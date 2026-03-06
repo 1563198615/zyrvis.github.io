@@ -518,6 +518,45 @@
         input.style.transform = 'translateY(0)';
     }
 
+    /* ═══════════════════════════════════════
+       待机 — 随机眨眼
+       ═══════════════════════════════════════ */
+    function startBlinking() {
+        var eyes = [lEyeL, lEyeR, lHlL, lHlR];
+        eyes.forEach(function(el) {
+            el.style.transformBox = 'fill-box';
+            el.style.transformOrigin = 'center center';
+        });
+
+        function singleBlink() {
+            return new Promise(function(resolve) {
+                eyes.forEach(function(el) {
+                    el.style.transition = 'transform 0.08s ease-in';
+                    el.style.transform = 'scaleY(0.05)';
+                });
+                setTimeout(function() {
+                    eyes.forEach(function(el) {
+                        el.style.transition = 'transform 0.14s ease-out';
+                        el.style.transform = 'scaleY(1)';
+                    });
+                    setTimeout(resolve, 150);
+                }, 100);
+            });
+        }
+
+        (async function blinkLoop() {
+            while (true) {
+                await wait(2500 + Math.random() * 4000);
+                await singleBlink();
+                /* 30% 概率连眨两次 */
+                if (Math.random() < 0.3) {
+                    await wait(180);
+                    await singleBlink();
+                }
+            }
+        })();
+    }
+
     /* ═══ 启动 ═══ */
     (async function() {
         await wait(400);
@@ -525,6 +564,7 @@
         await phaseLogo();
         await phaseType();
         await phaseChatBubble();
+        startBlinking();       // 进入待机眨眼
     })();
 })();
 </script>
