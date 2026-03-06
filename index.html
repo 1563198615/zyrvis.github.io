@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZYRVIS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at 50% 40%, #fafafa 0%, #ebebeb 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 菜单按钮 */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 28px;
+            height: 18px;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-btn span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            border-radius: 1.5px;
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(12px) saturate(1.3);
+            -webkit-backdrop-filter: blur(12px) saturate(1.3);
+            border: 0.5px solid rgba(255,255,255,0.7);
+            box-shadow:
+                0 1px 6px rgba(0,0,0,0.08),
+                inset 0 0.5px 0.5px rgba(255,255,255,0.9);
+            transform: scaleX(0);
+            transform-origin: left;
+            will-change: transform;
+        }
+
+        /* 菜单遮罩 */
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 998;
+            pointer-events: none;
+            opacity: 0;
+            background: rgba(0,0,0,0.08);
+            transition: opacity 0.35s ease;
+        }
+
+        .menu-overlay.active {
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+        /* 菜单 — 液态玻璃浮动卡片 */
+        .menu {
+            position: fixed;
+            top: 62px;
+            left: 16px;
+            width: 200px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.45);
+            backdrop-filter: blur(24px) saturate(1.3);
+            -webkit-backdrop-filter: blur(24px) saturate(1.3);
+            border: 1px solid rgba(255,255,255,0.65);
+            box-shadow:
+                0 8px 32px rgba(0,0,0,0.08),
+                0 2px 8px rgba(0,0,0,0.04),
+                inset 0 1px 1px rgba(255,255,255,0.8);
+            z-index: 999;
+            padding: 8px 0;
+            transform: scale(0.4);
+            transform-origin: 12px -14px;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        opacity 0.25s ease;
+        }
+
+        .menu.active {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu li {
+            padding: 0 6px;
+        }
+
+        .menu li + li {
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #222;
+            font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            display: block;
+            padding: 11px 14px;
+            border-radius: 10px;
+            transition: background 0.2s ease;
+        }
+
+        .menu a:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .menu a:active {
+            background: rgba(0,0,0,0.08);
+        }
+
+        /* 对话框 */
+        .chat-container {
+            margin-top: 30px;
+            width: 300px;
+            max-width: 90%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 48px;
+        }
+
+        .chat-bubble {
+            width: 100%;
+            height: 48px;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow:
+                0 2px 16px rgba(0,0,0,0.06),
+                inset 0 1px 2px rgba(255,255,255,0.9),
+                inset 0 -1px 2px rgba(0,0,0,0.04);
+            clip-path: inset(17px calc(50% - 7px) 17px calc(50% - 7px) round 24px);
+            opacity: 0;
+            will-change: clip-path, opacity;
+            position: relative;
+        }
+
+        .chat-bubble .chat-input {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            padding: 0 18px;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+            background: transparent;
+            color: #111;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(6px);
+            will-change: opacity, transform;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(0,0,0,0.3);
+        }
+
+        .chat-input:focus {
+            outline: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            opacity: 0.025;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 200px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stage {
+            position: relative;
+            width: 340px;
+            height: 220px;
+        }
+
+        .stage svg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #svg-logo {
+            width: 300px;
+            opacity: 0;
+        }
+
+        .typing-wrap {
+            margin-top: 36px;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+
+        #typed {
+            font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #111;
+            letter-spacing: 3px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2.5px;
+            height: 24px;
+            background: #111;
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            opacity: 0;
+        }
+        .cursor.on { animation: blink .7s step-end infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    </style>
+</head>
+<body>
+<!-- 菜单按钮 -->
+<div class="menu-btn" id="menuBtn">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<!-- 菜单遮罩 -->
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<!-- 菜单 -->
+<div class="menu" id="menu">
+    <ul>
+        <li><a href="#">项目管理</a></li>
+        <li><a href="#">ERUN</a></li>
+    </ul>
+</div>
+
+<div class="container">
+    <div class="stage">
+
+        <!-- ══ ZYRVIS Logo ══ -->
+        <svg id="svg-logo" viewBox="0 0 137 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- 头部轮廓 -->
+            <path id="l-head" fill-rule="evenodd" clip-rule="evenodd"
+                d="M57.6536 0.0510798C67.382 -0.110527 77.0984 0.11135 86.8032 0.71652C93.1631 1.1424 99.3462 2.34647 105.353 4.32891C108.763 5.63355 111.957 7.28137 114.933 9.27217C120.181 13.5956 125.243 18.1271 130.12 22.8662C132.002 24.9191 133.633 27.1373 135.012 29.5206C137.129 34.9313 136.245 39.8746 132.362 44.3504C129.84 46.8952 127.02 49.0816 123.903 50.9097C119.797 53.3705 115.448 55.3986 110.857 56.9937C109.926 57.3065 108.975 57.4333 108.003 57.374C111.495 54.7632 115.097 52.2915 118.806 49.9591C121.209 48.2255 123.485 46.356 125.635 44.3504C127.448 42.5314 128.943 40.5034 130.12 38.2663C131.725 34.6465 131.249 31.2876 128.693 28.1897C127.887 27.1206 127.003 26.1065 126.043 25.1477C122.13 21.5615 118.291 17.9176 114.526 14.2154C110.368 10.5008 105.476 7.96582 99.8491 6.61041C95.4141 5.60218 90.9296 4.84168 86.3955 4.32891C73.7513 3.41193 61.1131 3.47524 48.4807 4.51903C43.2045 5.04701 38.0405 6.06095 32.9887 7.56104C28.5086 9.14194 24.5677 11.4868 21.1658 14.5957C17.61 18.1026 13.9748 21.5566 10.2602 24.9575C8.2923 26.8563 6.72964 29.0112 5.57182 31.4218C4.83941 33.6818 4.97517 35.9 5.9795 38.0762C7.70014 41.331 10.0443 44.1513 13.0121 46.5368C13.9634 47.2973 14.9145 48.0578 15.8659 48.8183C19.9142 51.6871 23.991 54.5073 28.0964 57.2789C27.6347 57.497 27.1592 57.5287 26.6695 57.374C20.2738 55.3738 14.3623 52.522 8.93522 48.8183C6.2341 46.933 3.95799 44.6833 2.10649 42.0689C-0.480887 37.7188 -0.68473 33.2826 1.49496 28.7601C3.03194 26.2745 4.86652 23.993 6.99871 21.9155C10.9115 18.2026 14.8864 14.5586 18.9235 10.9833C24.8103 6.27408 31.6052 3.29538 39.3078 2.0474C45.407 1.01635 51.5223 0.350908 57.6536 0.0510798Z"
+                fill="none" stroke="#111" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 左眼 -->
+            <path id="l-eyeL" fill-rule="evenodd" clip-rule="evenodd"
+                d="M26.1759 19.3842C27.7323 19.8239 29.227 20.4261 30.6605 21.1904C36.7462 24.3343 42.7255 27.6299 48.5986 31.0769C48.9058 31.236 49.0077 31.4579 48.9044 31.7423C48.6569 32.0369 48.3512 32.2585 47.9871 32.4078C47.2416 32.3873 46.4943 32.3873 45.7448 32.4078C42.6737 35.8656 38.8007 37.0064 34.1258 35.8301C30.4976 34.2992 28.4251 31.669 27.9086 27.9398C27.6762 26.0661 27.8462 24.2284 28.4182 22.4262C27.8933 21.6501 27.2477 20.9529 26.4817 20.3348C26.276 20.0449 26.1741 19.7279 26.1759 19.3842Z"
+                fill="none" stroke="#111" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 右眼 -->
+            <path id="l-eyeR" fill-rule="evenodd" clip-rule="evenodd"
+                d="M109.344 19.3842C109.708 19.33 110.048 19.3933 110.363 19.5743C109.506 20.5316 108.69 21.5138 107.917 22.5212C109.215 26.4781 108.57 30.1223 105.98 33.4535C103.299 36.036 100.072 36.8915 96.2978 36.0202C93.9435 35.2834 91.9729 34.0159 90.3864 32.2177C89.8177 32.262 89.2402 32.357 88.6537 32.5028C88.1435 32.4097 87.7358 32.1562 87.4307 31.7423C87.3049 31.5619 87.3387 31.4035 87.5326 31.267C94.682 27.1092 101.952 23.1481 109.344 19.3842Z"
+                fill="none" stroke="#111" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 左眼瞳孔 -->
+            <path id="l-hlL"
+                d="M38.0847 27.9996C39.1023 27.9986 39.7817 28.4422 40.1232 29.3304C39.7744 30.552 39.1629 31.6294 38.2886 32.5626C37.5941 31.0549 37.5262 29.5339 38.0847 27.9996Z"
+                fill="#F0F0F0" opacity="0"/>
+            <!-- 右眼瞳孔 -->
+            <path id="l-hlR"
+                d="M97.317 27.7497C97.8929 27.67 98.3344 27.8602 98.642 28.3201C98.8002 29.6129 98.6642 30.8805 98.2343 32.1226C98.1499 32.2095 98.048 32.273 97.9286 32.3127C96.8364 31.2532 96.3268 29.9856 96.3997 28.5102C96.6845 28.2117 96.9903 27.9581 97.317 27.7497Z"
+                fill="#EEEEEE" opacity="0"/>
+            <!-- 下颌+舌头 -->
+            <path id="l-jaw" fill-rule="evenodd" clip-rule="evenodd"
+                d="M18.7197 45.301C19.5373 45.3014 20.2848 45.5231 20.9619 45.9664C28.2577 50.6099 35.868 54.7926 43.7923 58.5147C46.9344 59.992 50.2637 60.7208 53.7806 60.7012C56.9076 60.6377 59.9652 60.1624 62.9536 59.2752C65.9305 58.7265 68.9202 58.663 71.9226 59.0851C74.6603 59.8025 77.4462 60.3095 80.2802 60.6061C84.325 60.8962 88.1981 60.2626 91.8992 58.7049C99.9453 55.0497 107.623 50.8669 114.933 46.1566C115.692 45.7071 116.507 45.4219 117.38 45.301C117.41 45.501 117.376 45.6911 117.278 45.8714C114.382 49.3961 111.018 52.4699 107.187 55.0925C103.016 58.0927 98.5317 60.6278 93.7338 62.6975C88.9305 64.7952 83.9023 65.4923 78.6495 64.7889C76.9325 64.3712 75.2339 63.8959 73.5534 63.3629C73.3614 63.3835 73.1916 63.4468 73.0438 63.5531C72.9078 64.6305 72.9078 65.7078 73.0438 66.7852C74.0338 71.9323 75.9704 76.7487 78.8533 81.2347C78.6804 81.5737 78.4087 81.6688 78.0379 81.5199C74.8105 79.7771 72.2624 77.4005 70.3938 74.3902C69.4735 72.796 68.6919 71.1482 68.0496 69.447C66.6244 73.7176 64.1104 77.2982 60.5075 80.1891C59.5953 80.868 58.576 81.3433 57.4498 81.615C57.4172 81.292 57.451 80.975 57.5517 80.6644C61.194 75.3928 63.0624 69.6257 63.1574 63.3629C61.108 63.7789 59.0695 64.2542 57.0421 64.7889C52.3132 65.4496 47.7605 64.8792 43.3847 63.0778C34.6522 59.4009 27.0081 54.2991 20.4523 47.7726C19.6675 47.0678 19.0901 46.244 18.7197 45.301Z"
+                fill="none" stroke="#111" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <div class="typing-wrap">
+        <span id="typed"></span><span class="cursor" id="cursor"></span>
+    </div>
+
+    <!-- 对话框 -->
+    <div class="chat-container">
+        <div class="chat-bubble" id="chatBubble">
+            <input type="text" class="chat-input" placeholder="ZYRVIS IS READY" id="chatInput">
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    // 菜单功能
+    var menuBtn = document.getElementById('menuBtn');
+    var menu = document.getElementById('menu');
+    var menuOverlay = document.getElementById('menuOverlay');
+
+    function toggleMenu() {
+        menu.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    menuOverlay.addEventListener('click', toggleMenu);
+
+    var svgLogo = document.getElementById('svg-logo');
+    var lHead   = document.getElementById('l-head');
+    var lEyeL   = document.getElementById('l-eyeL');
+    var lEyeR   = document.getElementById('l-eyeR');
+    var lHlL    = document.getElementById('l-hlL');
+    var lHlR    = document.getElementById('l-hlR');
+    var lJaw    = document.getElementById('l-jaw');
+    var typed   = document.getElementById('typed');
+    var cursor  = document.getElementById('cursor');
+    var typingWrap = document.querySelector('.typing-wrap');
+    var chatBubble = document.getElementById('chatBubble');
+
+    function wait(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+    /* ── 同步初始化 dasharray，防止页面渲染时路径闪烁 ── */
+    function initDash(el) {
+        var len = el.getTotalLength();
+        el.style.strokeDasharray  = len;
+        el.style.strokeDashoffset = len;
+    }
+
+    initDash(lHead);
+    initDash(lEyeL);
+    initDash(lEyeR);
+    initDash(lJaw);
+
+    /* ── 描线动画（标准 rAF，easeOutCubic） ── */
+    function drawPath(el, dur, delay) {
+        return new Promise(function(resolve) {
+            setTimeout(function() {
+                var len = parseFloat(el.style.strokeDasharray);
+                var t0  = null;
+                requestAnimationFrame(function tick(now) {
+                    if (!t0) t0 = now;
+                    var t = Math.min((now - t0) / dur, 1);
+                    var e = 1 - Math.pow(1 - t, 3);
+                    el.style.strokeDashoffset = (len * (1 - e)).toFixed(2);
+                    if (t < 1) {
+                        requestAnimationFrame(tick);
+                    } else {
+                        el.style.strokeDashoffset = '0';
+                        resolve();
+                    }
+                });
+            }, delay || 0);
+        });
+    }
+
+    /* ── 填充过渡（先设透明再插值到目标色，解决 fill:none 无法过渡的问题） ── */
+    function fillIn(el, color, dur) {
+        var d = dur || 500;
+        var c = color || '#111';
+        el.style.fill = 'rgba(0,0,0,0)';
+        el.getBoundingClientRect();               // 强制回流
+        el.style.transition = 'fill ' + d + 'ms ease';
+        el.style.fill = c;
+    }
+
+    /* ── 淡入 ── */
+    function fadeIn(el, dur) {
+        el.style.transition = 'opacity ' + (dur || 300) + 'ms ease';
+        el.style.opacity = '1';
+    }
+
+    /* ── 通用 rAF 插值（easeOutCubic） ── */
+    function animate(dur, onFrame) {
+        return new Promise(function(resolve) {
+            var t0 = null;
+            requestAnimationFrame(function tick(now) {
+                if (!t0) t0 = now;
+                var t = Math.min((now - t0) / dur, 1);
+                var e = 1 - Math.pow(1 - t, 3);
+                onFrame(e);
+                if (t < 1) requestAnimationFrame(tick);
+                else resolve();
+            });
+        });
+    }
+
+    /* ═══════════════════════════════════════
+       Phase 0 — 菜单按钮描线
+       ═══════════════════════════════════════ */
+    async function phaseMenu() {
+        var spans = document.querySelectorAll('.menu-btn span');
+        for (var i = 0; i < spans.length; i++) {
+            await animate(350, (function(el) {
+                return function(e) { el.style.transform = 'scaleX(' + e + ')'; };
+            })(spans[i]));
+            if (i < spans.length - 1) await wait(80);
+        }
+        /* 动画结束后恢复 transition 供菜单交互用 */
+        for (var j = 0; j < spans.length; j++) {
+            spans[j].style.willChange = 'auto';
+            spans[j].style.transition = 'all 0.3s ease';
+        }
+    }
+
+    /* ═══════════════════════════════════════
+       Phase 1 — Logo 描线 → 填充
+       ═══════════════════════════════════════ */
+    async function phaseLogo() {
+        /* 显示 Logo 容器（路径均已隐藏） */
+        svgLogo.style.opacity = '1';
+
+        /* 描线：头部 → 下颌 → 双眼 */
+        await Promise.all([
+            drawPath(lHead, 2200, 0),
+            drawPath(lJaw,  1800, 600),
+            drawPath(lEyeL, 800,  1600),
+            drawPath(lEyeR, 800,  1800)
+        ]);
+
+        /* 填充各部件 */
+        fillIn(lHead, '#111', 600);
+        fillIn(lEyeL, '#111', 600);
+        fillIn(lEyeR, '#111', 600);
+        fillIn(lJaw,  '#111', 600);
+
+        await wait(650);
+
+        /* 去掉描边，避免 stroke 与 fill 叠加导致边缘模糊 */
+        [lHead, lEyeL, lEyeR, lJaw].forEach(function(el) {
+            el.style.transition = 'stroke-width 0.35s ease';
+            el.style.strokeWidth = '0';
+        });
+
+        await wait(400);
+
+        /* 眼睛高光淡入 */
+        fadeIn(lHlL, 500);
+        fadeIn(lHlR, 500);
+        await wait(600);
+    }
+
+    /* ═══════════════════════════════════════
+       Phase 2 — 打字效果
+       ═══════════════════════════════════════ */
+    async function phaseType() {
+        var text = '你好，我是ZYRVIS';
+
+        /* 打字区域淡入 */
+        typingWrap.style.transition = 'opacity 0.4s ease';
+        typingWrap.style.opacity = '1';
+        await wait(350);
+
+        cursor.classList.add('on');
+
+        for (var i = 0; i < text.length; i++) {
+            typed.textContent += text[i];
+            var ch = text[i];
+            await wait(ch === '，' ? 280 : /[A-Z]/.test(ch) ? 85 : 130);
+        }
+
+        /* 打字结束，光标淡出 */
+        cursor.classList.remove('on');
+        cursor.style.transition = 'opacity 0.4s ease';
+        cursor.style.opacity = '0';
+    }
+
+    /* ═══════════════════════════════════════
+       Phase 3 — 液态玻璃对话框（clip-path，纯 GPU 合成）
+       ═══════════════════════════════════════ */
+    async function phaseChatBubble() {
+        await wait(300);
+
+        /* 圆点淡入 */
+        chatBubble.style.transition = 'opacity 0.3s ease';
+        chatBubble.style.opacity = '1';
+        await wait(400);
+
+        /* 圆点向两侧拉伸为圆角矩形 */
+        var startTop = 17, startSide = 50 - (7 / 3);   // % 近似
+        await animate(600, function(e) {
+            var top  = startTop * (1 - e);
+            var side = startSide * (1 - e);
+            chatBubble.style.clipPath =
+                'inset(' + top + 'px ' + side + '% ' + top + 'px ' + side + '% round 24px)';
+        });
+        chatBubble.style.clipPath = 'inset(0 0 0 0 round 24px)';
+        chatBubble.style.willChange = 'auto';
+
+        /* 输入框浮现 */
+        var input = document.getElementById('chatInput');
+        input.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        input.style.opacity = '1';
+        input.style.transform = 'translateY(0)';
+    }
+
+    /* ═══ 启动 ═══ */
+    (async function() {
+        await wait(400);
+        phaseMenu();           // 菜单按钮与 Logo 同步开始
+        await phaseLogo();
+        await phaseType();
+        await phaseChatBubble();
+    })();
+})();
+</script>
+</body>
+</html>
