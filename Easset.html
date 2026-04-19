@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Easset — 视觉饮食资产收藏簿</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet"/>
+<style>
+  html, body { margin:0; padding:0; min-height:100%;
+    font-family:'Nunito',-apple-system,"PingFang SC",system-ui,sans-serif;
+    background:#E7DFD0; color:#2A2520; -webkit-font-smoothing:antialiased; }
+  * { box-sizing: border-box; }
+  @keyframes pulse { 0%,100%{opacity:.3;transform:translate(-50%,-50%) scale(1)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.04)} }
+  ::-webkit-scrollbar { display: none; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+/* ═══════════════ THEME ═══════════════ */
+const T = {
+  cream:'#F6F1E7', paper:'#FFFDF8', sand:'#EDE4D2',
+  ink:'#2A2520', ink2:'#6B6158', ink3:'#A89E91',
+  mocha:'#B08A5B', mochaDk:'#8A6740', mochaLt:'#D9C2A4',
+  sage:'#A8B89A', sageDk:'#7D9274',
+  rose:'#D9A9A2', roseDk:'#B47A74',
+  butter:'#F2D58A', sky:'#B8CFD9', coral:'#E69A78', plum:'#9E7BA0',
+  line:'rgba(42,37,32,0.08)',
+  shadow:'0 1px 2px rgba(42,37,32,0.04), 0 4px 14px rgba(42,37,32,0.06)',
+  shadowLg:'0 2px 4px rgba(42,37,32,0.05), 0 10px 28px rgba(42,37,32,0.08)',
+};
+const MOODS = [
+  { key:'bloom',  label:'盛放', color:'#F2D58A', ring:'#E4BE5E' },
+  { key:'calm',   label:'松弛', color:'#A8B89A', ring:'#7D9274' },
+  { key:'muse',   label:'走神', color:'#B8CFD9', ring:'#84A8B6' },
+  { key:'spicy',  label:'上头', color:'#E69A78', ring:'#C57550' },
+  { key:'velvet', label:'丝绒', color:'#9E7BA0', ring:'#785680' },
+];
+const MODES = [
+  { key:'loose',    label:'宽松', glyph:'🍀', color:'#A8B89A', desc:'老友式关怀' },
+  { key:'standard', label:'标准', glyph:'🔥', color:'#B08A5B', desc:'理性管家' },
+  { key:'strict',   label:'严厉', glyph:'⚖️', color:'#E69A78', desc:'硬核教练' },
+];
+const SCENES = [
+  { key:'collect', label:'收集' },
+  { key:'wild',    label:'豁出去' },
+  { key:'med',     label:'药物' },
+  { key:'water',   label:'喝水' },
+];
+
+/* ═══════════════ PRIMITIVES ═══════════════ */
+function Sticker({ kind, size=72, rot=0 }) {
+  const SH = {
+    latte:(<g transform="translate(14,8)"><path d="M4 10 L40 10 L36 54 Q36 58 32 58 L12 58 Q8 58 8 54 Z" fill="#7a5236"/><path d="M6 10 L38 10 L37 16 L5 16 Z" fill="#fff"/><ellipse cx="22" cy="12" rx="17" ry="3.5" fill="#c5a987"/></g>),
+    americano:(<g transform="translate(16,10)"><rect x="2" y="6" width="36" height="48" rx="4" fill="#2b1d14"/><rect x="2" y="6" width="36" height="8" rx="4" fill="#40291a"/><ellipse cx="20" cy="10" rx="16" ry="2.5" fill="#5a3b24"/><rect x="18" y="2" width="4" height="10" fill="#dedede"/></g>),
+    matcha:(<g transform="translate(14,8)"><path d="M4 14 L40 14 L36 56 Q36 60 32 60 L12 60 Q8 60 8 56 Z" fill="#9fb884"/><ellipse cx="22" cy="14" rx="18" ry="3.5" fill="#c8dab0"/></g>),
+    cake:(<g transform="translate(8,12)"><path d="M2 26 L54 26 L50 52 L6 52 Z" fill="#f3d9b5"/><circle cx="12" cy="22" r="3" fill="#d97757"/><circle cx="28" cy="20" r="3" fill="#d97757"/><circle cx="44" cy="22" r="3" fill="#d97757"/><rect x="26" y="6" width="4" height="14" fill="#f2d58a"/><path d="M28 4 Q26 8 28 10 Q30 8 28 4" fill="#e69a78"/></g>),
+    boba:(<g transform="translate(14,8)"><path d="M8 12 L36 12 L32 58 Q32 62 28 62 L16 62 Q12 62 12 58 Z" fill="#e9d4b0"/><rect x="6" y="10" width="32" height="6" rx="2" fill="#fff"/><rect x="20" y="2" width="4" height="24" fill="#d97757"/><circle cx="18" cy="50" r="2.2" fill="#3a2a1c"/><circle cx="24" cy="54" r="2.2" fill="#3a2a1c"/><circle cx="28" cy="46" r="2.2" fill="#3a2a1c"/><circle cx="16" cy="44" r="2.2" fill="#3a2a1c"/></g>),
+    wine:(<g transform="translate(18,6)"><path d="M6 4 L30 4 L26 28 Q26 38 18 38 Q10 38 10 28 Z" fill="#7a2838"/><rect x="16" y="38" width="4" height="18" fill="#7a2838"/><ellipse cx="18" cy="58" rx="10" ry="2" fill="#7a2838"/></g>),
+    beer:(<g transform="translate(14,8)"><rect x="4" y="8" width="30" height="52" rx="3" fill="#f2c94c"/><rect x="4" y="8" width="30" height="10" rx="3" fill="#fffbe0"/><path d="M34 16 Q44 16 44 28 Q44 40 34 40" fill="none" stroke="#f2c94c" strokeWidth="4"/><circle cx="12" cy="12" r="3" fill="#fff"/><circle cx="20" cy="11" r="4" fill="#fff"/><circle cx="28" cy="13" r="2.5" fill="#fff"/></g>),
+    pill:(<g transform="translate(10,20)"><rect x="0" y="0" width="56" height="24" rx="12" fill="#d9a9a2"/><rect x="0" y="0" width="28" height="24" rx="12" fill="#fffdf8"/><circle cx="14" cy="12" r="1.5" fill="#d9a9a2"/></g>),
+    water:(<g transform="translate(18,6)"><path d="M18 2 Q4 22 4 38 Q4 54 18 54 Q32 54 32 38 Q32 22 18 2Z" fill="#b8cfd9"/></g>),
+    salad:(<g transform="translate(8,14)"><path d="M2 18 Q4 34 28 36 Q52 34 54 18 Z" fill="#fff"/><circle cx="14" cy="22" r="7" fill="#7d9274"/><circle cx="28" cy="18" r="8" fill="#a8b89a"/><circle cx="42" cy="22" r="7" fill="#7d9274"/><circle cx="22" cy="26" r="3" fill="#e69a78"/><circle cx="36" cy="28" r="3" fill="#e69a78"/></g>),
+  };
+  return (<div style={{width:size,height:size,transform:`rotate(${rot}deg)`,filter:'drop-shadow(0 2px 4px rgba(42,37,32,0.18))'}}>
+    <svg viewBox="0 0 72 72" width={size} height={size} style={{filter:'drop-shadow(0 0 2.5px #fff) drop-shadow(0 0 2.5px #fff)'}}>{SH[kind]||SH.latte}</svg>
+  </div>);
+}
+function Pill({children,bg='#fff',color='#2A2520',border,style,onClick}) {
+  return (<div onClick={onClick} style={{display:'inline-flex',alignItems:'center',gap:6,padding:'8px 14px',borderRadius:999,background:bg,color,fontSize:13,fontWeight:600,border:border||'none',whiteSpace:'nowrap',cursor:onClick?'pointer':'default',...style}}>{children}</div>);
+}
+function Bento({children,style,pad=16,radius=26,bg}) {
+  return (<div style={{background:bg||T.paper,borderRadius:radius,padding:pad,boxShadow:T.shadow,border:`0.5px solid ${T.line}`,position:'relative',overflow:'hidden',...style}}>{children}</div>);
+}
+function Ring({size=120,stroke=12,value=0.6,color='#B08A5B',track='#EDE4D2',children}) {
+  const r=(size-stroke)/2, c=2*Math.PI*r, off=c*(1-Math.max(0,Math.min(1,value)));
+  return (<div style={{position:'relative',width:size,height:size}}>
+    <svg width={size} height={size} style={{transform:'rotate(-90deg)'}}>
+      <circle cx={size/2} cy={size/2} r={r} stroke={track} strokeWidth={stroke} fill="none"/>
+      <circle cx={size/2} cy={size/2} r={r} stroke={color} strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={off} strokeLinecap="round"/>
+    </svg>
+    <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column'}}>{children}</div>
+  </div>);
+}
+function Wave({data=[],w=320,h=96,color='#B08A5B',hi=6}) {
+  if (!data.length) return null;
+  const pad=8, ww=w-pad*2, hh=h-pad*2;
+  const mx=Math.max(...data), mn=Math.min(...data), rg=mx-mn||1;
+  const pts=data.map((v,i)=>[pad+(i/(data.length-1))*ww, pad+hh-((v-mn)/rg)*hh]);
+  let d=`M ${pts[0][0]} ${pts[0][1]}`;
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[i-1]||pts[i], p1=pts[i], p2=pts[i+1], p3=pts[i+2]||p2;
+    const c1x=p1[0]+(p2[0]-p0[0])/6, c1y=p1[1]+(p2[1]-p0[1])/6;
+    const c2x=p2[0]-(p3[0]-p1[0])/6, c2y=p2[1]-(p3[1]-p1[1])/6;
+    d+=` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p2[0]} ${p2[1]}`;
+  }
+  const hp=pts[hi];
+  return (<svg width={w} height={h} style={{display:'block'}}>
+    <defs><linearGradient id="wf" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={color} stopOpacity="0.18"/><stop offset="100%" stopColor={color} stopOpacity="0"/></linearGradient></defs>
+    <path d={`${d} L ${pts[pts.length-1][0]} ${h} L ${pts[0][0]} ${h} Z`} fill="url(#wf)"/>
+    <path d={d} stroke={color} strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+    {hp && <><circle cx={hp[0]} cy={hp[1]} r="4.5" fill="#fff" stroke={color} strokeWidth="2.5"/>
+      <rect x={hp[0]-20} y={hp[1]-32} width="40" height="20" rx="10" fill="#2A2520"/>
+      <text x={hp[0]} y={hp[1]-18} textAnchor="middle" fill="#fff" fontSize="11" fontWeight="700">{data[hi]}</text></>}
+  </svg>);
+}
+function Donut({slices,size=120,inner=38}) {
+  const tot=slices.reduce((s,x)=>s+x.v,0);
+  let a=-Math.PI/2;
+  const r=size/2-4, cx=size/2, cy=size/2;
+  return (<svg width={size} height={size}>{slices.map((s,i)=>{
+    const a2=a+(s.v/tot)*Math.PI*2, lg=s.v/tot>0.5?1:0;
+    const x1=cx+Math.cos(a)*r, y1=cy+Math.sin(a)*r;
+    const x2=cx+Math.cos(a2)*r, y2=cy+Math.sin(a2)*r;
+    const xi2=cx+Math.cos(a2)*inner, yi2=cy+Math.sin(a2)*inner;
+    const xi1=cx+Math.cos(a)*inner, yi1=cy+Math.sin(a)*inner;
+    const d=`M ${x1} ${y1} A ${r} ${r} 0 ${lg} 1 ${x2} ${y2} L ${xi2} ${yi2} A ${inner} ${inner} 0 ${lg} 0 ${xi1} ${yi1} Z`;
+    a=a2; return <path key={i} d={d} fill={s.c}/>;
+  })}</svg>);
+}
+function Bars({data,color='#B08A5B',h=110}) {
+  const mx=Math.max(...data.map(d=>d.v));
+  return (<div style={{display:'flex',alignItems:'flex-end',gap:10,height:h,padding:'0 4px'}}>
+    {data.map((d,i)=>(<div key={i} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:6}}>
+      <div style={{fontSize:11,color:T.ink2,fontWeight:700}}>{d.v||''}</div>
+      <div style={{width:'100%',height:`${(d.v/mx)*(h-40)}px`,background:d.active?color:'rgba(176,138,91,0.25)',borderRadius:'8px 8px 4px 4px',minHeight:4}}/>
+      <div style={{fontSize:10,color:T.ink3}}>{d.label}</div>
+    </div>))}
+  </div>);
+}
+
+/* ═══════════════ MOOD ILLUSTRATIONS ═══════════════ */
+function MoodIllo({kind,size=28}) {
+  const strokes={bloom:'#8A6B2E',calm:'#5E7556',muse:'#597387',spicy:'#A35B3E',velvet:'#64496B'};
+  const s=strokes[kind]||'#5E7556';
+  const I={
+    bloom:<g><circle cx="12" cy="12" r="3" fill={s}/><g stroke={s} strokeWidth="1.8" strokeLinecap="round" fill="none"><path d="M12 4 L12 8"/><path d="M12 16 L12 20"/><path d="M4 12 L8 12"/><path d="M16 12 L20 12"/><path d="M6 6 L9 9"/><path d="M15 15 L18 18"/><path d="M6 18 L9 15"/><path d="M15 9 L18 6"/></g></g>,
+    calm:<g stroke={s} strokeWidth="1.8" strokeLinecap="round" fill="none"><path d="M5 10 Q9 6 12 10 Q15 14 19 10"/><path d="M5 16 Q9 12 12 16 Q15 20 19 16"/></g>,
+    muse:<g stroke={s} strokeWidth="1.8" fill="none" strokeLinecap="round"><circle cx="12" cy="12" r="2" fill={s}/><path d="M12 4 Q6 12 12 20 Q18 12 12 4" opacity="0.6"/></g>,
+    spicy:<g stroke={s} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 L14 9 L20 10 L15 14 L17 20 L12 17 L7 20 L9 14 L4 10 L10 9 Z"/></g>,
+    velvet:<g stroke={s} strokeWidth="1.8" fill="none" strokeLinecap="round"><path d="M6 8 Q12 4 18 8 Q20 14 12 20 Q4 14 6 8 Z"/></g>,
+  };
+  return <svg width={size} height={size} viewBox="0 0 24 24">{I[kind]||I.bloom}</svg>;
+}
+
+/* ═══════════════ TOP BAR ═══════════════ */
+function TopBar({mood,setMood,setScreen}) {
+  const m=MOODS.find(x=>x.key===mood)||MOODS[0];
+  return (<div style={{padding:'18px 20px 8px',display:'flex',alignItems:'flex-start',justifyContent:'space-between'}}>
+    <div>
+      <div style={{fontSize:28,fontWeight:800,color:T.ink,letterSpacing:-0.5,lineHeight:1.1}}>早安，小溪 <span style={{display:'inline-block',transform:'rotate(-10deg)'}}>👋</span></div>
+      <div style={{display:'flex',alignItems:'center',gap:8,marginTop:8}}>
+        <Pill bg={T.sand} color={T.ink2} style={{padding:'5px 11px',fontSize:12}}>4月19日 · 周日</Pill>
+        <Pill bg="#EAF1F6" color="#507489" style={{padding:'5px 11px',fontSize:12}}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{marginRight:2}}><circle cx="12" cy="8" r="4" fill="#f2d58a"/><path d="M4 16 Q8 12 14 14 Q18 16 22 14 L22 20 L4 20 Z" fill="#b8cfd9"/></svg>
+          18°C 多云
+        </Pill>
+      </div>
+    </div>
+    <div style={{display:'flex',alignItems:'center',gap:10}}>
+      <div style={{position:'relative',width:46,height:46}}>
+        <div style={{position:'absolute',inset:0,borderRadius:'50%',background:`conic-gradient(${MOODS.map((x,i)=>`${x.color} ${i*20}% ${(i+1)*20}%`).join(', ')})`,padding:3}}>
+          <div style={{width:'100%',height:'100%',borderRadius:'50%',background:m.color,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}
+            onClick={()=>{const idx=MOODS.findIndex(x=>x.key===mood); setMood(MOODS[(idx+1)%MOODS.length].key);}}>
+            <MoodIllo kind={m.key} size={26}/>
+          </div>
+        </div>
+      </div>
+      <div onClick={()=>setScreen('settings')} style={{width:46,height:46,borderRadius:'50%',background:'linear-gradient(135deg,#D9C2A4,#B08A5B)',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:700,fontSize:16,boxShadow:T.shadow,cursor:'pointer',border:'2px solid #fff'}}>溪</div>
+    </div>
+  </div>);
+}
+
+/* ═══════════════ MONTH WHEEL ═══════════════ */
+function MonthWheel({month,setMonth}) {
+  const [active,setActive]=React.useState(false);
+  const months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  return (<div onMouseEnter={()=>setActive(true)} onMouseLeave={()=>setActive(false)}
+    style={{margin:'8px 16px 16px',opacity:active?1:0.55,transition:'opacity 0.3s'}}>
+    <div style={{fontSize:10,color:T.ink3,textAlign:'center',marginBottom:6,letterSpacing:3,fontWeight:600}}>— 切换月份 —</div>
+    <div style={{position:'relative',height:56,borderRadius:999,background:T.paper,border:`0.5px solid ${T.line}`,overflow:'hidden',boxShadow:active?T.shadow:'none'}}>
+      <div style={{position:'absolute',left:'50%',top:'50%',transform:'translate(-50%,-50%)',width:72,height:36,borderRadius:18,background:T.mocha,opacity:0.12}}/>
+      <div style={{display:'flex',alignItems:'center',height:'100%',padding:'0 12px',gap:14,overflowX:'auto',justifyContent:'center'}}>
+        {months.map((mm,i)=>{const sel=i===month; return (<div key={i} onClick={()=>setMonth(i)} style={{fontSize:sel?18:13,fontWeight:sel?800:500,color:sel?T.ink:T.ink3,cursor:'pointer',flexShrink:0,transform:sel?'scale(1.1)':'scale(1)',transition:'all 0.2s'}}>{mm}</div>);})}
+      </div>
+    </div>
+  </div>);
+}
+
+/* ═══════════════ TODAY ═══════════════ */
+function Today({mood,setMood,setScreen,mode,month,setMonth}) {
+  const mo=MODES.find(x=>x.key===mode);
+  const cal=187, calMax=400;
+  const today=[
+    {kind:'americano',name:'美式',cup:'大杯',time:'10:39',mg:123},
+    {kind:'latte',name:'拿铁',cup:'中杯',time:'14:20',mg:64},
+  ];
+  return (<div style={{paddingBottom:140}}>
+    <TopBar mood={mood} setMood={setMood} setScreen={setScreen}/>
+    <div style={{padding:'8px 16px 12px'}}>
+      <Bento style={{padding:0}}>
+        <div style={{background:`linear-gradient(135deg, ${mo.color}22, ${T.paper})`,padding:'18px 18px 14px',display:'flex',gap:16,alignItems:'center'}}>
+          <Ring size={108} stroke={11} value={cal/calMax} color={T.mocha} track="#fff">
+            <div style={{fontSize:10,color:T.ink2,fontWeight:600,letterSpacing:0.5}}>咖啡因</div>
+            <div style={{fontSize:26,fontWeight:800,color:T.ink,lineHeight:1}}>{cal}</div>
+            <div style={{fontSize:10,color:T.ink3}}>/ {calMax} mg</div>
+          </Ring>
+          <div style={{flex:1}}>
+            <Pill bg="#fff" color={T.mochaDk} border={`1px solid ${mo.color}55`} style={{fontSize:11,padding:'4px 10px'}}>{mo.glyph} {mo.label}模式</Pill>
+            <div style={{fontSize:14,fontWeight:700,color:T.ink,marginTop:8,lineHeight:1.35}}>再喝一杯中杯 拿铁 就到今日警戒线啦</div>
+            <div style={{fontSize:12,color:T.ink2,marginTop:4,lineHeight:1.45}}>{mode==='loose'?'不急，想喝就喝～ ☕️':mode==='standard'?'建议下午改喝一杯水 💧':'心率偏高，建议停止摄入咖啡因。'}</div>
+          </div>
+        </div>
+        <div style={{background:T.paper,padding:'14px 16px 16px',borderTop:`0.5px solid ${T.line}`}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+            <div style={{fontSize:13,fontWeight:700,color:T.ink}}>今日贴纸墙</div>
+            <span style={{fontSize:11,color:T.ink3}}>{today.length} 张 · 点击排版</span>
+          </div>
+          <div style={{position:'relative',height:116,background:`repeating-linear-gradient(45deg, ${T.sand}55 0 2px, transparent 2px 16px)`,borderRadius:18,border:`1px dashed ${T.ink3}55`,overflow:'hidden'}}>
+            <div style={{position:'absolute',left:16,top:18}}><Sticker kind="americano" size={84} rot={-8}/></div>
+            <div style={{position:'absolute',left:94,top:30}}><Sticker kind="latte" size={72} rot={6}/></div>
+            <div style={{position:'absolute',left:170,top:20}}><Sticker kind="cake" size={76} rot={-4}/></div>
+            <div style={{position:'absolute',right:14,bottom:10,background:'#fff',borderRadius:10,padding:'3px 8px',fontSize:10,color:T.ink2,fontWeight:600,boxShadow:T.shadow}}>Sat · 4.19</div>
+          </div>
+        </div>
+      </Bento>
+    </div>
+    <div style={{padding:'0 16px 12px'}}>
+      <div onClick={()=>setScreen('capture')} style={{background:T.ink,color:'#fff',borderRadius:999,padding:'14px 18px',display:'flex',alignItems:'center',justifyContent:'center',gap:10,fontWeight:700,fontSize:15,cursor:'pointer',boxShadow:T.shadowLg}}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="3" stroke="#fff" strokeWidth="2"/><circle cx="12" cy="13" r="4" stroke="#fff" strokeWidth="2"/><path d="M8 6 L9 4 L15 4 L16 6" stroke="#fff" strokeWidth="2"/></svg>
+        拍一张 · 生成贴纸
+      </div>
+    </div>
+    <div style={{padding:'0 16px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+      <Bento bg="#EAF1F6" style={{padding:14}}>
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between'}}>
+          <div><div style={{fontSize:11,fontWeight:700,color:'#507489',letterSpacing:0.5}}>喝水</div>
+            <div style={{fontSize:22,fontWeight:800,color:T.ink,marginTop:2}}>1.2<span style={{fontSize:12,color:T.ink3,fontWeight:600}}>/2.0 L</span></div></div>
+          <Sticker kind="water" size={42}/>
+        </div>
+        <div style={{marginTop:10,display:'flex',gap:4}}>{Array.from({length:8}).map((_,i)=>(<div key={i} style={{flex:1,height:16,borderRadius:4,background:i<5?'#84A8B6':'#fff',opacity:i<5?1:0.6}}/>))}</div>
+        <div style={{fontSize:10.5,color:'#507489',marginTop:8,lineHeight:1.4}}>吃了重口味午餐 · 目标 +300ml</div>
+      </Bento>
+      <Bento bg={MOODS.find(x=>x.key===mood).color} style={{padding:14,color:T.ink}}>
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:0.5,opacity:0.65}}>今日心情</div>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginTop:4}}><MoodIllo kind={mood} size={32}/><div style={{fontSize:22,fontWeight:800}}>{MOODS.find(x=>x.key===mood).label}</div></div>
+        <div style={{marginTop:10,fontSize:10.5,lineHeight:1.45,background:'rgba(255,253,248,0.55)',borderRadius:10,padding:'6px 8px'}}>"一杯好喝的拿铁就能让周日发光。"</div>
+      </Bento>
+      <Bento style={{padding:14}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div><div style={{fontSize:11,fontWeight:700,color:T.plum,letterSpacing:0.5}}>药物提醒</div>
+            <div style={{fontSize:15,fontWeight:700,color:T.ink,marginTop:4}}>维生素 D</div>
+            <div style={{fontSize:11,color:T.ink2,marginTop:2}}>饭后 30 分钟 · 还剩 2h</div></div>
+          <Sticker kind="pill" size={52}/>
+        </div>
+        <div style={{marginTop:10,display:'flex',gap:4}}>{['💊','🌿','⚪','💊','💊','🌿','⚪'].map((e,i)=>(<div key={i} style={{width:22,height:22,borderRadius:7,background:i<4?'#F3E6E4':T.sand,display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,opacity:i<4?1:0.45}}>{e}</div>))}</div>
+      </Bento>
+      <Bento bg={T.rose+'44'} style={{padding:14}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{fontSize:11,fontWeight:700,color:T.roseDk,letterSpacing:0.5}}>豁出去</div>
+          <Pill bg="#fff" color={T.roseDk} style={{fontSize:10,padding:'3px 8px'}}>3 勋章</Pill>
+        </div>
+        <div style={{fontSize:14,fontWeight:700,color:T.ink,marginTop:6,lineHeight:1.3}}>深夜<br/>酒神 · Lv2</div>
+        <div style={{display:'flex',gap:4,marginTop:8}}><Sticker kind="wine" size={40} rot={-6}/><Sticker kind="beer" size={40} rot={8}/></div>
+      </Bento>
+    </div>
+    <div style={{padding:'4px 16px 12px'}}>
+      <div style={{fontSize:13,fontWeight:700,color:T.ink,padding:'6px 4px 10px',display:'flex',justifyContent:'space-between'}}>
+        <span>今日记录</span><span style={{fontSize:11,color:T.ink3,fontWeight:500}}>{today.length} 项 · 187 mg</span>
+      </div>
+      {today.map((e,i)=>(<div key={i} style={{background:T.paper,borderRadius:20,padding:'10px 14px',display:'flex',alignItems:'center',gap:12,marginBottom:8,boxShadow:T.shadow,border:`0.5px solid ${T.line}`}}>
+        <Sticker kind={e.kind} size={48}/>
+        <div style={{flex:1}}>
+          <div style={{fontSize:14,fontWeight:700,color:T.ink}}>{e.name} <span style={{marginLeft:6,fontSize:10,color:T.mocha,background:T.mochaLt+'55',padding:'1px 6px',borderRadius:6,fontWeight:700}}>贴纸</span></div>
+          <div style={{fontSize:11,color:T.ink3,marginTop:2}}>{e.cup} · {e.time}</div>
+        </div>
+        <div style={{textAlign:'right'}}><div style={{fontSize:22,fontWeight:800,color:T.mocha,lineHeight:1}}>{e.mg}</div><div style={{fontSize:10,color:T.ink3}}>mg</div></div>
+      </div>))}
+    </div>
+    <MonthWheel month={month} setMonth={setMonth}/>
+  </div>);
+}
+
+/* ═══════════════ CAPTURE ═══════════════ */
+function Capture({setScreen,mode}) {
+  const mo=MODES.find(x=>x.key===mode);
+  const [step,setStep]=React.useState(0);
+  React.useEffect(()=>{if(step<2){const id=setTimeout(()=>setStep(step+1),1400); return ()=>clearTimeout(id);}},[step]);
+  return (<div style={{minHeight:'100%',background:'#1a1510',color:'#fff',paddingBottom:140}}>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'64px 20px 10px'}}>
+      <div onClick={()=>setScreen('today')} style={{width:36,height:36,borderRadius:18,background:'rgba(255,255,255,0.14)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
+        <svg width="14" height="14" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" fill="none"/></svg>
+      </div>
+      <Pill bg="rgba(255,255,255,0.14)" color="#fff" style={{padding:'6px 14px'}}>{mo.glyph} {mo.label} · AI 端侧</Pill>
+      <div style={{width:36}}/>
+    </div>
+    <div style={{padding:'0 18px'}}>
+      <div style={{aspectRatio:'3/4',borderRadius:32,overflow:'hidden',position:'relative',background:'linear-gradient(135deg,#3a2a1c,#5a3b24)'}}>
+        <div style={{position:'absolute',left:'50%',top:'52%',transform:'translate(-50%,-50%)'}}><Sticker kind="americano" size={200}/></div>
+        {step===1 && <div style={{position:'absolute',left:'50%',top:'52%',width:210,height:210,transform:'translate(-50%,-50%)',border:'2px dashed #F2D58A',borderRadius:18,animation:'pulse 1.2s infinite'}}/>}
+        {[0,1,2,3].map(i=>(<div key={i} style={{position:'absolute',[i<2?'top':'bottom']:22,[i%2?'right':'left']:22,width:22,height:22,borderTop:i<2?'2px solid #fff':'none',borderBottom:i>=2?'2px solid #fff':'none',borderLeft:i%2===0?'2px solid #fff':'none',borderRight:i%2===1?'2px solid #fff':'none',borderRadius:4,opacity:0.75}}/>))}
+        <div style={{position:'absolute',left:16,bottom:16,right:16,background:'rgba(26,21,16,0.7)',backdropFilter:'blur(8px)',borderRadius:16,padding:'10px 14px',display:'flex',alignItems:'center',gap:10}}>
+          <div style={{width:28,height:28,borderRadius:14,background:'#F2D58A',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3 L14 10 L21 12 L14 14 L12 21 L10 14 L3 12 L10 10 Z" fill="#8A6740"/></svg>
+          </div>
+          <div>
+            <div style={{fontSize:12,fontWeight:700}}>{step===0?'对准目标，AI 自动抠图':step===1?'MobileSAM 分割中...':'贴纸生成完毕！'}</div>
+            <div style={{fontSize:10.5,opacity:0.65}}>{step===2?'美式 · 大杯 · 约 120 mg 咖啡因':'端侧运行，不上传云端'}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style={{padding:'14px 18px 6px'}}>
+      <div style={{fontSize:11,color:'rgba(255,255,255,0.6)',letterSpacing:1,marginBottom:8}}>最近贴纸 · 滑动排版到手账</div>
+      <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:4}}>
+        {['americano','latte','boba','cake','matcha','salad','pill'].map(k=>(<div key={k} style={{flexShrink:0,width:68,height:68,background:'rgba(255,255,255,0.08)',borderRadius:16,display:'flex',alignItems:'center',justifyContent:'center',border:'1px solid rgba(255,255,255,0.06)'}}><Sticker kind={k} size={56}/></div>))}
+      </div>
+    </div>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:40,marginTop:16}}>
+      <div style={{width:44,height:44,borderRadius:12,background:'rgba(255,255,255,0.12)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#fff" strokeWidth="1.8"/><circle cx="12" cy="12" r="3" stroke="#fff" strokeWidth="1.8"/></svg>
+      </div>
+      <div onClick={()=>setStep(step===2?0:step+1)} style={{width:74,height:74,borderRadius:'50%',border:'3px solid #fff',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
+        <div style={{width:58,height:58,borderRadius:'50%',background:'#F2D58A'}}/>
+      </div>
+      <div style={{width:44,height:44,borderRadius:12,background:'rgba(255,255,255,0.12)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 16 L4 20 L8 20 M20 8 L20 4 L16 4 M4 4 L8 4 L4 8 M20 16 L20 20 L16 20" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg>
+      </div>
+    </div>
+  </div>);
+}
+
+/* ═══════════════ PORTFOLIO ═══════════════ */
+function Portfolio() {
+  const wd=[42,68,120,180,245,220,187];
+  const bars=[{label:'周一',v:180},{label:'周二',v:220},{label:'周三',v:310},{label:'周四',v:150},{label:'周五',v:265,active:true},{label:'周六',v:95},{label:'周日',v:187}];
+  const slices=[{v:60,c:T.mocha,label:'咖啡',pct:'60%'},{v:18,c:T.sage,label:'奶茶',pct:'18%'},{v:12,c:T.rose,label:'甜点',pct:'12%'},{v:10,c:T.sky,label:'水',pct:'10%'}];
+  return (<div style={{paddingBottom:140}}>
+    <div style={{padding:'18px 20px 8px',display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+      <div><div style={{fontSize:32,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>资产档案</div>
+        <div style={{fontSize:12,color:T.ink2,marginTop:2}}>你的视觉饮食收藏簿</div></div>
+      <Pill bg={T.paper} color={T.ink2} border={`0.5px solid ${T.line}`}>2026年4月</Pill>
+    </div>
+    <div style={{padding:'4px 16px 12px',display:'flex',gap:6}}>
+      {['周','月','年'].map((x,i)=>(<Pill key={i} bg={i===1?T.mocha:T.paper} color={i===1?'#fff':T.ink2} border={`0.5px solid ${T.line}`} style={{padding:'6px 14px',fontWeight:700}}>{x}</Pill>))}
+    </div>
+    <div style={{padding:'0 16px 12px'}}>
+      <Bento bg={T.sand} style={{padding:16,height:160,position:'relative',overflow:'hidden'}}>
+        {[['americano',10,18,-8,58],['latte',70,8,4,54],['boba',128,22,-6,52],['cake',188,12,8,58],['matcha',248,26,-4,50],['wine',40,78,6,48],['beer',104,86,-8,50],['salad',168,76,4,54],['water',232,82,-6,46],['pill',288,60,10,42]].map(([k,x,y,r,s],i)=>(<div key={i} style={{position:'absolute',left:x,top:y}}><Sticker kind={k} size={s} rot={r}/></div>))}
+        <div style={{position:'absolute',bottom:10,left:14,fontSize:11,color:T.ink2,fontWeight:700}}>共 42 张 · 本月</div>
+      </Bento>
+    </div>
+    <div style={{padding:'0 16px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+      <Bento style={{padding:14}}><div style={{fontSize:11,color:T.ink2,fontWeight:700,letterSpacing:0.5}}>总杯数</div>
+        <div style={{fontSize:34,fontWeight:800,color:T.mocha,lineHeight:1.1,marginTop:4,fontFamily:'Fraunces,Georgia,serif'}}>42</div>
+        <div style={{fontSize:10,color:T.sageDk,marginTop:2}}>↑ 12% vs 上月</div></Bento>
+      <Bento style={{padding:14}}><div style={{fontSize:11,color:T.ink2,fontWeight:700,letterSpacing:0.5}}>总咖啡因</div>
+        <div style={{fontSize:34,fontWeight:800,color:T.mocha,lineHeight:1.1,marginTop:4,fontFamily:'Fraunces,Georgia,serif'}}>3,820<span style={{fontSize:14,color:T.ink3}}> mg</span></div>
+        <div style={{fontSize:10,color:T.ink3,marginTop:2}}>日均 98 mg</div></Bento>
+    </div>
+    <div style={{padding:'0 16px 12px'}}>
+      <Bento style={{padding:16}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+          <div><div style={{fontSize:13,fontWeight:700,color:T.ink}}>每日咖啡因波动</div><div style={{fontSize:11,color:T.ink3}}>近 7 天</div></div>
+          <Pill bg={T.sand} color={T.ink2} style={{fontSize:11,padding:'4px 10px'}}>周六 · 187 mg</Pill>
+        </div>
+        <div style={{marginTop:8}}><Wave data={wd} w={330} h={96} color={T.mocha} hi={6}/></div>
+        <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:T.ink3,marginTop:2,padding:'0 8px'}}>{['日','一','二','三','四','五','六'].map(d=><span key={d}>{d}</span>)}</div>
+      </Bento>
+    </div>
+    <div style={{padding:'0 16px',display:'grid',gridTemplateColumns:'1.1fr 1fr',gap:12,marginBottom:12}}>
+      <Bento style={{padding:14}}><div style={{fontSize:12,fontWeight:700,color:T.ink,marginBottom:10}}>每周热量</div><Bars data={bars} color={T.mocha}/></Bento>
+      <Bento style={{padding:14}}>
+        <div style={{fontSize:12,fontWeight:700,color:T.ink,marginBottom:4}}>贴纸分类</div>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'center',position:'relative'}}>
+          <Donut slices={slices} size={116} inner={38}/>
+          <div style={{position:'absolute',textAlign:'center'}}><div style={{fontSize:20,fontWeight:800,color:T.ink,lineHeight:1}}>42</div><div style={{fontSize:9,color:T.ink3}}>贴纸</div></div>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:3,marginTop:6}}>{slices.map((s,i)=>(<div key={i} style={{display:'flex',alignItems:'center',gap:6,fontSize:10}}><div style={{width:8,height:8,borderRadius:2,background:s.c}}/><span style={{flex:1,color:T.ink2}}>{s.label}</span><span style={{color:T.ink,fontWeight:700}}>{s.pct}</span></div>))}</div>
+      </Bento>
+    </div>
+    <div style={{padding:'0 16px 12px'}}>
+      <Bento bg={`linear-gradient(135deg, ${T.rose}33, ${T.butter}33)`} style={{padding:14}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontSize:13,fontWeight:700,color:T.ink}}>勋章墙</div><span style={{fontSize:10,color:T.ink2}}>3 / 12 解锁</span></div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginTop:10}}>
+          {[{t:'深夜酒神',bg:T.rose+'55',icon:'🍷',on:true},{t:'清晨鸟',bg:'#FDF2C7',icon:'☕️',on:true},{t:'彩虹',bg:T.sage+'55',icon:'🌈',on:true},{t:'禅意日',bg:'#eee',icon:'?',on:false}].map((b,i)=>(<div key={i} style={{borderRadius:16,background:b.bg,padding:8,textAlign:'center',opacity:b.on?1:0.5}}><div style={{fontSize:24,lineHeight:1}}>{b.icon}</div><div style={{fontSize:10,fontWeight:700,color:T.ink,marginTop:4}}>{b.t}</div></div>))}
+        </div>
+      </Bento>
+    </div>
+  </div>);
+}
+
+/* ═══════════════ MED ═══════════════ */
+function Med() {
+  const cal=Array.from({length:30}).map((_,i)=>{const tg=[]; if([2,5,9,12,16,19,23,27].includes(i)) tg.push('💊'); if([3,10,17,24].includes(i)) tg.push('🌿'); if([5,11,18,25].includes(i)) tg.push('⚪'); return {day:i+1,tags:tg};});
+  return (<div style={{paddingBottom:140}}>
+    <div style={{padding:'18px 20px 12px'}}><div style={{fontSize:32,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>禅意日历</div>
+      <div style={{fontSize:12,color:T.ink2,marginTop:2}}>药物 · 中药 · 胶囊 · 轻盈记录</div></div>
+    <div style={{padding:'0 16px 12px',display:'flex',gap:8}}>
+      {[['💊','西药',T.rose],['🌿','中药',T.sage],['⚪','胶囊',T.sky]].map(([e,l,c],i)=>(<Pill key={i} bg={c+'44'} color={T.ink} border={`0.5px solid ${c}`} style={{fontSize:12}}>{e} {l}</Pill>))}
+    </div>
+    <div style={{padding:'0 16px 12px'}}>
+      <Bento style={{padding:14}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:4,fontSize:10,color:T.ink3,marginBottom:4,textAlign:'center'}}>{['日','一','二','三','四','五','六'].map(d=><div key={d}>{d}</div>)}</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:5}}>
+          {Array.from({length:3}).map((_,i)=><div key={`e${i}`}/>)}
+          {cal.map(d=>{const tday=d.day===19; return (<div key={d.day} style={{aspectRatio:'1/1',borderRadius:12,background:tday?T.ink:(d.tags.length?T.sand:'transparent'),color:tday?'#fff':T.ink,padding:4,display:'flex',flexDirection:'column',justifyContent:'space-between',border:tday?'none':`0.5px solid ${T.line}`}}>
+            <div style={{fontSize:11,fontWeight:700}}>{d.day}</div>
+            <div style={{display:'flex',gap:1,flexWrap:'wrap',justifyContent:'flex-end',fontSize:8,lineHeight:1}}>{d.tags.slice(0,3).map((t,j)=><span key={j}>{t}</span>)}</div>
+          </div>);})}
+        </div>
+      </Bento>
+    </div>
+    <div style={{padding:'0 16px'}}>
+      <div style={{fontSize:13,fontWeight:700,color:T.ink,padding:'8px 4px'}}>今日用药 · 4月19日</div>
+      {[{e:'💊',n:'维生素 D',t:'饭后 30 分钟',done:true,c:T.rose},{e:'🌿',n:'四君子汤',t:'早晚各一次',done:true,c:T.sage},{e:'⚪',n:'Omega-3',t:'随晚餐',done:false,c:T.sky}].map((m,i)=>(<div key={i} style={{background:T.paper,borderRadius:20,padding:'12px 14px',display:'flex',alignItems:'center',gap:12,marginBottom:8,boxShadow:T.shadow,border:`0.5px solid ${T.line}`}}>
+        <div style={{width:44,height:44,borderRadius:14,background:m.c+'44',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22}}>{m.e}</div>
+        <div style={{flex:1}}><div style={{fontSize:14,fontWeight:700,color:T.ink}}>{m.n}</div><div style={{fontSize:11,color:T.ink3}}>{m.t}</div></div>
+        <div style={{width:28,height:28,borderRadius:14,background:m.done?T.sageDk:'transparent',border:m.done?'none':`2px solid ${T.ink3}`,display:'flex',alignItems:'center',justifyContent:'center'}}>{m.done && <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12 L10 17 L19 7" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>}</div>
+      </div>))}
+    </div>
+  </div>);
+}
+
+/* ═══════════════ WILD ═══════════════ */
+function Wild() {
+  return (<div style={{paddingBottom:140,background:`linear-gradient(180deg, ${T.rose}33, ${T.cream} 320px)`,minHeight:'100%'}}>
+    <div style={{padding:'18px 20px 12px'}}>
+      <Pill bg={T.roseDk} color="#fff" style={{fontSize:11,padding:'5px 12px'}}>🌙 豁出去模式</Pill>
+      <div style={{fontSize:32,fontWeight:800,color:T.ink,letterSpacing:-0.5,marginTop:8,fontFamily:'Fraunces,Georgia,serif',fontStyle:'italic'}}>今夜，尽情放纵。</div>
+      <div style={{fontSize:13,color:T.ink2,marginTop:4,lineHeight:1.45}}>AI 切换为"陪你疯"口吻。不计热量，只记回忆。</div>
+    </div>
+    <div style={{padding:'0 16px 12px'}}>
+      <Bento bg="#2A2520" style={{padding:16,color:'#fff'}}>
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}><div style={{fontSize:13,fontWeight:700}}>今夜战绩</div><span style={{fontSize:10,opacity:0.5}}>4.19 · 23:24</span></div>
+        <div style={{position:'relative',height:110,background:'rgba(255,255,255,0.04)',borderRadius:16,overflow:'hidden'}}>
+          <div style={{position:'absolute',left:12,top:16}}><Sticker kind="wine" size={72} rot={-10}/></div>
+          <div style={{position:'absolute',left:80,top:26}}><Sticker kind="beer" size={64} rot={8}/></div>
+          <div style={{position:'absolute',left:148,top:20}}><Sticker kind="wine" size={60} rot={-6}/></div>
+          <div style={{position:'absolute',left:208,top:28}}><Sticker kind="cake" size={56} rot={10}/></div>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginTop:12}}>
+          {[['4','杯数'],['~2h','时长'],['微醺','状态']].map(([v,l],i)=>(<div key={i} style={{background:'rgba(255,255,255,0.06)',borderRadius:12,padding:'8px 10px'}}><div style={{fontSize:18,fontWeight:800,fontFamily:'Fraunces,serif'}}>{v}</div><div style={{fontSize:10,opacity:0.55}}>{l}</div></div>))}
+        </div>
+      </Bento>
+    </div>
+    <div style={{padding:'0 16px 12px'}}>
+      <Bento bg={T.rose+'55'} style={{padding:14}}>
+        <div style={{display:'flex',gap:10}}>
+          <div style={{width:32,height:32,borderRadius:16,background:T.roseDk,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:18}}>🎭</div>
+          <div style={{flex:1}}><div style={{fontSize:11,color:T.roseDk,fontWeight:700}}>AI · 陪你疯</div><div style={{fontSize:13,color:T.ink,marginTop:3,lineHeight:1.45}}>「第 4 杯了～ 记得桌上留一杯水，明早的你会感谢今晚的你。」</div></div>
+        </div>
+      </Bento>
+    </div>
+    <div style={{padding:'0 16px'}}>
+      <div style={{fontSize:13,fontWeight:700,color:T.ink,padding:'8px 4px'}}>放纵勋章 · 3/9</div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
+        {[{i:'🌙',t:'深夜酒神',s:'Lv2',c:'#3a2a4a',on:true},{i:'🎨',t:'微醺艺术家',s:'Lv1',c:'#5a3b24',on:true},{i:'🕺',t:'舞池新星',s:'Lv1',c:'#6a2a3a',on:true},{i:'?',t:'黎明使者',s:'未解锁',c:'#aaa',on:false},{i:'?',t:'微风清醒',s:'未解锁',c:'#aaa',on:false},{i:'?',t:'诗酒趁年华',s:'未解锁',c:'#aaa',on:false}].map((b,i)=>(<Bento key={i} bg={b.on?b.c:T.paper} style={{padding:12,textAlign:'center',color:b.on?'#fff':T.ink3,opacity:b.on?1:0.7}}><div style={{fontSize:28,lineHeight:1}}>{b.i}</div><div style={{fontSize:11,fontWeight:700,marginTop:4}}>{b.t}</div><div style={{fontSize:9,opacity:0.7,marginTop:2}}>{b.s}</div></Bento>))}
+      </div>
+    </div>
+  </div>);
+}
+
+/* ═══════════════ SETTINGS ═══════════════ */
+function Settings({mode,setMode}) {
+  return (<div style={{paddingBottom:140}}>
+    <div style={{padding:'18px 20px 12px'}}><div style={{fontSize:32,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>设置</div></div>
+    <div style={{padding:'0 16px 12px'}}>
+      <Bento style={{padding:16}}>
+        <div style={{display:'flex',alignItems:'center',gap:12}}>
+          <div style={{width:56,height:56,borderRadius:'50%',background:'linear-gradient(135deg,#D9C2A4,#B08A5B)',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:800,fontSize:22,border:'3px solid #fff',boxShadow:T.shadow}}>溪</div>
+          <div style={{flex:1}}><div style={{fontSize:16,fontWeight:800,color:T.ink}}>小溪</div><div style={{fontSize:11,color:T.ink2,marginTop:2}}>xiaoxi@easset.app · 已连续记录 42 天</div></div>
+          <Pill bg={T.mochaLt+'55'} color={T.mochaDk} style={{fontSize:10,fontWeight:800}}>Pro</Pill>
+        </div>
+      </Bento>
+    </div>
+    <div style={{padding:'0 16px 12px'}}>
+      <Bento style={{padding:16}}>
+        <div style={{fontSize:13,fontWeight:700,color:T.ink}}>建议力度</div>
+        <div style={{fontSize:11,color:T.ink3,marginTop:2,marginBottom:10}}>滑动切换 AI 的口吻。</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>
+          {MODES.map(m=>(<div key={m.key} onClick={()=>setMode(m.key)} style={{borderRadius:18,padding:'12px 8px',textAlign:'center',background:mode===m.key?m.color:T.sand,color:mode===m.key?'#fff':T.ink2,cursor:'pointer',border:mode===m.key?'none':`0.5px solid ${T.line}`,transition:'all 0.2s'}}>
+            <div style={{fontSize:22}}>{m.glyph}</div>
+            <div style={{fontSize:12,fontWeight:800,marginTop:4}}>{m.label}</div>
+            <div style={{fontSize:9,opacity:0.8,marginTop:2}}>{m.desc}</div>
+          </div>))}
+        </div>
+      </Bento>
+    </div>
+    <div style={{padding:'0 16px 12px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+      {[{t:'热量环',d:'BMR 动态配色',c:T.mochaLt+'55'},{t:'喝水提醒',d:'柔和 · 自适应',c:'#EAF1F6'},{t:'贴纸风格',d:'白描边 / 漫画',c:T.rose+'44'},{t:'药物日历',d:'禅意 Emoji',c:T.sage+'44'},{t:'iCloud 同步',d:'端到端加密',c:T.sand},{t:'品牌识别',d:'奶茶 · 咖啡',c:T.butter+'66'}].map((it,i)=>(<Bento key={i} bg={it.c} style={{padding:14}}>
+        <div style={{fontSize:13,fontWeight:800,color:T.ink}}>{it.t}</div>
+        <div style={{fontSize:10.5,color:T.ink2,marginTop:2}}>{it.d}</div>
+      </Bento>))}
+    </div>
+  </div>);
+}
+
+/* ═══════════════ DOCK ═══════════════ */
+function Dock({screen,setScreen,scene,setScene}) {
+  const icon=(k,a)=>{const c=a?'#fff':T.ink2, sw=1.8;
+    if(k==='today') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 8 Q8 5 12 5 Q16 5 18 8 L17 18 Q17 20 15 20 L9 20 Q7 20 7 18 Z" stroke={c} strokeWidth={sw}/><path d="M18 10 Q21 10 21 13 Q21 16 18 16" stroke={c} strokeWidth={sw}/></svg>;
+    if(k==='capture') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="3" stroke={c} strokeWidth={sw}/><circle cx="12" cy="13" r="4" stroke={c} strokeWidth={sw}/></svg>;
+    if(k==='portfolio') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="13" width="4" height="7" rx="1" fill={c}/><rect x="10" y="8" width="4" height="12" rx="1" fill={c}/><rect x="16" y="4" width="4" height="16" rx="1" fill={c}/></svg>;
+    if(k==='med') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="10" rx="5" stroke={c} strokeWidth={sw} transform="rotate(-30 12 16)"/><path d="M8.5 9 L15.5 16" stroke={c} strokeWidth={sw}/></svg>;
+    return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke={c} strokeWidth={sw}/><path d="M12 2 L12 5 M12 19 L12 22 M2 12 L5 12 M19 12 L22 12" stroke={c} strokeWidth={sw} strokeLinecap="round"/></svg>;
+  };
+  const items=['today','capture','portfolio','med','settings'];
+  return (<div style={{position:'absolute',left:14,right:14,bottom:16,zIndex:70,display:'flex',flexDirection:'column',gap:8}}>
+    <div style={{display:'flex',gap:6,padding:6,background:'rgba(255,253,248,0.85)',backdropFilter:'blur(16px)',border:`0.5px solid ${T.line}`,borderRadius:999,boxShadow:T.shadow}}>
+      {SCENES.map(s=>(<div key={s.key} onClick={()=>setScene(s.key)} style={{flex:1,textAlign:'center',padding:'6px 4px',borderRadius:999,cursor:'pointer',background:scene===s.key?(s.key==='wild'?T.roseDk:s.key==='med'?T.plum:s.key==='water'?'#84A8B6':T.mocha):'transparent',color:scene===s.key?'#fff':T.ink2,fontWeight:700,fontSize:11,transition:'all 0.2s'}}>{s.label}</div>))}
+    </div>
+    <div style={{display:'flex',gap:4,padding:6,background:'rgba(255,253,248,0.92)',backdropFilter:'blur(16px)',border:`0.5px solid ${T.line}`,borderRadius:999,boxShadow:T.shadowLg}}>
+      {items.map(k=>{const a=screen===k; return (<div key={k} onClick={()=>setScreen(k)} style={{flex:1,height:44,borderRadius:999,cursor:'pointer',background:a?T.ink:'transparent',display:'flex',alignItems:'center',justifyContent:'center',transition:'background 0.2s'}}>{icon(k,a)}</div>);})}
+    </div>
+  </div>);
+}
+
+/* ═══════════════ TWEAKS ═══════════════ */
+const TWEAKS=/*EDITMODE-BEGIN*/{"startScreen":"today","adviceMode":"standard","mood":"bloom","showFrame":true}/*EDITMODE-END*/;
+
+function TweaksPanel({state,setState,onClose}) {
+  const chip=(a,fn,ch,bg)=>(<div onClick={fn} style={{padding:'6px 11px',borderRadius:999,background:a?(bg||T.ink):'#fff',color:a?'#fff':T.ink2,cursor:'pointer',fontSize:11,fontWeight:700,border:`0.5px solid ${a?'transparent':T.line}`}}>{ch}</div>);
+  const row=(lbl,ch)=>(<div style={{marginBottom:12}}><div style={{fontSize:10,color:T.ink3,fontWeight:700,letterSpacing:1,marginBottom:6}}>{lbl.toUpperCase()}</div>{ch}</div>);
+  return (<div style={{position:'fixed',right:18,bottom:18,zIndex:200,width:280,background:'#fff',borderRadius:22,boxShadow:'0 20px 60px rgba(0,0,0,0.25)',padding:16,border:'0.5px solid rgba(0,0,0,0.08)'}}>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+      <div style={{fontSize:14,fontWeight:800,color:T.ink}}>Tweaks</div>
+      <div onClick={onClose} style={{cursor:'pointer',width:24,height:24,borderRadius:12,background:'#f1eadf',display:'flex',alignItems:'center',justifyContent:'center'}}>✕</div>
+    </div>
+    {row('起始屏幕',<div style={{display:'flex',flexWrap:'wrap',gap:6}}>{['today','capture','portfolio','med','settings'].map(s=>chip(state.startScreen===s,()=>setState({startScreen:s}),({today:'主页',capture:'拍摄',portfolio:'档案',med:'药物',settings:'设置'})[s]))}</div>)}
+    {row('AI 建议力度',<div style={{display:'flex',gap:6}}>{MODES.map(m=>chip(state.adviceMode===m.key,()=>setState({adviceMode:m.key}),<><span style={{marginRight:4}}>{m.glyph}</span>{m.label}</>,m.color))}</div>)}
+    {row('今日心情',<div style={{display:'flex',gap:6,flexWrap:'wrap'}}>{MOODS.map(m=>chip(state.mood===m.key,()=>setState({mood:m.key}),m.label,m.ring))}</div>)}
+    {row('设备外框',<div style={{display:'flex',gap:6}}>{chip(state.showFrame,()=>setState({showFrame:true}),'iPhone')}{chip(!state.showFrame,()=>setState({showFrame:false}),'无框')}</div>)}
+  </div>);
+}
+
+/* ═══════════════ APP ═══════════════ */
+function App() {
+  const [tweaks,setTweaks]=React.useState(TWEAKS);
+  const [tweaksOpen,setTweaksOpen]=React.useState(false);
+  const [screen,setScreen]=React.useState(()=>localStorage.getItem('easset.screen')||tweaks.startScreen);
+  const [scene,setScene]=React.useState('collect');
+  const [month,setMonth]=React.useState(3);
+  React.useEffect(()=>{localStorage.setItem('easset.screen',screen);},[screen]);
+  const setTweak=(p)=>{setTweaks({...tweaks,...p}); try{window.parent.postMessage({type:'__edit_mode_set_keys',edits:p},'*');}catch{}};
+  React.useEffect(()=>{if(scene==='wild')setScreen('wild');else if(scene==='med')setScreen('med');},[scene]);
+  React.useEffect(()=>{const h=(e)=>{if(!e.data||!e.data.type)return;if(e.data.type==='__activate_edit_mode')setTweaksOpen(true);if(e.data.type==='__deactivate_edit_mode')setTweaksOpen(false);};window.addEventListener('message',h);try{window.parent.postMessage({type:'__edit_mode_available'},'*');}catch{}return ()=>window.removeEventListener('message',h);},[]);
+
+  const props={mood:tweaks.mood,setMood:(v)=>setTweak({mood:v}),mode:tweaks.adviceMode,setMode:(v)=>setTweak({adviceMode:v}),screen,setScreen,scene,setScene,month,setMonth};
+  const renderScreen=()=>{
+    if(screen==='today')return <Today {...props}/>;
+    if(screen==='capture')return <Capture {...props}/>;
+    if(screen==='portfolio')return <Portfolio {...props}/>;
+    if(screen==='med')return <Med {...props}/>;
+    if(screen==='wild')return <Wild {...props}/>;
+    if(screen==='settings')return <Settings {...props}/>;
+    return null;
+  };
+
+  const inner=(<div style={{background:screen==='capture'?'#1a1510':T.cream,minHeight:'100%',paddingTop:52,position:'relative'}} data-screen-label={`Easset · ${screen}`}>
+    {renderScreen()}
+  </div>);
+
+  const phone=(<div style={{position:'relative'}}>
+    <div style={{width:402,height:874,borderRadius:48,overflow:'hidden',position:'relative',background:screen==='capture'?'#000':'#F2F2F7',boxShadow:'0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.12)'}}>
+      <div style={{position:'absolute',top:11,left:'50%',transform:'translateX(-50%)',width:126,height:37,borderRadius:24,background:'#000',zIndex:50}}/>
+      <div style={{height:'100%',overflowY:'auto'}}>{inner}</div>
+      <div style={{position:'absolute',bottom:0,left:0,right:0,zIndex:60,height:34,display:'flex',justifyContent:'center',alignItems:'flex-end',paddingBottom:8,pointerEvents:'none'}}>
+        <div style={{width:139,height:5,borderRadius:100,background:screen==='capture'?'rgba(255,255,255,0.7)':'rgba(0,0,0,0.25)'}}/>
+      </div>
+    </div>
+    <Dock screen={screen} setScreen={setScreen} scene={scene} setScene={setScene}/>
+  </div>);
+
+  return (<div style={{minHeight:'100vh',background:`radial-gradient(circle at 15% 20%, ${T.mochaLt}33, transparent 40%), radial-gradient(circle at 85% 80%, ${T.rose}22, transparent 40%), ${T.cream}`,padding:'40px 20px',display:'flex',alignItems:'center',justifyContent:'center',gap:48,flexWrap:'wrap'}}>
+    <div style={{maxWidth:360,flex:'0 0 auto'}}>
+      <Pill bg={T.ink} color="#fff" style={{fontSize:11,padding:'5px 12px'}}>🎨 Easset · iOS 17+</Pill>
+      <div style={{fontFamily:'Fraunces,Georgia,serif',fontSize:56,fontWeight:800,lineHeight:1,color:T.ink,marginTop:14,letterSpacing:-1.5}}>Your <em style={{color:T.mocha}}>visual</em><br/>diet diary.</div>
+      <div style={{fontSize:14,color:T.ink2,marginTop:14,lineHeight:1.55}}>像收集贴纸一样记录生活，像经营资产一样关爱健康。<br/>MobileSAM 端侧抠图 · 三档 AI · 豁出去模式 · 禅意药物日历。</div>
+      <div style={{display:'flex',gap:8,marginTop:18,flexWrap:'wrap'}}>{['贴纸墙','三档建议','豁出去','禅意日历','Bento 布局'].map(tag=><Pill key={tag} bg={T.paper} color={T.ink2} border={`0.5px solid ${T.line}`} style={{fontSize:11,padding:'5px 11px'}}>{tag}</Pill>)}</div>
+      <div style={{marginTop:22,padding:14,background:T.paper,borderRadius:18,border:`0.5px solid ${T.line}`,boxShadow:T.shadow}}>
+        <div style={{fontSize:11,color:T.mocha,fontWeight:800,letterSpacing:1}}>当前屏幕</div>
+        <div style={{fontSize:15,fontWeight:700,color:T.ink,marginTop:4}}>{({today:'主页 · Bento Dashboard',capture:'拍摄 · 贴纸生成',portfolio:'档案 · 数据可视化',med:'禅意药物日历',wild:'豁出去模式',settings:'设置'})[screen]}</div>
+        <div style={{display:'flex',gap:6,marginTop:10,flexWrap:'wrap'}}>{[['today','主页'],['capture','拍摄'],['portfolio','档案'],['med','药物'],['wild','豁出去'],['settings','设置']].map(([k,lbl])=>(<div key={k} onClick={()=>setScreen(k)} style={{padding:'6px 11px',borderRadius:999,background:screen===k?T.mocha:T.sand,color:screen===k?'#fff':T.ink2,fontSize:11,fontWeight:700,cursor:'pointer'}}>{lbl}</div>))}</div>
+      </div>
+      <div style={{marginTop:14,fontSize:10,color:T.ink3,lineHeight:1.5}}>免责声明：Easset 为生活记录工具，非医疗设备。<br/>AI 建议仅供参考，请咨询专业医疗人员。</div>
+    </div>
+    {tweaks.showFrame?phone:(<div style={{width:402,borderRadius:32,overflow:'hidden',boxShadow:'0 20px 60px rgba(0,0,0,0.12)',background:'#fff',position:'relative'}}>{inner}<Dock screen={screen} setScreen={setScreen} scene={scene} setScene={setScene}/></div>)}
+    {tweaksOpen && <TweaksPanel state={tweaks} setState={setTweak} onClose={()=>setTweaksOpen(false)}/>}
+  </div>);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
