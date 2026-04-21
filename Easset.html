@@ -65,6 +65,12 @@ function Sticker({ kind, size=72, rot=0 }) {
     pill:(<g transform="translate(10,20)"><rect x="0" y="0" width="56" height="24" rx="12" fill="#d9a9a2"/><rect x="0" y="0" width="28" height="24" rx="12" fill="#fffdf8"/><circle cx="14" cy="12" r="1.5" fill="#d9a9a2"/></g>),
     water:(<g transform="translate(18,6)"><path d="M18 2 Q4 22 4 38 Q4 54 18 54 Q32 54 32 38 Q32 22 18 2Z" fill="#b8cfd9"/></g>),
     salad:(<g transform="translate(8,14)"><path d="M2 18 Q4 34 28 36 Q52 34 54 18 Z" fill="#fff"/><circle cx="14" cy="22" r="7" fill="#7d9274"/><circle cx="28" cy="18" r="8" fill="#a8b89a"/><circle cx="42" cy="22" r="7" fill="#7d9274"/><circle cx="22" cy="26" r="3" fill="#e69a78"/><circle cx="36" cy="28" r="3" fill="#e69a78"/></g>),
+    hotpot:(<g transform="translate(8,10)"><ellipse cx="28" cy="44" rx="24" ry="10" fill="#c0392b"/><rect x="8" y="16" width="40" height="28" rx="4" fill="#e74c3c"/><path d="M12 20 Q28 8 44 20" fill="#f39c12"/><circle cx="16" cy="32" r="4" fill="#27ae60"/><circle cx="28" cy="30" r="3" fill="#e67e22"/><circle cx="38" cy="34" r="4" fill="#27ae60"/><rect x="24" y="22" width="8" height="12" rx="2" fill="#f39c12"/></g>),
+    sushi:(<g transform="translate(10,12)"><ellipse cx="18" cy="36" rx="14" ry="8" fill="#2d3436"/><ellipse cx="18" cy="34" rx="12" ry="6" fill="#fff"/><ellipse cx="18" cy="32" rx="8" ry="4" fill="#e74c3c"/><ellipse cx="42" cy="38" rx="12" ry="7" fill="#2d3436"/><ellipse cx="42" cy="36" rx="10" ry="5" fill="#fff"/><ellipse cx="42" cy="34" rx="6" ry="3" fill="#f39c12"/></g>),
+    noodle:(<g transform="translate(12,10)"><ellipse cx="24" cy="46" rx="20" ry="8" fill="#d35400"/><rect x="6" y="18" width="36" height="28" rx="4" fill="#e67e22"/><path d="M10 24 Q24 16 38 24" fill="#f39c12"/><path d="M12 28 Q24 22 36 28" fill="#fff" opacity="0.8"/><path d="M14 32 Q24 26 34 32" fill="#fff" opacity="0.6"/></g>),
+    rice:(<g transform="translate(12,14)"><ellipse cx="24" cy="42" rx="20" ry="10" fill="#ecf0f1"/><path d="M8 36 Q24 24 40 36" fill="#fff"/><circle cx="16" cy="34" r="3" fill="#27ae60"/><circle cx="24" cy="32" r="3" fill="#e74c3c"/><circle cx="32" cy="34" r="3" fill="#f39c12"/></g>),
+    vegetable:(<g transform="translate(8,14)"><path d="M4 28 Q8 44 28 46 Q48 44 52 28 Q48 24 28 22 Q8 24 4 28 Z" fill="#27ae60"/><circle cx="20" cy="30" r="6" fill="#2ecc71"/><circle cx="36" cy="30" r="6" fill="#2ecc71"/><circle cx="28" cy="26" r="5" fill="#e74c3c"/></g>),
+    brunch:(<g transform="translate(8,12)"><ellipse cx="28" cy="44" rx="24" ry="8" fill="#bdc3c7"/><rect x="8" y="24" width="40" height="20" rx="3" fill="#ecf0f1"/><ellipse cx="20" cy="24" rx="10" ry="4" fill="#f39c12"/><ellipse cx="38" cy="26" rx="8" ry="6" fill="#e74c3c"/><rect x="14" y="18" width="6" height="10" fill="#f39c12"/></g>),
   };
   return (<div style={{width:size,height:size,transform:`rotate(${rot}deg)`,filter:'drop-shadow(0 2px 4px rgba(42,37,32,0.18))'}}>
     <svg viewBox="0 0 72 72" width={size} height={size} style={{filter:'drop-shadow(0 0 2.5px #fff) drop-shadow(0 0 2.5px #fff)'}}>{SH[kind]||SH.latte}</svg>
@@ -75,6 +81,26 @@ function Pill({children,bg='#fff',color='#2A2520',border,style,onClick}) {
 }
 function Bento({children,style,pad=16,radius=26,bg}) {
   return (<div style={{background:bg||T.paper,borderRadius:radius,padding:pad,boxShadow:T.shadow,border:`0.5px solid ${T.line}`,position:'relative',overflow:'hidden',...style}}>{children}</div>);
+}
+/* ═══════════════ CALORIE RING (BMR Dynamic) ═══════════════ */
+function CalorieRing({cal,calMax,size=120,stroke=12}) {
+  const r=(size-stroke)/2, c=2*Math.PI*r;
+  const pct=Math.max(0,Math.min(1,cal/calMax));
+  const off=c*(1-pct);
+  const color=cal<calMax*0.8?'#4A90D9':cal<calMax?'#52C41A':cal<=calMax?'#FAAD14':'#F5222D';
+  const label=cal<calMax*0.8?'摄入不足':cal<calMax?'完美达标':cal<=calMax?'进入警戒':'当日超标';
+  return (<div style={{position:'relative',width:size,height:size}}>
+    <svg width={size} height={size} style={{transform:'rotate(-90deg)'}}>
+      <circle cx={size/2} cy={size/2} r={r} stroke="#EDE4D2" strokeWidth={stroke} fill="none"/>
+      <circle cx={size/2} cy={size/2} r={r} stroke={color} strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={off} strokeLinecap="round"/>
+    </svg>
+    <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column'}}>
+      <div style={{fontSize:10,color:'#507489',fontWeight:600}}>🔥 热量</div>
+      <div style={{fontSize:28,fontWeight:800,color:T.ink,lineHeight:1.1}}>{cal}</div>
+      <div style={{fontSize:10,color:T.ink3}}>/ {calMax} kcal</div>
+      <div style={{fontSize:9,color:color,marginTop:2,fontWeight:700}}>{label}</div>
+    </div>
+  </div>);
 }
 function Ring({size=120,stroke=12,value=0.6,color='#B08A5B',track='#EDE4D2',children}) {
   const r=(size-stroke)/2, c=2*Math.PI*r, off=c*(1-Math.max(0,Math.min(1,value)));
@@ -154,7 +180,7 @@ function TopBar({mood,setMood,setScreen}) {
     <div>
       <div style={{fontSize:28,fontWeight:800,color:T.ink,letterSpacing:-0.5,lineHeight:1.1}}>早安，小溪 <span style={{display:'inline-block',transform:'rotate(-10deg)'}}>👋</span></div>
       <div style={{display:'flex',alignItems:'center',gap:8,marginTop:8}}>
-        <Pill bg={T.sand} color={T.ink2} style={{padding:'5px 11px',fontSize:12}}>4月19日 · 周日</Pill>
+        <Pill bg={T.sand} color={T.ink2} style={{padding:'5px 11px',fontSize:12}}>4月20日 · 周一</Pill>
         <Pill bg="#EAF1F6" color="#507489" style={{padding:'5px 11px',fontSize:12}}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{marginRight:2}}><circle cx="12" cy="8" r="4" fill="#f2d58a"/><path d="M4 16 Q8 12 14 14 Q18 16 22 14 L22 20 L4 20 Z" fill="#b8cfd9"/></svg>
           18°C 多云
@@ -175,46 +201,69 @@ function TopBar({mood,setMood,setScreen}) {
   </div>);
 }
 
-/* ═══════════════ MONTH WHEEL ═══════════════ */
-function MonthWheel({month,setMonth}) {
-  const [active,setActive]=React.useState(false);
-  const months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-  return (<div onMouseEnter={()=>setActive(true)} onMouseLeave={()=>setActive(false)}
-    style={{margin:'8px 16px 16px',opacity:active?1:0.55,transition:'opacity 0.3s'}}>
-    <div style={{fontSize:10,color:T.ink3,textAlign:'center',marginBottom:6,letterSpacing:3,fontWeight:600}}>— 切换月份 —</div>
-    <div style={{position:'relative',height:56,borderRadius:999,background:T.paper,border:`0.5px solid ${T.line}`,overflow:'hidden',boxShadow:active?T.shadow:'none'}}>
-      <div style={{position:'absolute',left:'50%',top:'50%',transform:'translate(-50%,-50%)',width:72,height:36,borderRadius:18,background:T.mocha,opacity:0.12}}/>
-      <div style={{display:'flex',alignItems:'center',height:'100%',padding:'0 12px',gap:14,overflowX:'auto',justifyContent:'center'}}>
-        {months.map((mm,i)=>{const sel=i===month; return (<div key={i} onClick={()=>setMonth(i)} style={{fontSize:sel?18:13,fontWeight:sel?800:500,color:sel?T.ink:T.ink3,cursor:'pointer',flexShrink:0,transform:sel?'scale(1.1)':'scale(1)',transition:'all 0.2s'}}>{mm}</div>);})}
-      </div>
-    </div>
+
+
+/* ═══════════════ MACRO CARD (Nutrition) ═══════════════ */
+function MacroCard({protein,carbs,fat,proteinMax,carbsMax,fatMax}) {
+  const calc=(v,m,c)=>{const pct=Math.min(100,Math.round((v/m)*100)); return {pct,color:pct>90?'#F5222D':pct>70?'#FAAD14':'#52C41A'};};
+  const p=calc(protein,proteinMax,'#B08A5B'); const c=calc(carbs,carbsMax,'#E69A78'); const f=calc(fat,fatMax,'#9E7BA0');
+  return (<div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginTop:12}}>
+    {[{l:'蛋白质',v:protein,m:proteinMax,...p},{l:'碳水',v:carbs,m:carbsMax,...c},{l:'脂肪',v:fat,m:fatMax,...f}].map((x,i)=>(<div key={i} style={{background:T.paper,borderRadius:14,padding:'10px 12px',border:`0.5px solid ${T.line}`}}>
+      <div style={{fontSize:10,color:T.ink3,fontWeight:600}}>{x.l}</div>
+      <div style={{fontSize:18,fontWeight:800,color:T.ink,marginTop:2}}>{x.v}<span style={{fontSize:10,color:T.ink3,fontWeight:600}}>/{x.m}g</span></div>
+      <div style={{marginTop:6,height:6,background:T.sand,borderRadius:3,overflow:'hidden'}}><div style={{width:`${x.pct}%`,height:'100%',background:x.color,borderRadius:3,transition:'width 0.3s'}}/></div>
+      <div style={{fontSize:9,color:x.color,marginTop:3,fontWeight:700}}>{x.pct}%</div>
+    </div>))}
   </div>);
 }
 
 /* ═══════════════ TODAY ═══════════════ */
 function Today({mood,setMood,setScreen,mode,month,setMonth}) {
   const mo=MODES.find(x=>x.key===mode);
-  const cal=187, calMax=400;
+  const cal=mode==='strict'?1650:mode==='standard'?1400:187, calMax=mode==='strict'?2000:mode==='standard'?1800:999;
+  const protein=mode==='strict'?42:0, proteinMax=mode==='strict'?80:0;
+  const carbs=mode==='strict'?58:0, carbsMax=mode==='strict'?200:0;
+  const fat=mode==='strict'?22:0, fatMax=mode==='strict'?65:0;
   const today=[
     {kind:'americano',name:'美式',cup:'大杯',time:'10:39',mg:123},
     {kind:'latte',name:'拿铁',cup:'中杯',time:'14:20',mg:64},
+  ];
+  const modeLabel={loose:'想喝就喝～ ☕️',standard:'建议下午改喝一杯水 💧',strict:'心率偏高，建议停止摄入咖啡因。'};
+  const modeDesc={loose:'完全隐藏数字，仅二级菜单可见',standard:'使用 🔥 数量模糊表示摄入强度',strict:'实时显示具体数值，BMR 动态配色'};
+  const streaks=[
+    {emoji:'☕',label:'咖啡',count:28,trend:'+3'},
+    {emoji:'🍰',label:'甜点',count:12,trend:'+1'},
+    {emoji:'🍲',label:'火锅',count:5,trend:'+2'},
+    {emoji:'🍜',label:'面食',count:18,trend:'+5'},
   ];
   return (<div style={{paddingBottom:140}}>
     <TopBar mood={mood} setMood={setMood} setScreen={setScreen}/>
     <div style={{padding:'8px 16px 12px'}}>
       <Bento style={{padding:0}}>
         <div style={{background:`linear-gradient(135deg, ${mo.color}22, ${T.paper})`,padding:'18px 18px 14px',display:'flex',gap:16,alignItems:'center'}}>
-          <Ring size={108} stroke={11} value={cal/calMax} color={T.mocha} track="#fff">
-            <div style={{fontSize:10,color:T.ink2,fontWeight:600,letterSpacing:0.5}}>咖啡因</div>
-            <div style={{fontSize:26,fontWeight:800,color:T.ink,lineHeight:1}}>{cal}</div>
-            <div style={{fontSize:10,color:T.ink3}}>/ {calMax} mg</div>
-          </Ring>
+          {mode==='strict'?(
+            <CalorieRing cal={cal} calMax={calMax} size={108} stroke={11}/>
+          ):mode==='standard'?(
+            <Ring size={108} stroke={11} value={cal/calMax} color={T.mocha} track="#fff">
+              <div style={{fontSize:10,color:T.ink2,fontWeight:600,letterSpacing:0.5}}>🔥 摄入</div>
+              <div style={{fontSize:18,fontWeight:800,color:T.ink,lineHeight:1}}>{'🔥'.repeat(Math.min(3,Math.ceil(cal/600)))}</div>
+              <div style={{fontSize:10,color:T.ink3}}>约 {cal}</div>
+            </Ring>
+          ):(
+            <Ring size={108} stroke={11} value={0} color={T.sage} track="#fff">
+              <div style={{fontSize:10,color:T.ink2,fontWeight:600,letterSpacing:0.5}}>☕ 咖啡因</div>
+              <div style={{fontSize:26,fontWeight:800,color:T.ink,lineHeight:1}}>{cal}</div>
+              <div style={{fontSize:10,color:T.ink3}}>已隐藏</div>
+            </Ring>
+          )}
           <div style={{flex:1}}>
-            <Pill bg="#fff" color={T.mochaDk} border={`1px solid ${mo.color}55`} style={{fontSize:11,padding:'4px 10px'}}>{mo.glyph} {mo.label}模式</Pill>
+            <Pill bg="#fff" color={mo.color} border={`1px solid ${mo.color}55`} style={{fontSize:11,padding:'4px 10px'}}>{mo.glyph} {mo.label}模式</Pill>
             <div style={{fontSize:14,fontWeight:700,color:T.ink,marginTop:8,lineHeight:1.35}}>再喝一杯中杯 拿铁 就到今日警戒线啦</div>
-            <div style={{fontSize:12,color:T.ink2,marginTop:4,lineHeight:1.45}}>{mode==='loose'?'不急，想喝就喝～ ☕️':mode==='standard'?'建议下午改喝一杯水 💧':'心率偏高，建议停止摄入咖啡因。'}</div>
+            <div style={{fontSize:12,color:T.ink2,marginTop:4,lineHeight:1.45}}>{modeLabel[mode]}</div>
+            {mode==='strict'&&(<div style={{fontSize:10,color:T.ink3,marginTop:6,padding:'4px 8px',background:T.sand+'88',borderRadius:8}}>{modeDesc[mode]}</div>)}
           </div>
         </div>
+        {mode==='strict'&&protein>0&&(<div style={{padding:'0 14px 14px'}}><MacroCard protein={protein} carbs={carbs} fat={fat} proteinMax={proteinMax} carbsMax={carbsMax} fatMax={fatMax}/></div>)}
         <div style={{background:T.paper,padding:'14px 16px 16px',borderTop:`0.5px solid ${T.line}`}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
             <div style={{fontSize:13,fontWeight:700,color:T.ink}}>今日贴纸墙</div>
@@ -235,6 +284,7 @@ function Today({mood,setMood,setScreen,mode,month,setMonth}) {
         拍一张 · 生成贴纸
       </div>
     </div>
+
     <div style={{padding:'0 16px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
       <Bento bg="#EAF1F6" style={{padding:14}}>
         <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between'}}>
@@ -268,6 +318,19 @@ function Today({mood,setMood,setScreen,mode,month,setMonth}) {
         <div style={{display:'flex',gap:4,marginTop:8}}><Sticker kind="wine" size={40} rot={-6}/><Sticker kind="beer" size={40} rot={8}/></div>
       </Bento>
     </div>
+    <div style={{padding:'0 16px 12px'}}>
+      <div style={{fontSize:13,fontWeight:700,color:T.ink,padding:'4px 4px 10px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <span>美食连续打卡</span><Pill bg={T.butter+'66'} color={T.mochaDk} style={{fontSize:9,padding:'2px 8px'}}>42 天</Pill>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>
+        {streaks.map((s,i)=>(<Bento key={i} bg={T.sand} style={{padding:10,textAlign:'center'}}>
+          <div style={{fontSize:22}}>{s.emoji}</div>
+          <div style={{fontSize:14,fontWeight:800,color:T.ink,marginTop:2}}>{s.count}</div>
+          <div style={{fontSize:9,color:T.ink2}}>{s.label}</div>
+          <div style={{fontSize:9,color:T.sageDk,marginTop:2,fontWeight:700}}>{s.trend}</div>
+        </Bento>))}
+      </div>
+    </div>
     <div style={{padding:'4px 16px 12px'}}>
       <div style={{fontSize:13,fontWeight:700,color:T.ink,padding:'6px 4px 10px',display:'flex',justifyContent:'space-between'}}>
         <span>今日记录</span><span style={{fontSize:11,color:T.ink3,fontWeight:500}}>{today.length} 项 · 187 mg</span>
@@ -281,121 +344,561 @@ function Today({mood,setMood,setScreen,mode,month,setMonth}) {
         <div style={{textAlign:'right'}}><div style={{fontSize:22,fontWeight:800,color:T.mocha,lineHeight:1}}>{e.mg}</div><div style={{fontSize:10,color:T.ink3}}>mg</div></div>
       </div>))}
     </div>
-    <MonthWheel month={month} setMonth={setMonth}/>
   </div>);
 }
 
-/* ═══════════════ CAPTURE ═══════════════ */
+/* ═══════════════ CAPTURE (AI Vision) ═══════════════ */
 function Capture({setScreen,mode}) {
   const mo=MODES.find(x=>x.key===mode);
   const [step,setStep]=React.useState(0);
+  const [selected,setSelected]=React.useState('americano');
+  const recentStickers=['americano','latte','boba','cake','matcha','salad','pill','water'];
+  const sceneTypes=[
+    {k:'coffee',label:'咖啡',icon:'☕'},
+    {k:'bubble',label:'奶茶',icon:'🧋'},
+    {k:'dessert',label:'甜点',icon:'🧁'},
+    {k:'meal',label:'正餐',icon:'🍜'},
+    {k:'hotpot',label:'火锅',icon:'🍲'},
+    {k:'sushi',label:'寿司',icon:'🍣'},
+    {k:'noodle',label:'米线',icon:'🍜'},
+    {k:'cake',label:'蛋糕',icon:'🎂'},
+  ];
   React.useEffect(()=>{if(step<2){const id=setTimeout(()=>setStep(step+1),1400); return ()=>clearTimeout(id);}},[step]);
-  return (<div style={{minHeight:'100%',background:'#1a1510',color:'#fff',paddingBottom:140}}>
+  return (<div style={{minHeight:'100%',background:'#1a1510',color:'#fff',paddingBottom:160}}>
     <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'64px 20px 10px'}}>
       <div onClick={()=>setScreen('today')} style={{width:36,height:36,borderRadius:18,background:'rgba(255,255,255,0.14)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
         <svg width="14" height="14" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" fill="none"/></svg>
       </div>
-      <Pill bg="rgba(255,255,255,0.14)" color="#fff" style={{padding:'6px 14px'}}>{mo.glyph} {mo.label} · AI 端侧</Pill>
+      <Pill bg="rgba(255,255,255,0.14)" color="#fff" style={{padding:'6px 14px'}}>{mo.glyph} {mo.label} · MobileSAM</Pill>
       <div style={{width:36}}/>
     </div>
     <div style={{padding:'0 18px'}}>
       <div style={{aspectRatio:'3/4',borderRadius:32,overflow:'hidden',position:'relative',background:'linear-gradient(135deg,#3a2a1c,#5a3b24)'}}>
-        <div style={{position:'absolute',left:'50%',top:'52%',transform:'translate(-50%,-50%)'}}><Sticker kind="americano" size={200}/></div>
+        {step<2&&<div style={{position:'absolute',left:'50%',top:'52%',transform:'translate(-50%,-50%)'}}><Sticker kind={selected} size={200}/></div>}
         {step===1 && <div style={{position:'absolute',left:'50%',top:'52%',width:210,height:210,transform:'translate(-50%,-50%)',border:'2px dashed #F2D58A',borderRadius:18,animation:'pulse 1.2s infinite'}}/>}
         {[0,1,2,3].map(i=>(<div key={i} style={{position:'absolute',[i<2?'top':'bottom']:22,[i%2?'right':'left']:22,width:22,height:22,borderTop:i<2?'2px solid #fff':'none',borderBottom:i>=2?'2px solid #fff':'none',borderLeft:i%2===0?'2px solid #fff':'none',borderRight:i%2===1?'2px solid #fff':'none',borderRadius:4,opacity:0.75}}/>))}
-        <div style={{position:'absolute',left:16,bottom:16,right:16,background:'rgba(26,21,16,0.7)',backdropFilter:'blur(8px)',borderRadius:16,padding:'10px 14px',display:'flex',alignItems:'center',gap:10}}>
-          <div style={{width:28,height:28,borderRadius:14,background:'#F2D58A',display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3 L14 10 L21 12 L14 14 L12 21 L10 14 L3 12 L10 10 Z" fill="#8A6740"/></svg>
+        <div style={{position:'absolute',left:16,bottom:16,right:16,background:'rgba(26,21,16,0.8)',backdropFilter:'blur(10px)',borderRadius:16,padding:'12px 16px'}}>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:step===2?8:0}}>
+            <div style={{width:32,height:32,borderRadius:16,background:step===2?'#52C41A':'#F2D58A',display:'flex',alignItems:'center',justifyContent:'center'}}>
+              {step===2?(<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12 L10 17 L19 7" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>):(<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3 L14 10 L21 12 L14 14 L12 21 L10 14 L3 12 L10 10 Z" fill="#8A6740"/></svg>)}
+            </div>
+            <div>
+              <div style={{fontSize:12,fontWeight:700}}>{step===0?'对准目标，AI 自动分割':step===1?'MobileSAM 分割中...':'贴纸生成完毕！'}</div>
+              <div style={{fontSize:10.5,opacity:0.65}}>{step===2?'美式 · 大杯 · 约 120 kcal':`${sceneTypes.find(s=>s.k===selected)||sceneTypes[0]?.label} · 端侧运行，保护隐私`}</div>
+            </div>
           </div>
-          <div>
-            <div style={{fontSize:12,fontWeight:700}}>{step===0?'对准目标，AI 自动抠图':step===1?'MobileSAM 分割中...':'贴纸生成完毕！'}</div>
-            <div style={{fontSize:10.5,opacity:0.65}}>{step===2?'美式 · 大杯 · 约 120 mg 咖啡因':'端侧运行，不上传云端'}</div>
-          </div>
+          {step===2&&(<div style={{display:'flex',gap:6,marginTop:8}}>
+            {['白描边','漫画风','真实感'].map((t,i)=>(<div key={t} style={{padding:'4px 10px',borderRadius:8,background:i===0?'#fff':'rgba(255,255,255,0.1)',color:i===0?'#2A2520':'rgba(255,255,255,0.6)',fontSize:10,fontWeight:700}}>{t}</div>))}
+          </div>)}
         </div>
       </div>
     </div>
-    <div style={{padding:'14px 18px 6px'}}>
-      <div style={{fontSize:11,color:'rgba(255,255,255,0.6)',letterSpacing:1,marginBottom:8}}>最近贴纸 · 滑动排版到手账</div>
-      <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:4}}>
-        {['americano','latte','boba','cake','matcha','salad','pill'].map(k=>(<div key={k} style={{flexShrink:0,width:68,height:68,background:'rgba(255,255,255,0.08)',borderRadius:16,display:'flex',alignItems:'center',justifyContent:'center',border:'1px solid rgba(255,255,255,0.06)'}}><Sticker kind={k} size={56}/></div>))}
+    <div style={{padding:'12px 18px 6px'}}>
+      <div style={{fontSize:11,color:'rgba(255,255,255,0.6)',letterSpacing:1,marginBottom:8}}>全场景记录 · 点击选择</div>
+      <div style={{display:'flex',gap:6,overflowX:'auto',paddingBottom:4}}>
+        {sceneTypes.map(s=>(<div key={s.k} onClick={()=>{setSelected(s.k);setStep(0);}} style={{flexShrink:0,padding:'8px 12px',borderRadius:12,background:selected===s.k?'rgba(242,213,138,0.25)':'rgba(255,255,255,0.08)',border:`1px solid ${selected===s.k?'#F2D58A':'rgba(255,255,255,0.06)'}`,display:'flex',alignItems:'center',gap:6,cursor:'pointer'}}>
+          <span style={{fontSize:16}}>{s.icon}</span><span style={{fontSize:11,fontWeight:700,color:selected===s.k?'#F2D58A':'rgba(255,255,255,0.7)'}}>{s.label}</span>
+        </div>))}
       </div>
     </div>
-    <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:40,marginTop:16}}>
+    <div style={{padding:'8px 18px 6px'}}>
+      <div style={{fontSize:11,color:'rgba(255,255,255,0.6)',letterSpacing:1,marginBottom:8}}>最近贴纸 · 拖拽到手账</div>
+      <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:4}}>
+        {recentStickers.map(k=>(<div key={k} onClick={()=>setSelected(k)} style={{flexShrink:0,width:64,height:64,background:selected===k?'rgba(242,213,138,0.2)':'rgba(255,255,255,0.08)',borderRadius:14,display:'flex',alignItems:'center',justifyContent:'center',border:`1px solid ${selected===k?'#F2D58A':'rgba(255,255,255,0.06)'}`,cursor:'pointer'}}><Sticker kind={k} size={50}/></div>))}
+      </div>
+    </div>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:40,marginTop:14}}>
       <div style={{width:44,height:44,borderRadius:12,background:'rgba(255,255,255,0.12)',display:'flex',alignItems:'center',justifyContent:'center'}}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#fff" strokeWidth="1.8"/><circle cx="12" cy="12" r="3" stroke="#fff" strokeWidth="1.8"/></svg>
       </div>
       <div onClick={()=>setStep(step===2?0:step+1)} style={{width:74,height:74,borderRadius:'50%',border:'3px solid #fff',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
-        <div style={{width:58,height:58,borderRadius:'50%',background:'#F2D58A'}}/>
+        <div style={{width:58,height:58,borderRadius:'50%',background:step===2?'#52C41A':'#F2D58A'}}/>
       </div>
       <div style={{width:44,height:44,borderRadius:12,background:'rgba(255,255,255,0.12)',display:'flex',alignItems:'center',justifyContent:'center'}}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 16 L4 20 L8 20 M20 8 L20 4 L16 4 M4 4 L8 4 L4 8 M20 16 L20 20 L16 20" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg>
       </div>
     </div>
+    {step===2&&(<div style={{margin:'12px 18px 0',padding:'10px 14px',background:'rgba(82,196,26,0.15)',borderRadius:14,border:'1px solid rgba(82,196,26,0.3)'}}>
+      <div style={{fontSize:11,color:'#52C41A',fontWeight:700,marginBottom:4}}>✓ 贴纸已保存到手账</div>
+      <div style={{fontSize:11,color:'rgba(255,255,255,0.6)'}}>端侧 MobileSAM 处理，图片不会上传</div>
+    </div>)}
   </div>);
 }
 
-/* ═══════════════ PORTFOLIO ═══════════════ */
-function Portfolio() {
-  const wd=[42,68,120,180,245,220,187];
-  const bars=[{label:'周一',v:180},{label:'周二',v:220},{label:'周三',v:310},{label:'周四',v:150},{label:'周五',v:265,active:true},{label:'周六',v:95},{label:'周日',v:187}];
-  const slices=[{v:60,c:T.mocha,label:'咖啡',pct:'60%'},{v:18,c:T.sage,label:'奶茶',pct:'18%'},{v:12,c:T.rose,label:'甜点',pct:'12%'},{v:10,c:T.sky,label:'水',pct:'10%'}];
-  return (<div style={{paddingBottom:140}}>
+/* ═══════════════ SCROLL DRUM PICKER ═══════════════ */
+const PORTFOLIO_DAYS=[
+  {date:'4月19日',day:'周六',stickers:[{k:'americano',t:'10:39'},{k:'latte',t:'14:20'},{k:'cake',t:'16:30'},{k:'water',t:'18:00'}],note:'下午茶时光',mood:'🌤️',weather:'☁️'},
+  {date:'4月18日',day:'周五',stickers:[{k:'boba',t:'12:00'},{k:'salad',t:'12:30'},{k:'hotpot',t:'15:00'}],note:'清淡健康的一天',mood:'😊',weather:'🌤️'},
+  {date:'4月17日',day:'周四',stickers:[{k:'hotpot',t:'18:30'},{k:'beer',t:'19:00'},{k:'cake',t:'21:00'}],note:'火锅局超开心',mood:'🔥',weather:'🌡️'},
+  {date:'4月16日',day:'周三',stickers:[{k:'sushi',t:'12:00'},{k:'matcha',t:'15:00'}],note:'日料+抹茶🍃',mood:'🍃',weather:'🌸'},
+  {date:'4月15日',day:'周二',stickers:[{k:'noodle',t:'12:30'},{k:'americano',t:'09:00'}],note:'米线套餐',mood:'☀️',weather:'☀️'},
+  {date:'4月14日',day:'周一',stickers:[{k:'rice',t:'12:00'},{k:'vegetable',t:'18:00'}],note:'家常菜最香',mood:'😌',weather:'🌥️'},
+  {date:'4月13日',day:'周日',stickers:[{k:'brunch',t:'11:00'},{k:'cake',t:'14:00'},{k:'latte',t:'16:00'},{k:'water',t:'10:00'}],note:'慵懒早午餐',mood:'🌸',weather:'🌤️'},
+];
+const PORTFOLIO_POOL=PORTFOLIO_DAYS.flatMap(d=>d.stickers.map(s=>({k:s.k})));
+const STICKER_SIZES=[80,56,64,48,72,40,60,52,76,44,68,50];
+
+function CylinderPicker({items,selectedIdx,onSelect,onClose}) {
+  const IH=54,VIS=5;
+  const n=items.length;
+  const HALF=IH*(VIS-1)/2;
+  const initOff=HALF-selectedIdx*IH;
+  const [off,setOff]=React.useState(initOff);
+  const [entered,setEntered]=React.useState(false);
+  const offRef=React.useRef(initOff);
+  const drag=React.useRef({active:false,startY:0,startOff:0,vel:0,lastY:0,lastT:0});
+  const animRef=React.useRef(null);
+
+  React.useEffect(()=>{
+    const id=requestAnimationFrame(()=>setEntered(true));
+    return()=>{cancelAnimationFrame(id);if(animRef.current)cancelAnimationFrame(animRef.current);};
+  },[]);
+
+  const clamp=(o)=>Math.max(HALF-(n-1)*IH,Math.min(HALF,o));
+  const getIdx=(o)=>Math.max(0,Math.min(n-1,Math.round((HALF-o)/IH)));
+  const getY=(e)=>e.touches?e.touches[0].clientY:e.clientY;
+
+  const onDown=(e)=>{
+    e.preventDefault();
+    if(animRef.current)cancelAnimationFrame(animRef.current);
+    const y=getY(e);
+    drag.current={active:true,startY:y,startOff:offRef.current,vel:0,lastY:y,lastT:performance.now()};
+  };
+  const onMove=(e)=>{
+    if(!drag.current.active)return;
+    e.preventDefault();
+    const y=getY(e),now=performance.now(),dt=Math.max(1,now-drag.current.lastT);
+    const newOff=clamp(drag.current.startOff+(y-drag.current.startY));
+    drag.current.vel=(y-drag.current.lastY)/dt*16;
+    drag.current.lastY=y;drag.current.lastT=now;
+    offRef.current=newOff;setOff(newOff);
+  };
+  const onUp=()=>{
+    if(!drag.current.active)return;
+    drag.current.active=false;
+    const cur=offRef.current,vel=drag.current.vel;
+    const target=clamp(cur+vel*7);
+    const snap=HALF-Math.round((HALF-target)/IH)*IH;
+    const t0=performance.now();
+    const anim=(ts)=>{
+      const t=Math.min(1,(ts-t0)/380);
+      const ease=1-Math.pow(1-t,3);
+      const a=cur+(snap-cur)*ease;
+      offRef.current=a;setOff(a);
+      if(t<1){animRef.current=requestAnimationFrame(anim);}
+      else{offRef.current=snap;setOff(snap);onSelect(getIdx(snap));}
+    };
+    animRef.current=requestAnimationFrame(anim);
+  };
+
+  const selIdx=getIdx(off);
+  /* ✨ sparkle dots — 8 points on a circle, animate in on enter */
+  const sparkDots=[...Array(8)].map((_,i)=>{
+    const a=i*Math.PI/4;
+    return {x:Math.sin(a)*58,y:Math.cos(a)*58};
+  });
+
+  return (
+    <div style={{position:'fixed',inset:0,zIndex:300,background:'rgba(6,4,2,0.86)',
+      backdropFilter:'blur(20px)',display:'flex',flexDirection:'column',
+      alignItems:'center',justifyContent:'center',
+      opacity:entered?1:0,transform:entered?'none':'scale(0.9)',
+      transition:'opacity 0.24s ease-out,transform 0.32s cubic-bezier(0.34,1.56,0.64,1)'
+    }} onClick={onClose}>
+
+      {/* ✨ sparkle ring */}
+      <div style={{position:'relative',width:0,height:0,marginBottom:-IH*VIS/2-32}}>
+        {sparkDots.map((s,i)=>(
+          <div key={i} style={{
+            position:'absolute',
+            left:s.x-3,top:s.y-3,
+            width:entered?6:0,height:entered?6:0,
+            borderRadius:'50%',
+            background:T.butter,
+            opacity:entered?0.65:0,
+            boxShadow:entered?`0 0 10px ${T.butter}cc`:'',
+            transition:`width 0.3s ${i*0.035}s cubic-bezier(0.34,1.56,0.64,1),height 0.3s ${i*0.035}s cubic-bezier(0.34,1.56,0.64,1),opacity 0.3s ${i*0.035}s ease-out`,
+            pointerEvents:'none'
+          }}/>
+        ))}
+      </div>
+
+      {/* Picker drum */}
+      <div onClick={e=>e.stopPropagation()}
+        style={{display:'flex',flexDirection:'column',alignItems:'center',gap:14}}
+      >
+        <div style={{fontSize:9,color:'rgba(255,255,255,0.28)',letterSpacing:1.8,fontWeight:700,textTransform:'uppercase'}}>上下滑动</div>
+
+        <div style={{
+          position:'relative',width:186,height:IH*VIS,
+          borderRadius:24,overflow:'hidden',
+          background:'rgba(255,253,248,0.04)',
+          border:'0.5px solid rgba(255,253,248,0.1)',
+          boxShadow:'0 16px 56px rgba(0,0,0,0.55)',
+          userSelect:'none',touchAction:'none',cursor:'grab',
+        }}
+          onMouseDown={onDown} onMouseMove={onMove} onMouseUp={onUp} onMouseLeave={onUp}
+          onTouchStart={onDown} onTouchMove={onMove} onTouchEnd={onUp}
+        >
+          {/* Selection highlight band */}
+          <div style={{
+            position:'absolute',top:'50%',left:12,right:12,height:IH,
+            transform:'translateY(-50%)',
+            background:`linear-gradient(135deg,rgba(242,213,138,0.14),rgba(242,213,138,0.07))`,
+            border:`1px solid rgba(242,213,138,0.32)`,
+            borderRadius:16,zIndex:2,pointerEvents:'none',
+            boxShadow:`0 0 18px rgba(242,213,138,0.08) inset`
+          }}/>
+          {/* Top fade */}
+          <div style={{position:'absolute',top:0,left:0,right:0,height:IH*1.6,
+            background:'linear-gradient(to bottom,rgba(6,4,2,0.88),transparent)',
+            zIndex:3,pointerEvents:'none'}}/>
+          {/* Bottom fade */}
+          <div style={{position:'absolute',bottom:0,left:0,right:0,height:IH*1.6,
+            background:'linear-gradient(to top,rgba(6,4,2,0.88),transparent)',
+            zIndex:3,pointerEvents:'none'}}/>
+          {/* Scrolling items */}
+          <div style={{position:'absolute',top:0,left:0,right:0,
+            transform:`translateY(${off}px)`,zIndex:1}}>
+            {items.map((item,i)=>{
+              const dist=Math.abs(selIdx-i);
+              const isSel=selIdx===i;
+              const sc=Math.max(0.68,1-dist*0.14);
+              const op=Math.max(0.18,1-dist*0.4);
+              return (<div key={i} style={{
+                height:IH,display:'flex',alignItems:'center',justifyContent:'center',
+                transform:`scale(${sc})`,opacity:op,
+              }}>
+                <span style={{
+                  fontSize:isSel?26:15,
+                  fontWeight:isSel?900:500,
+                  color:isSel?T.butter:'rgba(255,253,248,0.68)',
+                  fontFamily:'Fraunces,serif',
+                  letterSpacing:isSel?-1:0,
+                  textShadow:isSel?`0 0 28px ${T.butter}88`:'',
+                  transition:'font-size 0.14s,color 0.14s',
+                }}>{item.label}</span>
+              </div>);
+            })}
+          </div>
+        </div>
+
+        <div style={{fontSize:9,color:'rgba(255,255,255,0.18)',letterSpacing:0.6}}>点击外侧关闭</div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════ PORTFOLIO (手帐) ═══════════════ */
+function Portfolio({month,setMonth,setScreen}) {
+  const [view,setView]=React.useState('week');
+  const [selectedDay,setSelectedDay]=React.useState(null);
+  const [weekIdx,setWeekIdx]=React.useState(0);
+  const [monthIdx,setMonthIdx]=React.useState(3);
+  const [yearIdx,setYearIdx]=React.useState(2);
+  const [pickerOpen,setPickerOpen]=React.useState(false);
+  const [particles,setParticles]=React.useState([]);
+  const [lpTimer,setLpTimer]=React.useState(null);
+  const particlesRef=React.useRef([]);
+  const physicsRef=React.useRef(null);
+
+  const CH=344, G=1.12, REST=0.44, FR=0.965, CW=328, ROW_N=5;
+
+  const weekItems=[1,2,3,4].map((n,i)=>({label:`${n}`,idx:i}));
+  const monthItems=[1,2,3,4,5,6,7,8,9,10,11,12].map((n,i)=>({label:`${n}`,idx:i}));
+  const yearItems=['2024','2025','2026'].map((l,i)=>({label:l,idx:i}));
+  const monthData=[{week:'第一周',stickers:18,color:T.mocha},{week:'第二周',stickers:24,color:T.sage},{week:'第三周',stickers:15,color:T.rose},{week:'第四周',stickers:12,color:T.sky}];
+  const yearData=[{month:'1月',stickers:42},{month:'2月',stickers:38},{month:'3月',stickers:56},{month:'4月',stickers:69}];
+
+  /* Separate settled stickers so horizontal overlap ≤ 5% of smaller */
+  const separateSettled=(arr)=>{
+    const wi=arr.map((p,i)=>({...p,_i:i}));
+    /* Group by row */
+    const rows={};
+    wi.forEach(p=>{const r=p.row??0;if(!rows[r])rows[r]=[];rows[r].push(p);});
+    Object.values(rows).forEach(grp=>{
+      grp.sort((a,b)=>(a.x+a.sz/2)-(b.x+b.sz/2));
+      for(let iter=0;iter<60;iter++){
+        let changed=false;
+        /* left → right */
+        for(let i=0;i<grp.length-1;i++){
+          const a=grp[i],b=grp[i+1];
+          const allow=Math.min(a.sz,b.sz)*0.05;
+          const ov=(a.x+a.sz)-b.x;
+          if(ov>allow){const push=(ov-allow)*0.55;grp[i].x=Math.max(0,grp[i].x-push*0.5);grp[i+1].x=Math.min(CW-grp[i+1].sz,grp[i+1].x+push*0.5);changed=true;}
+        }
+        /* right → left */
+        for(let i=grp.length-1;i>0;i--){
+          const a=grp[i-1],b=grp[i];
+          const allow=Math.min(a.sz,b.sz)*0.05;
+          const ov=(a.x+a.sz)-b.x;
+          if(ov>allow){const push=(ov-allow)*0.55;grp[i-1].x=Math.max(0,grp[i-1].x-push*0.5);grp[i].x=Math.min(CW-grp[i].sz,grp[i].x+push*0.5);changed=true;}
+        }
+        if(!changed)break;
+      }
+      grp.forEach(p=>{wi[p._i]=p;});
+    });
+    return wi.map(({_i,...rest})=>rest);
+  };
+
+  const runPhysics=()=>{
+    let any=false;
+    let next=particlesRef.current.map(p=>{
+      if(p.settled)return p;
+      any=true;
+      let{x,y,vx,vy,rotation,vrot,sz,floor}=p;
+      vy+=G;y+=vy;x+=vx;vx*=FR;rotation+=vrot;vrot*=0.95;
+      if(y>=floor){
+        y=floor;vy=-Math.abs(vy)*REST;vx*=0.72;vrot*=0.55;
+        if(Math.abs(vy)<0.85&&Math.abs(vx)<0.35)return{...p,y:floor,x,vy:0,vx:0,vrot:0,rotation,settled:true};
+      }
+      if(x<0){x=0;vx=Math.abs(vx)*0.45;}
+      if(x>CW-sz){x=CW-sz;vx=-Math.abs(vx)*0.45;}
+      return{...p,x,y,vx,vy,rotation,vrot};
+    });
+    if(!any){next=separateSettled(next);}
+    particlesRef.current=next;
+    setParticles([...next]);
+    if(any)physicsRef.current=requestAnimationFrame(runPhysics);
+    else physicsRef.current=null;
+  };
+
+  const triggerFall=()=>{
+    if(physicsRef.current){cancelAnimationFrame(physicsRef.current);physicsRef.current=null;}
+    /* Show 10 stickers in 2 rows of 5; evenly spaced + small deterministic jitter */
+    const SHOW=10,ROW=5;
+    const pool=PORTFOLIO_POOL.slice(0,SHOW);
+    const ps=pool.map((s,i)=>{
+      const sz=STICKER_SIZES[i%STICKER_SIZES.length];
+      const row=Math.floor(i/ROW),col=i%ROW;
+      const slotW=(CW-sz)/(ROW-1);
+      const jx=(Math.sin(i*2.7+1.3)*0.5)*sz*0.05; /* ≤5% size jitter */
+      const x=Math.max(0,Math.min(CW-sz,col*slotW+jx));
+      const groundFloor=CH-sz-6;
+      const floor=row===0?groundFloor:groundFloor-Math.round(sz*0.9+10);
+      return{k:s.k,sz,row,col,x,
+        y:-sz-i*22-row*90,
+        vx:(Math.sin(i*1.9+row)-0.5)*1.8,
+        vy:0.6+Math.abs(Math.sin(i*1.3))*0.8,
+        rotation:Math.sin(i*1.3)*32,
+        vrot:Math.sin(i*2.1)*6,
+        settled:false,floor};
+    });
+    particlesRef.current=ps;
+    setParticles([...ps]);
+    physicsRef.current=requestAnimationFrame(runPhysics);
+  };
+
+  /* Stickers fall once on mount and stay — switching views does NOT reset */
+  React.useEffect(()=>{
+    triggerFall();
+    return()=>{if(physicsRef.current)cancelAnimationFrame(physicsRef.current);};
+  },[]);
+
+  // DeviceMotion shake → stickers bounce
+  React.useEffect(()=>{
+    let lastShake=0;
+    const hm=(e)=>{
+      const a=e.acceleration||e.accelerationIncludingGravity;if(!a)return;
+      const f=Math.abs(a.x||0)+Math.abs(a.y||0)+Math.abs(a.z||0);
+      const now=Date.now();
+      if(f>18&&now-lastShake>500){
+        lastShake=now;
+        particlesRef.current=particlesRef.current.map(p=>({...p,
+          vx:p.vx+(Math.random()-0.5)*15,vy:p.vy-Math.random()*10-4,
+          vrot:p.vrot+(Math.random()-0.5)*20,settled:false}));
+        if(!physicsRef.current)physicsRef.current=requestAnimationFrame(runPhysics);
+      }
+    };
+    window.addEventListener('devicemotion',hm);
+    return()=>window.removeEventListener('devicemotion',hm);
+  },[]);
+
+  const pItems=view==='week'?weekItems:view==='month'?monthItems:yearItems;
+  const pIdx=view==='week'?weekIdx:view==='month'?monthIdx:yearIdx;
+  /* Button label: week→"1", month→"4"(just number), year→"2026" */
+  const pLabel=view==='week'?`${weekIdx+1}`:view==='month'?`${monthIdx+1}`:yearItems[yearIdx%3].label;
+
+  const lpStart=()=>{const t=setTimeout(()=>{setPickerOpen(true);},500);setLpTimer(t);};
+  const lpEnd=()=>{if(lpTimer){clearTimeout(lpTimer);setLpTimer(null);}};
+
+  const isAct=(i)=>((i===0&&view==='week')||(i===1&&view==='month')||(i===2&&view==='year'));
+
+  // Precompute stable rotations for week stickers to avoid Math.random in render
+  const stickerRots=React.useMemo(()=>PORTFOLIO_DAYS.map(d=>d.stickers.map((_,j)=>((j*37+13)%20-10))),[]);
+
+  return(<div style={{paddingBottom:140}}>
+    {/* Header */}
     <div style={{padding:'18px 20px 8px',display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
-      <div><div style={{fontSize:32,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>资产档案</div>
-        <div style={{fontSize:12,color:T.ink2,marginTop:2}}>你的视觉饮食收藏簿</div></div>
-      <Pill bg={T.paper} color={T.ink2} border={`0.5px solid ${T.line}`}>2026年4月</Pill>
+      <div>
+        <div style={{fontSize:28,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>手帐 📖</div>
+        <div style={{fontSize:12,color:T.ink2,marginTop:2}}>记录每天的美食时光 ✨</div>
+      </div>
     </div>
-    <div style={{padding:'4px 16px 12px',display:'flex',gap:6}}>
-      {['周','月','年'].map((x,i)=>(<Pill key={i} bg={i===1?T.mocha:T.paper} color={i===1?'#fff':T.ink2} border={`0.5px solid ${T.line}`} style={{padding:'6px 14px',fontWeight:700}}>{x}</Pill>))}
-    </div>
-    <div style={{padding:'0 16px 12px'}}>
-      <Bento bg={T.sand} style={{padding:16,height:160,position:'relative',overflow:'hidden'}}>
-        {[['americano',10,18,-8,58],['latte',70,8,4,54],['boba',128,22,-6,52],['cake',188,12,8,58],['matcha',248,26,-4,50],['wine',40,78,6,48],['beer',104,86,-8,50],['salad',168,76,4,54],['water',232,82,-6,46],['pill',288,60,10,42]].map(([k,x,y,r,s],i)=>(<div key={i} style={{position:'absolute',left:x,top:y}}><Sticker kind={k} size={s} rot={r}/></div>))}
-        <div style={{position:'absolute',bottom:10,left:14,fontSize:11,color:T.ink2,fontWeight:700}}>共 42 张 · 本月</div>
-      </Bento>
-    </div>
-    <div style={{padding:'0 16px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
-      <Bento style={{padding:14}}><div style={{fontSize:11,color:T.ink2,fontWeight:700,letterSpacing:0.5}}>总杯数</div>
-        <div style={{fontSize:34,fontWeight:800,color:T.mocha,lineHeight:1.1,marginTop:4,fontFamily:'Fraunces,Georgia,serif'}}>42</div>
-        <div style={{fontSize:10,color:T.sageDk,marginTop:2}}>↑ 12% vs 上月</div></Bento>
-      <Bento style={{padding:14}}><div style={{fontSize:11,color:T.ink2,fontWeight:700,letterSpacing:0.5}}>总咖啡因</div>
-        <div style={{fontSize:34,fontWeight:800,color:T.mocha,lineHeight:1.1,marginTop:4,fontFamily:'Fraunces,Georgia,serif'}}>3,820<span style={{fontSize:14,color:T.ink3}}> mg</span></div>
-        <div style={{fontSize:10,color:T.ink3,marginTop:2}}>日均 98 mg</div></Bento>
-    </div>
-    <div style={{padding:'0 16px 12px'}}>
-      <Bento style={{padding:16}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
-          <div><div style={{fontSize:13,fontWeight:700,color:T.ink}}>每日咖啡因波动</div><div style={{fontSize:11,color:T.ink3}}>近 7 天</div></div>
-          <Pill bg={T.sand} color={T.ink2} style={{fontSize:11,padding:'4px 10px'}}>周六 · 187 mg</Pill>
+
+    {/* View tabs + date button */}
+    <div style={{padding:'4px 16px 14px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+      {/* Segmented tabs */}
+      <div style={{display:'flex',background:T.sand,borderRadius:14,padding:3,gap:2}}>
+        {['周','月','年'].map((t,i)=>{
+          const act=isAct(i);
+          return(<div key={t} onClick={()=>setView(['week','month','year'][i])}
+            style={{padding:'7px 18px',borderRadius:11,
+              background:act?T.paper:'transparent',
+              color:act?T.mochaDk:T.ink3,
+              fontSize:13,fontWeight:act?800:600,cursor:'pointer',
+              boxShadow:act?T.shadow:'none',
+              transition:'all 0.18s',letterSpacing:act?-0.2:0}}>
+            {t}
+          </div>);
+        })}
+      </div>
+      {/* Circle date button — long press opens scroll drum */}
+      <div style={{position:'relative',userSelect:'none',WebkitUserSelect:'none'}}
+        onMouseDown={lpStart} onMouseUp={lpEnd} onMouseLeave={lpEnd}
+        onTouchStart={lpStart} onTouchEnd={lpEnd}
+        onContextMenu={e=>e.preventDefault()}
+      >
+        <div style={{width:48,height:48,borderRadius:'50%',
+          background:`conic-gradient(${T.mocha} 0deg,${T.butter} 80deg,${T.sage} 185deg,${T.sky} 290deg,${T.rose} 340deg,${T.mocha} 360deg)`,
+          padding:3,cursor:'pointer',boxShadow:T.shadowLg,
+        }}>
+          <div style={{width:'100%',height:'100%',borderRadius:'50%',background:T.paper,
+            display:'flex',alignItems:'center',justifyContent:'center',
+          }}>
+            <span style={{fontSize:pLabel.length>3?10:pLabel.length>2?12:18,fontWeight:900,color:T.mochaDk,letterSpacing:-0.5,lineHeight:1}}>{pLabel}</span>
+          </div>
         </div>
-        <div style={{marginTop:8}}><Wave data={wd} w={330} h={96} color={T.mocha} hi={6}/></div>
-        <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:T.ink3,marginTop:2,padding:'0 8px'}}>{['日','一','二','三','四','五','六'].map(d=><span key={d}>{d}</span>)}</div>
-      </Bento>
-    </div>
-    <div style={{padding:'0 16px',display:'grid',gridTemplateColumns:'1.1fr 1fr',gap:12,marginBottom:12}}>
-      <Bento style={{padding:14}}><div style={{fontSize:12,fontWeight:700,color:T.ink,marginBottom:10}}>每周热量</div><Bars data={bars} color={T.mocha}/></Bento>
-      <Bento style={{padding:14}}>
-        <div style={{fontSize:12,fontWeight:700,color:T.ink,marginBottom:4}}>贴纸分类</div>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'center',position:'relative'}}>
-          <Donut slices={slices} size={116} inner={38}/>
-          <div style={{position:'absolute',textAlign:'center'}}><div style={{fontSize:20,fontWeight:800,color:T.ink,lineHeight:1}}>42</div><div style={{fontSize:9,color:T.ink3}}>贴纸</div></div>
+      </div>
+      {/* Trophy button → badge wall (right of date, same size) */}
+      <div onClick={()=>setScreen('badgewall')} style={{position:'absolute',left:270,top:0,width:48,height:48,borderRadius:14,
+        background:`conic-gradient(${T.butter},${T.mocha},${T.rose},${T.butter})`,
+        padding:3,cursor:'pointer',boxShadow:T.shadow}}>
+        <div style={{width:'100%',height:'100%',borderRadius:11,background:T.paper,
+          display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:0}}>
+          <span style={{fontSize:18,lineHeight:1}}>🏆</span>
+          <span style={{fontSize:6,fontWeight:800,color:T.mochaDk,letterSpacing:-0.2}}>勋章</span>
         </div>
-        <div style={{display:'flex',flexDirection:'column',gap:3,marginTop:6}}>{slices.map((s,i)=>(<div key={i} style={{display:'flex',alignItems:'center',gap:6,fontSize:10}}><div style={{width:8,height:8,borderRadius:2,background:s.c}}/><span style={{flex:1,color:T.ink2}}>{s.label}</span><span style={{color:T.ink,fontWeight:700}}>{s.pct}</span></div>))}</div>
-      </Bento>
+      </div>
     </div>
+
+    {/* ── No badge strip here; use the trophy button in the tab row ── */}
+
+    {/* ── Physics sticker canvas ── occupies 1/2 display area */}
     <div style={{padding:'0 16px 12px'}}>
-      <Bento bg={`linear-gradient(135deg, ${T.rose}33, ${T.butter}33)`} style={{padding:14}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{fontSize:13,fontWeight:700,color:T.ink}}>勋章墙</div><span style={{fontSize:10,color:T.ink2}}>3 / 12 解锁</span></div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginTop:10}}>
-          {[{t:'深夜酒神',bg:T.rose+'55',icon:'🍷',on:true},{t:'清晨鸟',bg:'#FDF2C7',icon:'☕️',on:true},{t:'彩虹',bg:T.sage+'55',icon:'🌈',on:true},{t:'禅意日',bg:'#eee',icon:'?',on:false}].map((b,i)=>(<div key={i} style={{borderRadius:16,background:b.bg,padding:8,textAlign:'center',opacity:b.on?1:0.5}}><div style={{fontSize:24,lineHeight:1}}>{b.icon}</div><div style={{fontSize:10,fontWeight:700,color:T.ink,marginTop:4}}>{b.t}</div></div>))}
-        </div>
-      </Bento>
+      <div style={{height:CH,
+        background:`repeating-linear-gradient(45deg,${T.sand}55 0 2px,transparent 2px 16px)`,
+        borderRadius:20,border:`1px dashed ${T.ink3}44`,
+        overflow:'hidden',position:'relative',boxShadow:T.shadow,
+      }}>
+        {particles.map((p,i)=>(
+          <div key={i} style={{position:'absolute',left:p.x,top:p.y,transform:`rotate(${p.rotation}deg)`,willChange:'transform,top,left'}}>
+            <Sticker kind={p.k} size={p.sz} rot={0}/>
+          </div>
+        ))}
+        {/* Pile depth shadow */}
+        <div style={{position:'absolute',bottom:0,left:0,right:0,height:56,background:`linear-gradient(to top,${T.sand}bb,transparent)`,pointerEvents:'none'}}/>
+        {/* Shake button — desktop fallback */}
+      </div>
     </div>
+
+    {/* Week view */}
+    {view==='week'&&(<div style={{padding:'0 16px'}}>
+      <div style={{background:T.paper,borderRadius:28,padding:4,boxShadow:'0 4px 20px rgba(42,37,32,0.1)',border:`0.5px solid ${T.line}`}}>
+        <div style={{display:'flex',gap:0}}>
+          <div style={{width:28,display:'flex',flexDirection:'column',alignItems:'center',paddingTop:16,gap:12}}>
+            {[1,2,3,4,5,6,7].map(i=>(<div key={i} style={{width:16,height:16,borderRadius:8,background:i%2===0?T.mocha+'22':T.sage+'22',border:`1px solid ${i%2===0?T.mocha+'44':T.sage+'44'}`}}/>))}
+          </div>
+          <div style={{flex:1,padding:'12px 16px 16px'}}>
+            {PORTFOLIO_DAYS.map((day,i)=>(<div key={i} onClick={()=>setSelectedDay(selectedDay===i?null:i)} style={{marginBottom:16,cursor:'pointer'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <div style={{fontSize:15,fontWeight:800,color:T.ink}}>{day.date}</div>
+                  <div style={{fontSize:11,color:T.ink3,background:T.sand+'88',padding:'2px 8px',borderRadius:8}}>{day.day}</div>
+                </div>
+                <div style={{display:'flex',alignItems:'center',gap:6}}>
+                  <span style={{fontSize:14}}>{day.weather}</span>
+                  <span style={{fontSize:14}}>{day.mood}</span>
+                </div>
+              </div>
+              <div style={{display:'flex',gap:8,flexWrap:'wrap',padding:'10px 12px',background:i%2===0?T.sand+'44':'transparent',borderRadius:16,border:`0.5px dashed ${T.line}`}}>
+                {day.stickers.map((s,j)=>(<div key={j} style={{position:'relative'}}>
+                  <Sticker kind={s.k} size={48} rot={stickerRots[i]?.[j]||0}/>
+                  <div style={{position:'absolute',bottom:-4,right:-2,fontSize:8,color:T.ink3,background:'#fff',padding:'1px 3px',borderRadius:4}}>{s.t}</div>
+                </div>))}
+              </div>
+              {selectedDay===i&&(<div style={{marginTop:8,padding:'8px 12px',background:T.butter+'33',borderRadius:12,fontSize:11,color:T.ink2}}>📝 {day.note}</div>)}
+            </div>))}
+          </div>
+        </div>
+      </div>
+    </div>)}
+
+    {/* Month view */}
+    {view==='month'&&(<div style={{padding:'0 16px'}}>
+      <div style={{background:T.paper,borderRadius:24,padding:20,boxShadow:'0 4px 16px rgba(42,37,32,0.08)'}}>
+        <div style={{fontSize:15,fontWeight:800,color:T.ink,marginBottom:16}}>📅 {monthIdx+1}月回顾</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12}}>
+          {monthData.map((m,i)=>(<div key={i} style={{padding:16,background:T.sand+'44',borderRadius:16,border:`1px dashed ${m.color}66`}}>
+            <div style={{fontSize:12,fontWeight:700,color:m.color,marginBottom:8}}>{m.week}</div>
+            <div style={{display:'flex',alignItems:'baseline',gap:4}}>
+              <span style={{fontSize:32,fontWeight:800,color:T.ink,fontFamily:'Fraunces,serif'}}>{m.stickers}</span>
+              <span style={{fontSize:12,color:T.ink3}}>张贴纸</span>
+            </div>
+            <div style={{marginTop:8,height:6,background:T.sand,borderRadius:3,overflow:'hidden'}}>
+              <div style={{height:'100%',width:`${(m.stickers/30)*100}%`,background:m.color,borderRadius:3}}/>
+            </div>
+          </div>))}
+        </div>
+        <div style={{marginTop:16,padding:'12px 16px',background:T.mochaLt+'33',borderRadius:16}}>
+          <div style={{fontSize:12,color:T.ink2,marginBottom:8}}>🍽️ 本月美食构成</div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+            {['☕32%','🧋18%','🍲12%','🍣10%','🧁8%','🍜6%','其他14%'].map((e,i)=>(<div key={i} style={{padding:'4px 10px',background:i===0?T.mocha+'22':T.sand,borderRadius:8,fontSize:11,color:T.ink}}>{e}</div>))}
+          </div>
+        </div>
+      </div>
+    </div>)}
+
+    {/* Year view */}
+    {view==='year'&&(<div style={{padding:'0 16px'}}>
+      <div style={{background:T.paper,borderRadius:24,padding:20,boxShadow:'0 4px 16px rgba(42,37,32,0.08)',marginBottom:12}}>
+        <div style={{fontSize:16,fontWeight:800,color:T.ink,marginBottom:4}}>{yearItems[yearIdx%3].label} 年</div>
+        <div style={{fontSize:12,color:T.ink3,marginBottom:16}}>手帐收藏 📖</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10}}>
+          {yearData.map((m,i)=>(<div key={i} style={{textAlign:'center',padding:14,background:T.sand+'55',borderRadius:16}}>
+            <div style={{fontSize:26,fontWeight:800,color:T.ink,fontFamily:'Fraunces,serif'}}>{m.stickers}</div>
+            <div style={{fontSize:11,color:T.ink3,marginTop:4}}>{m.month}</div>
+          </div>))}
+        </div>
+        <div style={{marginTop:16,textAlign:'center',padding:'12px',background:T.rose+'22',borderRadius:16}}>
+          <div style={{fontSize:18,fontWeight:800,color:T.ink}}>205</div>
+          <div style={{fontSize:11,color:T.ink2}}>全年累计贴纸 · ↑23%</div>
+        </div>
+      </div>
+      <div style={{background:T.paper,borderRadius:24,padding:20,boxShadow:'0 4px 16px rgba(42,37,32,0.08)'}}>
+        <div style={{fontSize:14,fontWeight:800,color:T.ink,marginBottom:12}}>🏆 美食成就</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
+          {[{t:'火锅达人',e:'🍲',c:T.rose},{t:'咖啡重度',e:'☕',c:T.mocha},{t:'甜品控',e:'🧁',c:T.rose},{t:'健康饮食',e:'🥗',c:T.sage},{t:'早午餐',e:'🥞',c:T.butter},{t:'嗜酒人生',e:'🍺',c:T.sky}].map((b,i)=>(<div key={i} style={{padding:12,background:b.c+'22',borderRadius:14,textAlign:'center',border:`1px solid ${b.c}44`}}><div style={{fontSize:24}}>{b.e}</div><div style={{fontSize:10,fontWeight:700,color:T.ink,marginTop:4}}>{b.t}</div></div>))}
+        </div>
+      </div>
+    </div>)}
+
+    {/* Cylinder picker overlay */}
+    {pickerOpen&&(<CylinderPicker
+      items={pItems} selectedIdx={pIdx%pItems.length}
+      onSelect={(idx)=>{
+        if(view==='week')setWeekIdx(idx);
+        else if(view==='month')setMonthIdx(idx);
+        else setYearIdx(idx);
+        setPickerOpen(false);
+      }}
+      onClose={()=>setPickerOpen(false)}
+    />)}
   </div>);
 }
 
 /* ═══════════════ MED ═══════════════ */
-function Med() {
+function Med({periodTracking}) {
   const cal=Array.from({length:30}).map((_,i)=>{const tg=[]; if([2,5,9,12,16,19,23,27].includes(i)) tg.push('💊'); if([3,10,17,24].includes(i)) tg.push('🌿'); if([5,11,18,25].includes(i)) tg.push('⚪'); return {day:i+1,tags:tg};});
   return (<div style={{paddingBottom:140}}>
     <div style={{padding:'18px 20px 12px'}}><div style={{fontSize:32,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>禅意日历</div>
@@ -423,50 +926,389 @@ function Med() {
         <div style={{width:28,height:28,borderRadius:14,background:m.done?T.sageDk:'transparent',border:m.done?'none':`2px solid ${T.ink3}`,display:'flex',alignItems:'center',justifyContent:'center'}}>{m.done && <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12 L10 17 L19 7" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>}</div>
       </div>))}
     </div>
+
+    {/* ── Menstrual Cycle Tracker ── */}
+    {periodTracking!==false && <div style={{padding:'8px 16px 16px'}}>
+      <div style={{display:'flex',alignItems:'center',gap:8,padding:'8px 4px 10px'}}>
+        <span style={{fontSize:16}}>🌸</span>
+        <div style={{fontSize:13,fontWeight:700,color:T.ink}}>经期追踪</div>
+        <div style={{marginLeft:'auto',padding:'2px 10px',borderRadius:999,background:'#E8A0BF33',border:'0.5px solid #E8A0BF',fontSize:10,fontWeight:700,color:'#B5648E'}}>周期 28 天</div>
+      </div>
+
+      {/* Phase ring */}
+      <Bento style={{padding:16,marginBottom:10}}>
+        <div style={{display:'flex',alignItems:'center',gap:14}}>
+          {/* Cycle arc indicator */}
+          <div style={{position:'relative',width:80,height:80,flexShrink:0}}>
+            <svg width="80" height="80" style={{transform:'rotate(-90deg)'}}>
+              <circle cx="40" cy="40" r="32" stroke={T.sand} strokeWidth="7" fill="none"/>
+              {/* 4 arc segments */}
+              {[{color:'#E88FAF',pct:0.18,offset:0},{color:'#B8CFD9',pct:0.27,offset:0.18},{color:'#F2D58A',pct:0.05,offset:0.45},{color:'#A8B89A',pct:0.50,offset:0.50}].map((s,i)=>{
+                const C=2*Math.PI*32;
+                return(<circle key={i} cx="40" cy="40" r="32" stroke={s.color} strokeWidth="7" fill="none"
+                  strokeDasharray={`${C*s.pct} ${C*(1-s.pct)}`}
+                  strokeDashoffset={-C*s.offset} strokeLinecap="butt"/>);
+              })}
+              {/* Current position dot at ~day 19/28 → ~68% */}
+              <circle cx={40+32*Math.sin(2*Math.PI*0.68)} cy={40-32*Math.cos(2*Math.PI*0.68)} r="5" fill="#2A2520" style={{transform:'rotate(90deg)',transformOrigin:'40px 40px'}}/>
+            </svg>
+            <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
+              <div style={{fontSize:18,fontWeight:900,color:T.ink,lineHeight:1}}>19</div>
+              <div style={{fontSize:8,color:T.ink3}}>周期天</div>
+            </div>
+          </div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:11,color:T.ink3,marginBottom:2}}>当前阶段</div>
+            <div style={{fontSize:16,fontWeight:800,color:'#9E7BA0',marginBottom:4}}>🌿 黄体期</div>
+            <div style={{fontSize:11,color:T.ink2,lineHeight:1.4}}>下次经期预计 <span style={{fontWeight:700,color:'#B5648E'}}>4月 29 日</span>（9天后）</div>
+          </div>
+        </div>
+        {/* Phase legend */}
+        <div style={{display:'flex',gap:6,marginTop:12,flexWrap:'wrap'}}>
+          {[['🔴','经期','#E88FAF','1–5天'],['💙','卵泡期','#B8CFD9','6–13天'],['🟡','排卵期','#F2D58A','14–16天'],['🟢','黄体期','#A8B89A','17–28天']].map(([e,l,c,d],i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:4,padding:'3px 8px',borderRadius:8,background:c+'33',border:`0.5px solid ${c}`}}>
+              <span style={{fontSize:9}}>{e}</span>
+              <span style={{fontSize:10,fontWeight:700,color:T.ink}}>{l}</span>
+              <span style={{fontSize:9,color:T.ink3}}>{d}</span>
+            </div>
+          ))}
+        </div>
+      </Bento>
+
+      {/* Symptom quick-log */}
+      <Bento style={{padding:14,marginBottom:10}}>
+        <div style={{fontSize:11,fontWeight:700,color:T.ink,marginBottom:8}}>今日症状快记</div>
+        <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+          {[['😮‍💨','腹胀',false],['🤕','头痛',true],['😴','疲劳',true],['💢','情绪波动',false],['🌡️','发热',false],['💧','分泌物',false],['🍫','渴望甜食',true],['🤢','恶心',false]].map(([e,l,active],i)=>(
+            <div key={i} style={{padding:'5px 10px',borderRadius:10,
+              background:active?T.plum+'44':T.sand,
+              border:`0.5px solid ${active?T.plum:T.line}`,
+              fontSize:11,fontWeight:active?700:400,color:active?T.plum:T.ink2,
+              cursor:'pointer',display:'flex',alignItems:'center',gap:4}}>
+              <span>{e}</span><span>{l}</span>
+            </div>
+          ))}
+        </div>
+      </Bento>
+
+    {/* Cycle history mini */}
+    <Bento bg={'#E8A0BF11'} style={{padding:14}}>
+      <div style={{fontSize:11,fontWeight:700,color:T.ink,marginBottom:8}}>近期周期</div>
+      <div style={{display:'flex',gap:8}}>
+        {[{m:'2月',d:27},{m:'3月',d:29},{m:'4月',d:28}].map((c,i)=>(
+          <div key={i} style={{flex:1,borderRadius:12,padding:'8px 6px',background:'#E8A0BF22',border:'0.5px solid #E8A0BF',textAlign:'center'}}>
+            <div style={{fontSize:10,color:T.ink3}}>{c.m}</div>
+            <div style={{fontSize:16,fontWeight:800,color:'#B5648E'}}>{c.d}</div>
+            <div style={{fontSize:9,color:T.ink3}}>天</div>
+          </div>
+        ))}
+        <div style={{flex:1,borderRadius:12,padding:'8px 6px',background:T.sand,border:`0.5px solid ${T.line}`,textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
+          <div style={{fontSize:18,color:T.ink3}}>+</div>
+          <div style={{fontSize:9,color:T.ink3}}>记录</div>
+        </div>
+      </div>
+    </Bento>
+    </div>}
+
+  </div>);}
+
+/* ═══════════════ WILD BADGE ═══════════════ */
+function WildBadge({icon,title,level,desc,bg,earned}) {
+  return (<div style={{borderRadius:20,padding:14,background:earned?bg:T.paper,textAlign:'center',boxShadow:earned?`0 4px 16px ${bg}55`:T.shadow,border:`0.5px solid ${earned?'transparent':T.line}`,opacity:earned?1:0.5,transform:earned?'scale(1)':'scale(0.96)',transition:'all 0.3s'}}>
+    <div style={{fontSize:36,lineHeight:1,marginBottom:6}}>{earned?icon:'🔒'}</div>
+    <div style={{fontSize:11,fontWeight:800,color:earned?'#fff':T.ink3,marginBottom:2}}>{title}</div>
+    <div style={{fontSize:9,color:earned?'rgba(255,255,255,0.7)':T.ink3}}>{earned?level:'未解锁'}</div>
+    {earned&&desc&&(<div style={{fontSize:9,color:'rgba(255,255,255,0.6)',marginTop:4,lineHeight:1.3}}>{desc}</div>)}
   </div>);
 }
 
 /* ═══════════════ WILD ═══════════════ */
 function Wild() {
-  return (<div style={{paddingBottom:140,background:`linear-gradient(180deg, ${T.rose}33, ${T.cream} 320px)`,minHeight:'100%'}}>
-    <div style={{padding:'18px 20px 12px'}}>
-      <Pill bg={T.roseDk} color="#fff" style={{fontSize:11,padding:'5px 12px'}}>🌙 豁出去模式</Pill>
-      <div style={{fontSize:32,fontWeight:800,color:T.ink,letterSpacing:-0.5,marginTop:8,fontFamily:'Fraunces,Georgia,serif',fontStyle:'italic'}}>今夜，尽情放纵。</div>
-      <div style={{fontSize:13,color:T.ink2,marginTop:4,lineHeight:1.45}}>AI 切换为"陪你疯"口吻。不计热量，只记回忆。</div>
+  /* Time-aware theming: night (20:00–05:59) vs day */
+  const hour=React.useMemo(()=>new Date().getHours(),[]);
+  const isNight=hour>=20||hour<6;
+
+  /* Night: neon-battle (deep violet + electric crimson) / Day: dopamine explosion (hot orange→yellow) */
+  const W=isNight?{
+    bg:'linear-gradient(180deg,#080018 0%,#1A0040 45%,#0E0030 100%)',
+    card:'rgba(255,255,255,0.06)',
+    cardBorder:'rgba(255,26,108,0.35)',
+    accent:'#FF1A6C',
+    accent2:'#FF6B35',
+    accentGlow:'rgba(255,26,108,0.45)',
+    pillBg:'#CC0055',pillTxt:'#fff',
+    titleColor:'#fff',
+    subColor:'rgba(255,255,255,0.45)',
+    statBg:'rgba(255,26,108,0.08)',
+    statColor:'#fff',
+    tip:['「⚡ 夜场战神上线！热量归零，只计战绩。」','「兄弟，今晚谁也拦不住你——勋章墙等你来填满！」','「凌晨的盘子从不撒谎，干！」'],
+    badge:true,
+    badgeWall:'linear-gradient(135deg,#12002E,#200050)',
+    badgeBorder:'rgba(255,26,108,0.5)',
+    next:'rgba(255,255,255,0.05)',nextBorder:'rgba(255,26,108,0.2)',nextText:'rgba(255,255,255,0.55)',
+    titleText:'今夜，横扫一切。',pillIcon:'⚡',pillLabel:'深夜战斗模式',
+    statsRow:[['7','道菜'],['~3h','时长'],['⚡','战神']],
+  }:{
+    bg:'linear-gradient(180deg,#FF3300 0%,#FF7700 35%,#FFD200 72%,#FFF4A0 100%)',
+    card:'rgba(255,255,255,0.22)',
+    cardBorder:'rgba(204,34,0,0.25)',
+    accent:'#CC1100',
+    accent2:'#FF5500',
+    accentGlow:'rgba(255,85,0,0.4)',
+    pillBg:'#DD2200',pillTxt:'#fff',
+    titleColor:'#1A0000',
+    subColor:'rgba(26,0,0,0.55)',
+    statBg:'rgba(255,255,255,0.35)',
+    statColor:'#1A0000',
+    tip:['「大白天就这么猛！今天的你是个传说。」','「热量？今天不讲道理！人均贡献王称号等你拿。」','「🔥 吃够了给勋章，吃透了传说级——干！」'],
+    badge:true,
+    badgeWall:'linear-gradient(135deg,rgba(255,51,0,0.15),rgba(255,200,0,0.12))',
+    badgeBorder:'rgba(204,34,0,0.3)',
+    next:'rgba(255,255,255,0.45)',nextBorder:'rgba(204,34,0,0.2)',nextText:'rgba(26,0,0,0.6)',
+    titleText:'今天，吃个爽！',pillIcon:'🔥',pillLabel:'豁出去模式',
+    statsRow:[['7','道菜'],['~2h','时长'],['🔥','无敌']],
+  };
+
+  const medals=[
+    /* earned */
+    {icon:'🌙',title:'午夜烤肉神',level:'Lv3',desc:'凌晨2点后还在撸串',bg:isNight?'#3D006B':'#7A2860',earned:true},
+    {icon:'🍲',title:'火锅终结者',level:'Lv2',desc:'一人扫完整锅',bg:isNight?'#550010':'#8B2020',earned:true},
+    {icon:'🍔',title:'人均贡献王',level:'Lv2',desc:'聚餐单笔贴纸最多',bg:isNight?'#3A0045':'#662080',earned:true},
+    {icon:'🥩',title:'全家桶达人',level:'Lv1',desc:'一桌七八个人全点完',bg:isNight?'#002255':'#1A3A7A',earned:true},
+    {icon:'🍜',title:'圆桌水流山',level:'Lv3',desc:'连桌上汤底都喝干了',bg:isNight?'#1A0050':'#2A0070',earned:true},
+    {icon:'⚡',title:'今日吃货',level:'Lv1',desc:'今天记录超过5道菜',bg:isNight?'#402500':'#804500',earned:true},
+    {icon:'🍗',title:'炸鸡终结者',level:'Lv2',desc:'一次点了整桶炸鸡',bg:isNight?'#451500':'#883000',earned:true},
+    {icon:'🧋',title:'奶茶重度患者',level:'Lv3',desc:'连续7天都有奶茶记录',bg:isNight?'#3A1A40':'#6B3080',earned:true},
+    {icon:'🥂',title:'干杯传说',level:'Lv2',desc:'酒水记录超过5种',bg:isNight?'#001A45':'#002870',earned:true},
+    /* locked */
+    {icon:'🍣',title:'刺身战神',level:'Lv2',desc:'连续记录3次日料',bg:isNight?'#1A0030':'#3A0060',earned:false},
+    {icon:'🍕',title:'披萨统治者',level:'Lv1',desc:'收藏10种披萨',bg:isNight?'#2A1000':'#4A2000',earned:false},
+    {icon:'🌅',title:'黎明使者',level:'Lv3',desc:'熬夜到天亮的第一人',bg:isNight?'#200A00':'#402000',earned:false},
+    {icon:'🍦',title:'甜品炸弹',level:'Lv1',desc:'一餐甜品超3份',bg:isNight?'#200030':'#400060',earned:false},
+    {icon:'🎆',title:'节日轰炸机',level:'Lv2',desc:'节假日豪华记录',bg:isNight?'#001530':'#002860',earned:false},
+    {icon:'🍺',title:'啤酒山终结者',level:'Lv1',desc:'啤酒记录超过10瓶',bg:isNight?'#1A1000':'#352000',earned:false},
+    {icon:'🌮',title:'墨西哥卷王',level:'Lv1',desc:'记录5次墨西哥食物',bg:isNight?'#2A0010':'#4A0020',earned:false},
+    {icon:'🍰',title:'蛋糕猎人',level:'Lv2',desc:'解锁8种蛋糕贴纸',bg:isNight?'#1A0025':'#30004A',earned:false},
+    {icon:'🦞',title:'海鲜霸主',level:'Lv3',desc:'一餐记录3种以上海鲜',bg:isNight?'#001A15':'#003A2A',earned:false},
+  ];
+  const tip=W.tip[0];
+
+  /* Animated fire particles (decorative, night only) */
+  const fires=isNight?[{x:20,d:0},{x:55,d:0.3},{x:88,d:0.6},{x:130,d:0.1},{x:168,d:0.45},{x:220,d:0.2},{x:270,d:0.55},{x:308,d:0.15}]:[];
+
+  return (<div style={{paddingBottom:140,background:W.bg,minHeight:'100%',position:'relative',overflow:'hidden'}}>
+
+    {/* Night-only: ambient fire glow blobs */}
+    {isNight&&(<>
+      <div style={{position:'absolute',top:-40,left:-40,width:200,height:200,borderRadius:'50%',
+        background:'radial-gradient(circle,rgba(200,20,0,0.18),transparent 70%)',pointerEvents:'none'}}/>
+      <div style={{position:'absolute',top:80,right:-60,width:240,height:240,borderRadius:'50%',
+        background:'radial-gradient(circle,rgba(100,0,200,0.22),transparent 70%)',pointerEvents:'none'}}/>
+      <div style={{position:'absolute',bottom:100,left:-30,width:180,height:180,borderRadius:'50%',
+        background:'radial-gradient(circle,rgba(255,26,108,0.18),transparent 70%)',pointerEvents:'none'}}/>
+    </>)}
+
+    {/* Header */}
+    <div style={{padding:'22px 20px 14px',position:'relative'}}>
+      <div style={{display:'inline-flex',alignItems:'center',gap:6,padding:'5px 12px',
+        borderRadius:999,background:W.pillBg,
+        boxShadow:`0 4px 18px ${W.accentGlow}`,marginBottom:12}}>
+        <span style={{fontSize:13}}>{W.pillIcon}</span>
+        <span style={{fontSize:11,fontWeight:800,color:W.pillTxt,letterSpacing:0.5}}>{W.pillLabel}</span>
+      </div>
+      <div style={{fontSize:34,fontWeight:900,color:W.titleColor,letterSpacing:-1,lineHeight:1.1,
+        fontFamily:'Fraunces,Georgia,serif',fontStyle:'italic',
+        textShadow:isNight?`0 0 40px ${W.accentGlow},0 2px 0 rgba(0,0,0,0.8)`:''
+      }}>{W.titleText}</div>
     </div>
-    <div style={{padding:'0 16px 12px'}}>
-      <Bento bg="#2A2520" style={{padding:16,color:'#fff'}}>
-        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}><div style={{fontSize:13,fontWeight:700}}>今夜战绩</div><span style={{fontSize:10,opacity:0.5}}>4.19 · 23:24</span></div>
-        <div style={{position:'relative',height:110,background:'rgba(255,255,255,0.04)',borderRadius:16,overflow:'hidden'}}>
-          <div style={{position:'absolute',left:12,top:16}}><Sticker kind="wine" size={72} rot={-10}/></div>
-          <div style={{position:'absolute',left:80,top:26}}><Sticker kind="beer" size={64} rot={8}/></div>
-          <div style={{position:'absolute',left:148,top:20}}><Sticker kind="wine" size={60} rot={-6}/></div>
-          <div style={{position:'absolute',left:208,top:28}}><Sticker kind="cake" size={56} rot={10}/></div>
+
+    {/* Battle record card */}
+    <div style={{padding:'0 16px 14px'}}>
+      <div style={{borderRadius:22,padding:18,
+        background:isNight?'rgba(10,0,30,0.85)':'rgba(255,255,255,0.22)',
+        border:`1px solid ${W.cardBorder}`,
+        boxShadow:isNight?`0 8px 32px ${W.accentGlow},inset 0 1px 0 rgba(255,255,255,0.06)`:`0 4px 20px rgba(0,0,0,0.18)`,
+        backdropFilter:'blur(12px)'
+      }}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+          <div style={{fontSize:14,fontWeight:800,color:isNight?'#fff':W.titleColor}}>
+            {isNight?'今夜战绩':'今日战绩'} 🏆
+          </div>
+          <span style={{fontSize:10,color:isNight?'rgba(255,255,255,0.35)':W.subColor}}>
+            4.19 · {isNight?'23:24':'14:50'}
+          </span>
         </div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginTop:12}}>
-          {[['4','杯数'],['~2h','时长'],['微醺','状态']].map(([v,l],i)=>(<div key={i} style={{background:'rgba(255,255,255,0.06)',borderRadius:12,padding:'8px 10px'}}><div style={{fontSize:18,fontWeight:800,fontFamily:'Fraunces,serif'}}>{v}</div><div style={{fontSize:10,opacity:0.55}}>{l}</div></div>))}
+        {/* Sticker strip */}
+        <div style={{position:'relative',height:96,
+          background:isNight?'rgba(255,255,255,0.03)':'rgba(255,255,255,0.25)',
+          borderRadius:14,overflow:'hidden',border:`0.5px solid ${W.cardBorder}`,marginBottom:14}}>
+          {isNight&&<div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 100%,rgba(255,26,108,0.25),transparent 70%)',pointerEvents:'none'}}/>}
+          <div style={{position:'absolute',left:8,top:12}}><Sticker kind="hotpot" size={70} rot={-8}/></div>
+          <div style={{position:'absolute',left:76,top:18}}><Sticker kind="beer" size={62} rot={7}/></div>
+          <div style={{position:'absolute',left:144,top:14}}><Sticker kind="boba" size={58} rot={-5}/></div>
+          <div style={{position:'absolute',left:208,top:20}}><Sticker kind="cake" size={54} rot={9}/></div>
         </div>
-      </Bento>
+        {/* Stats row */}
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>
+          {W.statsRow.map(([v,l],i)=>(
+            <div key={i} style={{background:W.statBg,borderRadius:12,padding:'9px 8px',textAlign:'center',
+              border:`0.5px solid ${W.cardBorder}`}}>
+              <div style={{fontSize:20,fontWeight:900,fontFamily:'Fraunces,serif',color:isNight?W.accent2:W.accent}}>{v}</div>
+              <div style={{fontSize:10,color:isNight?'rgba(255,255,255,0.45)':W.subColor,marginTop:2}}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
-    <div style={{padding:'0 16px 12px'}}>
-      <Bento bg={T.rose+'55'} style={{padding:14}}>
-        <div style={{display:'flex',gap:10}}>
-          <div style={{width:32,height:32,borderRadius:16,background:T.roseDk,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:18}}>🎭</div>
-          <div style={{flex:1}}><div style={{fontSize:11,color:T.roseDk,fontWeight:700}}>AI · 陪你疯</div><div style={{fontSize:13,color:T.ink,marginTop:3,lineHeight:1.45}}>「第 4 杯了～ 记得桌上留一杯水，明早的你会感谢今晚的你。」</div></div>
+
+    {/* AI tip */}
+    <div style={{padding:'0 16px 14px'}}>
+      <div style={{borderRadius:18,padding:14,
+        background:isNight?'rgba(255,255,255,0.05)':'rgba(255,255,255,0.45)',
+        border:`1px solid ${W.cardBorder}`,backdropFilter:'blur(8px)'}}>
+        <div style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+          <div style={{width:34,height:34,borderRadius:17,background:W.pillBg,
+            display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0,
+            boxShadow:`0 4px 12px ${W.accentGlow}`}}>🤙</div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:11,fontWeight:800,color:W.accent,marginBottom:4,letterSpacing:0.3}}>AI · 死党模式</div>
+            <div style={{fontSize:13,color:isNight?'rgba(255,255,255,0.8)':W.titleColor,lineHeight:1.5}}>{tip}</div>
+          </div>
         </div>
-      </Bento>
+      </div>
     </div>
+
+    {/* Badge wall */}
+    <div style={{padding:'0 16px 14px'}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+        <div style={{fontSize:14,fontWeight:800,color:isNight?'#fff':W.titleColor}}>放纵勋章墙</div>
+        <div style={{padding:'3px 10px',borderRadius:999,background:W.pillBg,fontSize:10,fontWeight:700,color:'#fff',
+          boxShadow:`0 2px 8px ${W.accentGlow}`}}>
+          {medals.filter(m=>m.earned).length} / {medals.length} 解锁
+        </div>
+      </div>
+      <div style={{borderRadius:20,padding:14,
+        background:W.badgeWall,
+        border:`2px solid ${W.badgeBorder}`,
+        boxShadow:isNight?`0 8px 28px ${W.accentGlow},inset 0 1px 0 rgba(255,255,255,0.06)`:'none',
+        height:320,overflow:'hidden',position:'relative'}}>
+        {/* Fade bottom mask */}
+        <div style={{position:'absolute',bottom:0,left:0,right:0,height:48,
+          background:isNight?'linear-gradient(to top,#12002E,transparent)':'linear-gradient(to top,rgba(255,180,0,0.3),transparent)',
+          pointerEvents:'none',zIndex:2,borderRadius:'0 0 18px 18px'}}/>
+        <div style={{overflowY:'auto',height:'100%',scrollbarWidth:'none',WebkitOverflowScrolling:'touch'}}>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
+            {medals.map((m,i)=>(<WildBadge key={i} {...m}/>))}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Next-day recovery */}
     <div style={{padding:'0 16px'}}>
-      <div style={{fontSize:13,fontWeight:700,color:T.ink,padding:'8px 4px'}}>放纵勋章 · 3/9</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
-        {[{i:'🌙',t:'深夜酒神',s:'Lv2',c:'#3a2a4a',on:true},{i:'🎨',t:'微醺艺术家',s:'Lv1',c:'#5a3b24',on:true},{i:'🕺',t:'舞池新星',s:'Lv1',c:'#6a2a3a',on:true},{i:'?',t:'黎明使者',s:'未解锁',c:'#aaa',on:false},{i:'?',t:'微风清醒',s:'未解锁',c:'#aaa',on:false},{i:'?',t:'诗酒趁年华',s:'未解锁',c:'#aaa',on:false}].map((b,i)=>(<Bento key={i} bg={b.on?b.c:T.paper} style={{padding:12,textAlign:'center',color:b.on?'#fff':T.ink3,opacity:b.on?1:0.7}}><div style={{fontSize:28,lineHeight:1}}>{b.i}</div><div style={{fontSize:11,fontWeight:700,marginTop:4}}>{b.t}</div><div style={{fontSize:9,opacity:0.7,marginTop:2}}>{b.s}</div></Bento>))}
+      <div style={{borderRadius:18,padding:14,
+        background:W.next,border:`1px solid ${W.nextBorder}`,backdropFilter:'blur(6px)'}}>
+        <div style={{fontSize:11,fontWeight:700,color:W.accent,marginBottom:6,letterSpacing:0.3}}>🌿 明日自然收尾</div>
+        <div style={{fontSize:13,color:W.nextText,lineHeight:1.55}}>
+          进入"豁出去"的次日，系统自动切回常规模式，优先推送轻食提醒和微运动建议——没有说教，只有轻轻的过渡。
+        </div>
       </div>
     </div>
   </div>);
 }
 
+/* ═══════════════ WATER ═══════════════ */
+function Water() {
+  const today=new Date();
+  const [dateOffset,setDateOffset]=React.useState(0);
+  const viewDate=new Date(today.getTime()+dateOffset*86400000);
+  const isToday=dateOffset===0;
+  const fmtDate=d=>{const m=d.getMonth()+1,day=d.getDate(),wd=['日','一','二','三','四','五','六'][d.getDay()];return `${m}月${day}日 · 周${wd}`;};
+
+  const [logs,setLogs]=React.useState([{t:'08:00',a:250},{t:'10:30',a:300},{t:'13:00',a:200},{t:'15:30',a:350}]);
+  const total=logs.reduce((s,x)=>s+x.a,0);
+  const target=2000;
+  const pct=Math.min(100,Math.round((total/target)*100));
+  const suggestions=['重口味餐饮后','今日咖啡因摄入较高','运动后'];
+  const tip=suggestions[0];
+  return (<div style={{paddingBottom:140}}>
+    <div style={{padding:'18px 20px 12px'}}>
+      <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <Sticker kind="water" size={36}/>
+        <div style={{fontSize:28,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>喝水追踪</div>
+      </div>
+      <div style={{fontSize:12,color:T.ink2,marginTop:4}}>根据饮食自动调整目标 · {tip}</div>
+    </div>
+
+    {/* Date navigator */}
+    <div style={{padding:'0 16px 12px'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
+        background:T.paper,borderRadius:18,padding:'10px 14px',
+        boxShadow:T.shadow,border:`0.5px solid ${T.line}`}}>
+        <div onClick={()=>setDateOffset(dateOffset-1)}
+          style={{width:32,height:32,borderRadius:10,background:T.sand,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',fontSize:16,color:T.ink2}}>‹</div>
+        <div style={{textAlign:'center'}}>
+          <div style={{fontSize:14,fontWeight:800,color:T.ink}}>{fmtDate(viewDate)}</div>
+          {isToday&&<div style={{fontSize:10,color:T.mocha,fontWeight:700,marginTop:1}}>今天</div>}
+          {!isToday&&dateOffset===-1&&<div style={{fontSize:10,color:T.ink3,marginTop:1}}>昨天</div>}
+          {!isToday&&dateOffset<-1&&<div style={{fontSize:10,color:T.ink3,marginTop:1}}>{Math.abs(dateOffset)}天前</div>}
+        </div>
+        <div onClick={()=>dateOffset<0&&setDateOffset(dateOffset+1)}
+          style={{width:32,height:32,borderRadius:10,background:dateOffset<0?T.sand:'transparent',display:'flex',alignItems:'center',justifyContent:'center',cursor:dateOffset<0?'pointer':'default',fontSize:16,color:dateOffset<0?T.ink2:T.ink3+'66',opacity:dateOffset<0?1:0.3}}>›</div>
+      </div>
+    </div>
+
+    <div style={{padding:'0 16px 12px'}}>
+      <Bento style={{padding:20}}>
+        <div style={{display:'flex',gap:16,alignItems:'center'}}>
+          <div style={{position:'relative',width:100,height:100}}>
+            <svg width="100" height="100" style={{transform:'rotate(-90deg)'}}>
+              <circle cx="50" cy="50" r="42" stroke={T.sand} strokeWidth="10" fill="none"/>
+              <circle cx="50" cy="50" r="42" stroke="#84A8B6" strokeWidth="10" fill="none" strokeDasharray={`${2*Math.PI*42}`} strokeDashoffset={`${2*Math.PI*42*(1-pct/100)}`} strokeLinecap="round"/>
+            </svg>
+            <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
+              <div style={{fontSize:26,fontWeight:800,color:T.ink,lineHeight:1}}>{total}</div>
+              <div style={{fontSize:10,color:T.ink3}}>ml</div>
+            </div>
+          </div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:14,fontWeight:700,color:T.ink}}>{pct}% 完成</div>
+            <div style={{fontSize:12,color:T.ink2,marginTop:4}}>目标 {target}ml</div>
+            <div style={{marginTop:8,display:'flex',gap:4}}>
+              {Array.from({length:8}).map((_,i)=>(<div key={i} style={{flex:1,height:8,borderRadius:4,background:i<Math.ceil(pct/12.5)?'#84A8B6':T.sand,opacity:i<Math.ceil(pct/12.5)?1:0.4}}/>))}
+            </div>
+          </div>
+        </div>
+        <div style={{marginTop:14,display:'flex',gap:6,flexWrap:'wrap'}}>
+          {[200,300,350,500].map(v=>(<div key={v} onClick={()=>setLogs([...logs,{t:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),a:v}])} style={{padding:'8px 14px',borderRadius:12,background:T.sky+'44',color:T.ink2,fontSize:12,fontWeight:700,cursor:'pointer',border:`1px solid ${T.sky}`}}>+{v}ml</div>))}
+        </div>
+      </Bento>
+    </div>
+    <div style={{padding:'0 16px 12px'}}>
+      <div style={{fontSize:13,fontWeight:700,color:T.ink,padding:'4px 4px 10px'}}>今日记录</div>
+      {logs.map((l,i)=>(<div key={i} style={{background:T.paper,borderRadius:16,padding:'10px 14px',display:'flex',alignItems:'center',gap:12,marginBottom:8,boxShadow:T.shadow,border:`0.5px solid ${T.line}`}}>
+        <div style={{width:32,height:32,borderRadius:10,background:T.sky+'44',display:'flex',alignItems:'center',justifyContent:'center'}}><Sticker kind="water" size={22}/></div>
+        <div style={{flex:1}}><div style={{fontSize:13,fontWeight:700,color:T.ink}}>{l.a} ml</div><div style={{fontSize:10,color:T.ink3}}>{l.t}</div></div>
+        <div style={{width:24,height:24,borderRadius:12,background:'#84A8B633',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12}}>💧</div>
+      </div>))}
+    </div>
+    <div style={{padding:'0 16px'}}>
+      <Bento bg={T.sky+'22'} style={{padding:14}}>
+        <div style={{fontSize:11,fontWeight:700,color:T.ink2,marginBottom:8}}>💡 智能建议</div>
+        <div style={{fontSize:13,color:T.ink,lineHeight:1.5}}>根据你中午的火锅记录，建议今日多补充 300ml 水分。可以在接下来两小时内分次饮用。</div>
+      </Bento>
+    </div>
+  </div>);
+}
+
 /* ═══════════════ SETTINGS ═══════════════ */
-function Settings({mode,setMode}) {
+function Toggle({on,onToggle,color}) {
+  const c=color||T.sageDk;
+  return (<div onClick={onToggle} style={{width:44,height:26,borderRadius:13,background:on?c:T.ink3+'55',cursor:'pointer',position:'relative',transition:'background 0.2s',flexShrink:0}}>
+    <div style={{width:20,height:20,borderRadius:10,background:'#fff',position:'absolute',top:3,left:on?21:3,transition:'left 0.2s',boxShadow:'0 1px 4px rgba(0,0,0,0.2)'}}/>
+  </div>);
+}
+function Settings({mode,setMode,periodTracking,setPeriodTracking}) {
   return (<div style={{paddingBottom:140}}>
     <div style={{padding:'18px 20px 12px'}}><div style={{fontSize:32,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>设置</div></div>
     <div style={{padding:'0 16px 12px'}}>
@@ -491,8 +1333,28 @@ function Settings({mode,setMode}) {
         </div>
       </Bento>
     </div>
+    {/* Health & Privacy */}
+    <div style={{padding:'0 16px 12px'}}>
+      <div style={{fontSize:11,fontWeight:700,color:T.ink3,letterSpacing:1,padding:'0 4px 8px'}}>健康功能</div>
+      <Bento style={{padding:0,overflow:'hidden'}}>
+        {[
+          {icon:'🌸',label:'经期追踪',desc:'在药物日历中追踪月经周期、症状与预测',on:periodTracking,toggle:()=>setPeriodTracking(!periodTracking),color:'#C8609A'},
+          {icon:'💧',label:'喝水提醒',desc:'根据饮食自动调整每日目标',on:true,toggle:()=>{},color:T.sky},
+          {icon:'💊',label:'用药智能提醒',desc:'结合餐后时间推送提醒',on:true,toggle:()=>{},color:T.plum},
+        ].map((item,i,arr)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:12,padding:'13px 16px',borderBottom:i<arr.length-1?`0.5px solid ${T.line}`:'none'}}>
+            <div style={{width:36,height:36,borderRadius:11,background:item.color+'22',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0}}>{item.icon}</div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13,fontWeight:700,color:T.ink}}>{item.label}</div>
+              <div style={{fontSize:10,color:T.ink3,marginTop:1,lineHeight:1.3}}>{item.desc}</div>
+            </div>
+            <Toggle on={item.on} onToggle={item.toggle} color={item.color}/>
+          </div>
+        ))}
+      </Bento>
+    </div>
     <div style={{padding:'0 16px 12px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-      {[{t:'热量环',d:'BMR 动态配色',c:T.mochaLt+'55'},{t:'喝水提醒',d:'柔和 · 自适应',c:'#EAF1F6'},{t:'贴纸风格',d:'白描边 / 漫画',c:T.rose+'44'},{t:'药物日历',d:'禅意 Emoji',c:T.sage+'44'},{t:'iCloud 同步',d:'端到端加密',c:T.sand},{t:'品牌识别',d:'奶茶 · 咖啡',c:T.butter+'66'}].map((it,i)=>(<Bento key={i} bg={it.c} style={{padding:14}}>
+      {[{t:'热量环',d:'BMR 动态配色',c:T.mochaLt+'55'},{t:'贴纸风格',d:'白描边 / 漫画',c:T.rose+'44'},{t:'iCloud 同步',d:'端到端加密',c:T.sand},{t:'品牌识别',d:'奶茶 · 咖啡',c:T.butter+'66'}].map((it,i)=>(<Bento key={i} bg={it.c} style={{padding:14}}>
         <div style={{fontSize:13,fontWeight:800,color:T.ink}}>{it.t}</div>
         <div style={{fontSize:10.5,color:T.ink2,marginTop:2}}>{it.d}</div>
       </Bento>))}
@@ -501,27 +1363,30 @@ function Settings({mode,setMode}) {
 }
 
 /* ═══════════════ DOCK ═══════════════ */
-function Dock({screen,setScreen,scene,setScene}) {
-  const icon=(k,a)=>{const c=a?'#fff':T.ink2, sw=1.8;
-    if(k==='today') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 8 Q8 5 12 5 Q16 5 18 8 L17 18 Q17 20 15 20 L9 20 Q7 20 7 18 Z" stroke={c} strokeWidth={sw}/><path d="M18 10 Q21 10 21 13 Q21 16 18 16" stroke={c} strokeWidth={sw}/></svg>;
+function Dock({screen,setScreen,scene,setScene,wildIsNight}) {
+  const isWild=screen==='wild';
+  const dockBg=isWild?(wildIsNight?'rgba(8,0,24,0.92)':'rgba(255,60,0,0.18)'):'rgba(255,253,248,0.92)';
+  const dockBorder=isWild?(wildIsNight?'rgba(255,26,108,0.4)':'rgba(204,34,0,0.25)'):T.line;
+  const inactiveTxt=isWild?(wildIsNight?'rgba(255,255,255,0.45)':'rgba(26,0,0,0.55)'):T.ink2;
+  const activeBg=(k)=>{if(isWild)return wildIsNight?'#CC0055':'#CC1100'; const m={water:'#84A8B6',wild:T.roseDk,med:T.plum}; return m[k]||T.ink;};
+  const icon=(k,a)=>{const c=a?'#fff':inactiveTxt, sw=1.8;
+    if(k==='today') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12 L5 12 M19 12 L21 12 M12 3 L12 5 M12 19 L12 21" stroke={c} strokeWidth={sw} strokeLinecap="round"/><circle cx="12" cy="12" r="4" stroke={c} strokeWidth={sw}/></svg>;
     if(k==='capture') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="3" stroke={c} strokeWidth={sw}/><circle cx="12" cy="13" r="4" stroke={c} strokeWidth={sw}/></svg>;
-    if(k==='portfolio') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="4" y="13" width="4" height="7" rx="1" fill={c}/><rect x="10" y="8" width="4" height="12" rx="1" fill={c}/><rect x="16" y="4" width="4" height="16" rx="1" fill={c}/></svg>;
-    if(k==='med') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="10" rx="5" stroke={c} strokeWidth={sw} transform="rotate(-30 12 16)"/><path d="M8.5 9 L15.5 16" stroke={c} strokeWidth={sw}/></svg>;
+    if(k==='portfolio') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke={c} strokeWidth={sw}/><path d="M3 8 L21 8" stroke={c} strokeWidth={sw}/><path d="M7 4 L7 8" stroke={c} strokeWidth={sw}/><circle cx="17.5" cy="6" r="1" fill={c}/><circle cx="14.5" cy="6" r="1" fill={c}/></svg>;
+    if(k==='water') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3 Q6 14 6 18 Q6 22 12 22 Q18 22 18 18 Q18 14 12 3Z" stroke={c} strokeWidth={sw} fill={a?c:'none'}/></svg>;
+    if(k==='wild') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3 L13.5 8.5 L19 10 L13.5 11.5 L12 17 L10.5 11.5 L5 10 L10.5 8.5 Z" stroke={c} strokeWidth={sw} fill={a?c:'none'}/><circle cx="12" cy="12" r="2" fill={c}/></svg>;
+    if(k==='med') return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 12 L18 12 M12 6 L12 18" stroke={c} strokeWidth={sw} strokeLinecap="round"/><rect x="5" y="5" width="14" height="14" rx="6" stroke={c} strokeWidth={sw}/></svg>;
     return <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke={c} strokeWidth={sw}/><path d="M12 2 L12 5 M12 19 L12 22 M2 12 L5 12 M19 12 L22 12" stroke={c} strokeWidth={sw} strokeLinecap="round"/></svg>;
   };
-  const items=['today','capture','portfolio','med','settings'];
-  return (<div style={{position:'absolute',left:14,right:14,bottom:16,zIndex:70,display:'flex',flexDirection:'column',gap:8}}>
-    <div style={{display:'flex',gap:6,padding:6,background:'rgba(255,253,248,0.85)',backdropFilter:'blur(16px)',border:`0.5px solid ${T.line}`,borderRadius:999,boxShadow:T.shadow}}>
-      {SCENES.map(s=>(<div key={s.key} onClick={()=>setScene(s.key)} style={{flex:1,textAlign:'center',padding:'6px 4px',borderRadius:999,cursor:'pointer',background:scene===s.key?(s.key==='wild'?T.roseDk:s.key==='med'?T.plum:s.key==='water'?'#84A8B6':T.mocha):'transparent',color:scene===s.key?'#fff':T.ink2,fontWeight:700,fontSize:11,transition:'all 0.2s'}}>{s.label}</div>))}
-    </div>
-    <div style={{display:'flex',gap:4,padding:6,background:'rgba(255,253,248,0.92)',backdropFilter:'blur(16px)',border:`0.5px solid ${T.line}`,borderRadius:999,boxShadow:T.shadowLg}}>
-      {items.map(k=>{const a=screen===k; return (<div key={k} onClick={()=>setScreen(k)} style={{flex:1,height:44,borderRadius:999,cursor:'pointer',background:a?T.ink:'transparent',display:'flex',alignItems:'center',justifyContent:'center',transition:'background 0.2s'}}>{icon(k,a)}</div>);})}
-    </div>
+  const labels={today:'首页',capture:'拍摄',portfolio:'手帐',water:'喝水',wild:'豁出去',med:'药物',settings:'设置'};
+  const items=['today','capture','portfolio','water','wild','med'];
+  return (<div style={{position:'absolute',left:14,right:14,bottom:16,zIndex:70,display:'flex',gap:4,padding:6,background:dockBg,backdropFilter:'blur(16px)',border:`0.5px solid ${dockBorder}`,borderRadius:999,boxShadow:T.shadowLg}}>
+    {items.map(k=>{const a=screen===k; return (<div key={k} onClick={()=>setScreen(k)} style={{flex:1,height:50,borderRadius:999,cursor:'pointer',background:a?activeBg(k):'transparent',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,transition:'background 0.2s'}}>{icon(k,a)}<span style={{fontSize:9,fontWeight:700,color:a?'#fff':inactiveTxt,marginTop:2}}>{labels[k]}</span></div>);})}
   </div>);
 }
 
 /* ═══════════════ TWEAKS ═══════════════ */
-const TWEAKS=/*EDITMODE-BEGIN*/{"startScreen":"today","adviceMode":"standard","mood":"bloom","showFrame":true}/*EDITMODE-END*/;
+const TWEAKS=/*EDITMODE-BEGIN*/{"startScreen":"today","adviceMode":"standard","mood":"bloom","showFrame":true,"periodTracking":true}/*EDITMODE-END*/;
 
 function TweaksPanel({state,setState,onClose}) {
   const chip=(a,fn,ch,bg)=>(<div onClick={fn} style={{padding:'6px 11px',borderRadius:999,background:a?(bg||T.ink):'#fff',color:a?'#fff':T.ink2,cursor:'pointer',fontSize:11,fontWeight:700,border:`0.5px solid ${a?'transparent':T.line}`}}>{ch}</div>);
@@ -531,10 +1396,98 @@ function TweaksPanel({state,setState,onClose}) {
       <div style={{fontSize:14,fontWeight:800,color:T.ink}}>Tweaks</div>
       <div onClick={onClose} style={{cursor:'pointer',width:24,height:24,borderRadius:12,background:'#f1eadf',display:'flex',alignItems:'center',justifyContent:'center'}}>✕</div>
     </div>
-    {row('起始屏幕',<div style={{display:'flex',flexWrap:'wrap',gap:6}}>{['today','capture','portfolio','med','settings'].map(s=>chip(state.startScreen===s,()=>setState({startScreen:s}),({today:'主页',capture:'拍摄',portfolio:'档案',med:'药物',settings:'设置'})[s]))}</div>)}
+    {row('起始屏幕',<div style={{display:'flex',flexWrap:'wrap',gap:6}}>{['today','capture','portfolio','water','wild','med','settings'].map(s=>chip(state.startScreen===s,()=>setState({startScreen:s}),({today:'主页',capture:'拍摄',portfolio:'档案',water:'喝水',wild:'豁出去',med:'药物',settings:'设置'})[s]))}</div>)}
     {row('AI 建议力度',<div style={{display:'flex',gap:6}}>{MODES.map(m=>chip(state.adviceMode===m.key,()=>setState({adviceMode:m.key}),<><span style={{marginRight:4}}>{m.glyph}</span>{m.label}</>,m.color))}</div>)}
     {row('今日心情',<div style={{display:'flex',gap:6,flexWrap:'wrap'}}>{MOODS.map(m=>chip(state.mood===m.key,()=>setState({mood:m.key}),m.label,m.ring))}</div>)}
     {row('设备外框',<div style={{display:'flex',gap:6}}>{chip(state.showFrame,()=>setState({showFrame:true}),'iPhone')}{chip(!state.showFrame,()=>setState({showFrame:false}),'无框')}</div>)}
+  </div>);
+}
+
+/* ═══════════════ BADGE WALL SCREEN ═══════════════ */
+function BadgeWallScreen({setScreen}) {
+  const categories=[
+    {label:'🍽️ 美食战绩',color:T.rose,badges:[
+      {e:'🍲',l:'火锅终结者',d:'一人扫完整锅',earned:true},
+      {e:'🍔',l:'人均贡献王',d:'聚餐单笔最多',earned:true},
+      {e:'🍜',l:'圆桌水流山',d:'汤底都喝干了',earned:true},
+      {e:'🍗',l:'炸鸡终结者',d:'一次整桶炸鸡',earned:true},
+      {e:'🥩',l:'全家桶达人',d:'七八人全点完',earned:true},
+      {e:'🍣',l:'刺身战神',d:'连续3次日料',earned:false},
+      {e:'🌮',l:'墨西哥卷王',d:'5次墨西哥菜',earned:false},
+      {e:'🦞',l:'海鲜霸主',d:'3种以上海鲜',earned:false},
+    ]},
+    {label:'🍹 饮品 & 甜品',color:T.mocha,badges:[
+      {e:'🧋',l:'奶茶重度患者',d:'连续7天奶茶',earned:true},
+      {e:'🍕',l:'披萨统治者',d:'收藏10种披萨',earned:false},
+      {e:'🍦',l:'甜品炸弹',d:'一餐超3份甜品',earned:false},
+      {e:'🍰',l:'蛋糕猎人',d:'解锁8种蛋糕',earned:false},
+    ]},
+    {label:'🌙 夜间传说',color:'#7B2FBE',badges:[
+      {e:'🌙',l:'午夜烤肉神',d:'凌晨2点撸串',earned:true},
+      {e:'🌅',l:'黎明使者',d:'熬夜到天亮',earned:false},
+      {e:'🍺',l:'啤酒山终结者',d:'超过10瓶啤酒',earned:false},
+      {e:'🥂',l:'干杯传说',d:'5种以上酒水',earned:true},
+    ]},
+    {label:'💊 健康坚持',color:T.plum,badges:[
+      {e:'💊',l:'按时服药',d:'连续14天打卡',earned:true},
+      {e:'🌸',l:'月经规律',d:'连续3月追踪',earned:true},
+      {e:'🌿',l:'七日清淡',d:'一周低油低盐',earned:false},
+    ]},
+    {label:'💧 喝水达人',color:T.sky,badges:[
+      {e:'💧',l:'补水达标',d:'连续7天完成',earned:true},
+      {e:'🌊',l:'水分充盈',d:'连续30天达标',earned:false},
+    ]},
+    {label:'⚡ 日常成就',color:T.coral,badges:[
+      {e:'⚡',l:'今日吃货',d:'记录超5道菜',earned:true},
+      {e:'🎆',l:'节日轰炸机',d:'节假日豪华记录',earned:false},
+      {e:'🥗',l:'健康饮食',d:'连续5天蔬菜',earned:false},
+    ]},
+  ];
+  return (<div style={{paddingBottom:140}}>
+    {/* Header with back */}
+    <div style={{padding:'18px 20px 12px',display:'flex',alignItems:'center',gap:12}}>
+      <div onClick={()=>setScreen('portfolio')} style={{width:36,height:36,borderRadius:11,background:T.sand,
+        display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',fontSize:18,color:T.ink2,fontWeight:700}}>‹</div>
+      <div>
+        <div style={{fontSize:26,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>🏆 成就图鉴</div>
+        <div style={{fontSize:11,color:T.ink2,marginTop:1}}>药物 · 记录 · 喝水 · 豁出去</div>
+      </div>
+    </div>
+    {/* Stats row */}
+    <div style={{padding:'0 16px 14px'}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10}}>
+        {[['17','总成就'],['9','已解锁'],['53%','完成率']].map(([v,l],i)=>(
+          <Bento key={i} style={{padding:'12px 8px',textAlign:'center'}}>
+            <div style={{fontSize:22,fontWeight:900,color:T.mochaDk,fontFamily:'Fraunces,serif'}}>{v}</div>
+            <div style={{fontSize:10,color:T.ink3,marginTop:2}}>{l}</div>
+          </Bento>
+        ))}
+      </div>
+    </div>
+    {/* Badge categories */}
+    {categories.map((cat,ci)=>(
+      <div key={ci} style={{padding:'0 16px 14px'}}>
+        <div style={{fontSize:13,fontWeight:800,color:T.ink,padding:'0 2px 8px',display:'flex',alignItems:'center',gap:6}}>
+          <div style={{width:4,height:16,borderRadius:2,background:cat.color,flexShrink:0}}/>
+          {cat.label}
+          <span style={{fontSize:10,color:T.ink3,fontWeight:600,marginLeft:4}}>{cat.badges.filter(b=>b.earned).length}/{cat.badges.length}</span>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}}>
+          {cat.badges.map((b,bi)=>(
+            <div key={bi} style={{
+              borderRadius:16,padding:'10px 6px',textAlign:'center',
+              background:b.earned?cat.color+'22':T.sand,
+              border:`1px solid ${b.earned?cat.color+'55':T.line}`,
+              opacity:b.earned?1:0.55,
+            }}>
+              <div style={{fontSize:24,lineHeight:1,marginBottom:4}}>{b.earned?b.e:'🔒'}</div>
+              <div style={{fontSize:9,fontWeight:800,color:b.earned?T.ink:T.ink3,lineHeight:1.2}}>{b.l}</div>
+              {b.earned&&<div style={{fontSize:8,color:T.ink3,marginTop:2,lineHeight:1.2}}>{b.d}</div>}
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
   </div>);
 }
 
@@ -547,33 +1500,41 @@ function App() {
   const [month,setMonth]=React.useState(3);
   React.useEffect(()=>{localStorage.setItem('easset.screen',screen);},[screen]);
   const setTweak=(p)=>{setTweaks({...tweaks,...p}); try{window.parent.postMessage({type:'__edit_mode_set_keys',edits:p},'*');}catch{}};
-  React.useEffect(()=>{if(scene==='wild')setScreen('wild');else if(scene==='med')setScreen('med');},[scene]);
   React.useEffect(()=>{const h=(e)=>{if(!e.data||!e.data.type)return;if(e.data.type==='__activate_edit_mode')setTweaksOpen(true);if(e.data.type==='__deactivate_edit_mode')setTweaksOpen(false);};window.addEventListener('message',h);try{window.parent.postMessage({type:'__edit_mode_available'},'*');}catch{}return ()=>window.removeEventListener('message',h);},[]);
 
-  const props={mood:tweaks.mood,setMood:(v)=>setTweak({mood:v}),mode:tweaks.adviceMode,setMode:(v)=>setTweak({adviceMode:v}),screen,setScreen,scene,setScene,month,setMonth};
+  const wildIsNight=React.useMemo(()=>{const h=new Date().getHours();return h>=20||h<6;},[]);
+  const wildStatusBg=wildIsNight?'#080018':'#FF3300';
+
+  const props={mood:tweaks.mood,setMood:(v)=>setTweak({mood:v}),mode:tweaks.adviceMode,setMode:(v)=>setTweak({adviceMode:v}),periodTracking:tweaks.periodTracking??true,setPeriodTracking:(v)=>setTweak({periodTracking:v}),screen,setScreen,scene,setScene,month,setMonth};
   const renderScreen=()=>{
     if(screen==='today')return <Today {...props}/>;
     if(screen==='capture')return <Capture {...props}/>;
     if(screen==='portfolio')return <Portfolio {...props}/>;
+    if(screen==='badgewall')return <BadgeWallScreen {...props}/>;
     if(screen==='med')return <Med {...props}/>;
     if(screen==='wild')return <Wild {...props}/>;
+    if(screen==='water')return <Water {...props}/>;
     if(screen==='settings')return <Settings {...props}/>;
     return null;
   };
 
-  const inner=(<div style={{background:screen==='capture'?'#1a1510':T.cream,minHeight:'100%',paddingTop:52,position:'relative'}} data-screen-label={`Easset · ${screen}`}>
+  const isWild=screen==='wild';
+  const innerBg=screen==='capture'?'#1a1510':isWild?wildStatusBg:T.cream;
+  const phoneBg=screen==='capture'?'#000':isWild?wildStatusBg:'#F2F2F7';
+
+  const inner=(<div style={{background:innerBg,minHeight:'100%',paddingTop:52,position:'relative'}} data-screen-label={`Easset · ${screen}`}>
     {renderScreen()}
   </div>);
 
   const phone=(<div style={{position:'relative'}}>
-    <div style={{width:402,height:874,borderRadius:48,overflow:'hidden',position:'relative',background:screen==='capture'?'#000':'#F2F2F7',boxShadow:'0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.12)'}}>
+    <div style={{width:402,height:874,borderRadius:48,overflow:'hidden',position:'relative',background:phoneBg,boxShadow:'0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.12)'}}>
       <div style={{position:'absolute',top:11,left:'50%',transform:'translateX(-50%)',width:126,height:37,borderRadius:24,background:'#000',zIndex:50}}/>
       <div style={{height:'100%',overflowY:'auto'}}>{inner}</div>
       <div style={{position:'absolute',bottom:0,left:0,right:0,zIndex:60,height:34,display:'flex',justifyContent:'center',alignItems:'flex-end',paddingBottom:8,pointerEvents:'none'}}>
-        <div style={{width:139,height:5,borderRadius:100,background:screen==='capture'?'rgba(255,255,255,0.7)':'rgba(0,0,0,0.25)'}}/>
+        <div style={{width:139,height:5,borderRadius:100,background:(screen==='capture'||isWild)?'rgba(255,255,255,0.5)':'rgba(0,0,0,0.25)'}}/>
       </div>
     </div>
-    <Dock screen={screen} setScreen={setScreen} scene={scene} setScene={setScene}/>
+    <Dock screen={screen} setScreen={setScreen} scene={scene} setScene={setScene} wildIsNight={wildIsNight}/>
   </div>);
 
   return (<div style={{minHeight:'100vh',background:`radial-gradient(circle at 15% 20%, ${T.mochaLt}33, transparent 40%), radial-gradient(circle at 85% 80%, ${T.rose}22, transparent 40%), ${T.cream}`,padding:'40px 20px',display:'flex',alignItems:'center',justifyContent:'center',gap:48,flexWrap:'wrap'}}>
@@ -581,15 +1542,25 @@ function App() {
       <Pill bg={T.ink} color="#fff" style={{fontSize:11,padding:'5px 12px'}}>🎨 Easset · iOS 17+</Pill>
       <div style={{fontFamily:'Fraunces,Georgia,serif',fontSize:56,fontWeight:800,lineHeight:1,color:T.ink,marginTop:14,letterSpacing:-1.5}}>Your <em style={{color:T.mocha}}>visual</em><br/>diet diary.</div>
       <div style={{fontSize:14,color:T.ink2,marginTop:14,lineHeight:1.55}}>像收集贴纸一样记录生活，像经营资产一样关爱健康。<br/>MobileSAM 端侧抠图 · 三档 AI · 豁出去模式 · 禅意药物日历。</div>
-      <div style={{display:'flex',gap:8,marginTop:18,flexWrap:'wrap'}}>{['贴纸墙','三档建议','豁出去','禅意日历','Bento 布局'].map(tag=><Pill key={tag} bg={T.paper} color={T.ink2} border={`0.5px solid ${T.line}`} style={{fontSize:11,padding:'5px 11px'}}>{tag}</Pill>)}</div>
+      <div style={{display:'flex',gap:8,marginTop:18,flexWrap:'wrap'}}>{['AI 视觉抠图','三档 AI 建议','豁出去模式','禅意药物日历','Bento 布局','勋章墙'].map(tag=><Pill key={tag} bg={T.paper} color={T.ink2} border={`0.5px solid ${T.line}`} style={{fontSize:11,padding:'5px 11px'}}>{tag}</Pill>)}</div>
+      <div style={{marginTop:20,padding:'16px',background:T.paper,borderRadius:20,border:`0.5px solid ${T.line}`,boxShadow:T.shadow}}>
+        <div style={{fontSize:12,fontWeight:800,color:T.ink,marginBottom:12,letterSpacing:0.5}}>🎯 核心功能</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:10}}>
+          {[{icon:'📷',title:'AI 视觉抠图',desc:'MobileSAM 端侧分割，保护隐私',color:T.mocha},{icon:'🏆',title:'美食勋章墙',desc:'30+ 成就徽章，解锁稀有称号',color:T.rose},{icon:'📊',title:'三档 AI 建议',desc:'宽松·标准·严厉，按需切换',color:T.sage},{icon:'💧',title:'喝水联动',desc:'餐饮后智能补水提醒',color:T.sky},{icon:'📖',title:'手帐系统',desc:'周/月/年数据可视化',color:T.butter},{icon:'💊',title:'禅意药物日历',desc:'用药 + 经期追踪',color:T.plum}].map((f,i)=>(<div key={i} style={{padding:10,background:f.color+'22',borderRadius:14}}>
+            <div style={{fontSize:20,marginBottom:4}}>{f.icon}</div>
+            <div style={{fontSize:11,fontWeight:700,color:T.ink}}>{f.title}</div>
+            <div style={{fontSize:9,color:T.ink2,marginTop:2,lineHeight:1.3}}>{f.desc}</div>
+          </div>))}
+        </div>
+      </div>
       <div style={{marginTop:22,padding:14,background:T.paper,borderRadius:18,border:`0.5px solid ${T.line}`,boxShadow:T.shadow}}>
         <div style={{fontSize:11,color:T.mocha,fontWeight:800,letterSpacing:1}}>当前屏幕</div>
-        <div style={{fontSize:15,fontWeight:700,color:T.ink,marginTop:4}}>{({today:'主页 · Bento Dashboard',capture:'拍摄 · 贴纸生成',portfolio:'档案 · 数据可视化',med:'禅意药物日历',wild:'豁出去模式',settings:'设置'})[screen]}</div>
-        <div style={{display:'flex',gap:6,marginTop:10,flexWrap:'wrap'}}>{[['today','主页'],['capture','拍摄'],['portfolio','档案'],['med','药物'],['wild','豁出去'],['settings','设置']].map(([k,lbl])=>(<div key={k} onClick={()=>setScreen(k)} style={{padding:'6px 11px',borderRadius:999,background:screen===k?T.mocha:T.sand,color:screen===k?'#fff':T.ink2,fontSize:11,fontWeight:700,cursor:'pointer'}}>{lbl}</div>))}</div>
+        <div style={{fontSize:15,fontWeight:700,color:T.ink,marginTop:4}}>{({today:'主页 · Bento Dashboard',capture:'拍摄 · AI 抠图生成贴纸',portfolio:'档案 · 手帐周月年视图',water:'喝水追踪 · 智能补水提醒',med:'禅意药物日历 · 经期追踪',wild:'豁出去模式 · 战绩记录',settings:'设置',badgewall:'勋章墙 · 成就展示'})[screen]}</div>
+        <div style={{display:'flex',gap:6,marginTop:10,flexWrap:'wrap'}}>{[['today','主页'],['capture','拍摄'],['portfolio','档案'],['water','喝水'],['med','药物'],['wild','豁出去'],['badgewall','勋章'],['settings','设置']].map(([k,lbl])=>(<div key={k} onClick={()=>setScreen(k)} style={{padding:'6px 11px',borderRadius:999,background:screen===k?T.mocha:T.sand,color:screen===k?'#fff':T.ink2,fontSize:11,fontWeight:700,cursor:'pointer'}}>{lbl}</div>))}</div>
       </div>
       <div style={{marginTop:14,fontSize:10,color:T.ink3,lineHeight:1.5}}>免责声明：Easset 为生活记录工具，非医疗设备。<br/>AI 建议仅供参考，请咨询专业医疗人员。</div>
     </div>
-    {tweaks.showFrame?phone:(<div style={{width:402,borderRadius:32,overflow:'hidden',boxShadow:'0 20px 60px rgba(0,0,0,0.12)',background:'#fff',position:'relative'}}>{inner}<Dock screen={screen} setScreen={setScreen} scene={scene} setScene={setScene}/></div>)}
+    {tweaks.showFrame?phone:(<div style={{width:402,borderRadius:32,overflow:'hidden',boxShadow:'0 20px 60px rgba(0,0,0,0.12)',background:'#fff',position:'relative'}}>{inner}<Dock screen={screen} setScreen={setScreen} scene={scene} setScene={setScene} wildIsNight={wildIsNight}/></div>)}
     {tweaksOpen && <TweaksPanel state={tweaks} setState={setTweak} onClose={()=>setTweaksOpen(false)}/>}
   </div>);
 }
