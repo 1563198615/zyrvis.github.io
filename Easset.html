@@ -369,7 +369,7 @@ function Capture({setScreen,mode}) {
       <div onClick={()=>setScreen('today')} style={{width:36,height:36,borderRadius:18,background:'rgba(255,255,255,0.14)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
         <svg width="14" height="14" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" fill="none"/></svg>
       </div>
-      <Pill bg="rgba(255,255,255,0.14)" color="#fff" style={{padding:'6px 14px'}}>{mo.glyph} {mo.label} · MobileSAM</Pill>
+      <Pill bg="rgba(255, 255, 255, 0.14)" color="#fff" style={{padding:'6px 14px'}}>{mo.glyph} {mo.label} · Vision</Pill>
       <div style={{width:36}}/>
     </div>
     <div style={{padding:'0 18px'}}>
@@ -426,7 +426,7 @@ function Capture({setScreen,mode}) {
 }
 
 /* ═══════════════ SCROLL DRUM PICKER ═══════════════ */
-const PORTFOLIO_DAYS=[
+const PORTFOLIO_DAYS_ORIG=[
   {date:'4月19日',day:'周六',stickers:[{k:'americano',t:'10:39'},{k:'latte',t:'14:20'},{k:'cake',t:'16:30'},{k:'water',t:'18:00'}],note:'下午茶时光',mood:'🌤️',weather:'☁️'},
   {date:'4月18日',day:'周五',stickers:[{k:'boba',t:'12:00'},{k:'salad',t:'12:30'},{k:'hotpot',t:'15:00'}],note:'清淡健康的一天',mood:'😊',weather:'🌤️'},
   {date:'4月17日',day:'周四',stickers:[{k:'hotpot',t:'18:30'},{k:'beer',t:'19:00'},{k:'cake',t:'21:00'}],note:'火锅局超开心',mood:'🔥',weather:'🌡️'},
@@ -435,7 +435,7 @@ const PORTFOLIO_DAYS=[
   {date:'4月14日',day:'周一',stickers:[{k:'rice',t:'12:00'},{k:'vegetable',t:'18:00'}],note:'家常菜最香',mood:'😌',weather:'🌥️'},
   {date:'4月13日',day:'周日',stickers:[{k:'brunch',t:'11:00'},{k:'cake',t:'14:00'},{k:'latte',t:'16:00'},{k:'water',t:'10:00'}],note:'慵懒早午餐',mood:'🌸',weather:'🌤️'},
 ];
-const PORTFOLIO_POOL=PORTFOLIO_DAYS.flatMap(d=>d.stickers.map(s=>({k:s.k})));
+const PORTFOLIO_POOL=PORTFOLIO_DAYS_ORIG.flatMap(d=>d.stickers.map(s=>({k:s.k})));
 const STICKER_SIZES=[80,56,64,48,72,40,60,52,76,44,68,50];
 
 function CylinderPicker({items,selectedIdx,onSelect,onClose}) {
@@ -590,6 +590,114 @@ function CylinderPicker({items,selectedIdx,onSelect,onClose}) {
 }
 
 /* ═══════════════ PORTFOLIO (手帐) ═══════════════ */
+function ShareButton({portfolioData,view}) {
+  const [menuOpen,setMenuOpen]=React.useState(false);
+  const [exporting,setExporting]=React.useState(false);
+
+  const generateImage=()=>{
+    setExporting(true);
+    const canvas=document.createElement('canvas');
+    canvas.width=1170; canvas.height=2532;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#F6F1E7'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#2A2520'; ctx.font='bold 64px sans-serif';
+    ctx.fillText('Easset 手帐',80,140);
+    ctx.fillStyle='#6B6158'; ctx.font='36px sans-serif';
+    ctx.fillText(new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'}),80,200);
+    let y=320;
+    const days=Array.isArray(portfolioData)?portfolioData:[];
+    days.slice(0,7).forEach(day=>{
+      ctx.fillStyle='#FFFDF8'; ctx.fillRect(60,y,1050,180);
+      ctx.strokeStyle='rgba(42,37,32,0.08)'; ctx.lineWidth=2;
+      ctx.strokeRect(60,y,1050,180);
+      ctx.fillStyle='#2A2520'; ctx.font='bold 40px sans-serif';
+      const label=typeof day==='object'&&day.date?day.date:day.week||day.month||'';
+      ctx.fillText(label,90,y+60);
+      if(day.stickers!==undefined){
+        ctx.fillStyle='#6B6158'; ctx.font='32px sans-serif';
+        ctx.fillText(`${day.stickers} 张贴纸`,90,y+120);
+      }
+      if(Array.isArray(day.stickers)){
+        const stickers=day.stickers.slice(0,6);
+        stickers.forEach((s,i)=>{
+          ctx.fillStyle='#B08A5B'; ctx.beginPath();
+          ctx.ellipse(220+i*150,y+100,50,50,0,0,Math.PI*2); ctx.fill();
+          ctx.fillStyle='#fff'; ctx.font='28px sans-serif';
+          ctx.fillText(s.t||'',220+i*150-14,y+108);
+        });
+      }
+      y+=210;
+    });
+    ctx.fillStyle='#2A2520'; ctx.font='bold 36px sans-serif';
+    ctx.fillText('🍽️ Easset · 美食手帐',canvas.width/2-180,canvas.height-100);
+    return canvas;
+  };
+
+  const handleExportImage=()=>{
+    const canvas=generateImage();
+    const link=document.createElement('a');
+    link.download=`Easset-${view}-${Date.now()}.png`;
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+    setMenuOpen(false);
+    setTimeout(()=>setExporting(false),500);
+  };
+
+  const handleExportJSON=()=>{
+    const data=JSON.stringify({view,data:portfolioData,exportedAt:new Date().toISOString()},null,2);
+    const blob=new Blob([data],{type:'application/json'});
+    const link=document.createElement('a');
+    link.download=`Easset-${view}-${Date.now()}.json`;
+    link.href=URL.createObjectURL(blob);
+    link.click();
+    setMenuOpen(false);
+  };
+
+  const handleShare=async()=>{
+    setMenuOpen(false);
+    try {
+      const canvas=generateImage();
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+      const file=new File([blob],'Easset.png',{type:'image/png'});
+      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:'Easset 手帐',text:'我的美食手帐记录 📖✨'});
+      } else {
+        const url=canvas.toDataURL('image/png');
+        const a=document.createElement('a'); a.href=url; a.download='Easset.png'; a.click();
+      }
+    } catch(e){ console.log('Share cancelled or failed:',e); }
+    setExporting(false);
+  };
+
+  return(<div style={{position:'relative'}}>
+    <div onClick={()=>setMenuOpen(!menuOpen)} style={{
+      padding:'10px 16px',borderRadius:14,
+      background:T.ink,
+      color:'#fff',cursor:'pointer',
+      display:'inline-flex',alignItems:'center',gap:6,
+      boxShadow:'0 4px 12px rgba(42,37,32,0.25)',
+      transition:'all 0.2s',
+      fontSize:13,fontWeight:700,
+    }}>
+      {exporting?<svg width="13" height="13" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#fff" strokeWidth="3" fill="none" strokeDasharray="31.4 31.4"/><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></svg>:'↗'}
+      导出
+    </div>
+    {menuOpen&&(<div style={{position:'absolute',right:0,top:'100%',marginTop:8,background:T.paper,borderRadius:16,boxShadow:'0 8px 32px rgba(42,37,32,0.18)',border:`0.5px solid ${T.line}`,padding:6,zIndex:200,minWidth:180}}>
+      <div onClick={handleExportImage} style={{padding:'10px 14px',borderRadius:12,cursor:'pointer',display:'flex',alignItems:'center',gap:8}}>
+        <span style={{fontSize:18}}>🖼️</span><div><div style={{fontSize:13,fontWeight:700,color:T.ink}}>导出图片</div><div style={{fontSize:10,color:T.ink3}}>PNG 格式 · 2K 分辨率</div></div>
+      </div>
+      <div onClick={handleExportJSON} style={{padding:'10px 14px',borderRadius:12,cursor:'pointer',display:'flex',alignItems:'center',gap:8}}>
+        <span style={{fontSize:18}}>📄</span><div><div style={{fontSize:13,fontWeight:700,color:T.ink}}>导出数据</div><div style={{fontSize:10,color:T.ink3}}>JSON 格式 · 可备份</div></div>
+      </div>
+      <div style={{height:1,background:T.line,margin:'4px 8px'}}/>
+      <div onClick={handleShare} style={{padding:'10px 14px',borderRadius:12,cursor:'pointer',display:'flex',alignItems:'center',gap:8}}>
+        <span style={{fontSize:18}}>📤</span><div><div style={{fontSize:13,fontWeight:700,color:T.ink}}>分享</div><div style={{fontSize:10,color:T.ink3}}>发送给朋友</div></div>
+      </div>
+    </div>)}
+    {menuOpen&&<div onClick={()=>setMenuOpen(false)} style={{position:'fixed',inset:0,zIndex:100}}/>}
+  </div>);
+}
+
 function Portfolio({month,setMonth,setScreen}) {
   const [view,setView]=React.useState('week');
   const [selectedDay,setSelectedDay]=React.useState(null);
@@ -601,6 +709,15 @@ function Portfolio({month,setMonth,setScreen}) {
   const [lpTimer,setLpTimer]=React.useState(null);
   const particlesRef=React.useRef([]);
   const physicsRef=React.useRef(null);
+  const [editDay,setEditDay]=React.useState(null);
+  const [editNote,setEditNote]=React.useState('');
+  const [editMood,setEditMood]=React.useState('');
+
+  const [PORTFOLIO_DAYS,setPORTFOLIO_DAYS]=React.useState(()=>{
+    try{const s=localStorage.getItem('easset-portfolio');return s?JSON.parse(s):PORTFOLIO_DAYS_ORIG;}catch{return PORTFOLIO_DAYS_ORIG;}
+  });
+  React.useEffect(()=>{localStorage.setItem('easset-portfolio',JSON.stringify(PORTFOLIO_DAYS));},[PORTFOLIO_DAYS]);
+  const saveDayEdit=(i)=>{setPORTFOLIO_DAYS(prev=>prev.map((d,j)=>j===i?{...d,note:editNote,mood:editMood}:d));setEditDay(null);};
 
   const CH=344, G=1.12, REST=0.44, FR=0.965, CW=328, ROW_N=5;
 
@@ -734,6 +851,7 @@ function Portfolio({month,setMonth,setScreen}) {
         <div style={{fontSize:28,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>手帐 📖</div>
         <div style={{fontSize:12,color:T.ink2,marginTop:2}}>记录每天的美食时光 ✨</div>
       </div>
+      <ShareButton portfolioData={view==='week'?PORTFOLIO_DAYS:view==='month'?monthData:yearData} view={view}/>
     </div>
 
     {/* View tabs + date button */}
@@ -753,31 +871,36 @@ function Portfolio({month,setMonth,setScreen}) {
           </div>);
         })}
       </div>
-      {/* Circle date button — long press opens scroll drum */}
-      <div style={{position:'relative',userSelect:'none',WebkitUserSelect:'none'}}
-        onMouseDown={lpStart} onMouseUp={lpEnd} onMouseLeave={lpEnd}
-        onTouchStart={lpStart} onTouchEnd={lpEnd}
-        onContextMenu={e=>e.preventDefault()}
-      >
-        <div style={{width:48,height:48,borderRadius:'50%',
-          background:`conic-gradient(${T.mocha} 0deg,${T.butter} 80deg,${T.sage} 185deg,${T.sky} 290deg,${T.rose} 340deg,${T.mocha} 360deg)`,
-          padding:3,cursor:'pointer',boxShadow:T.shadowLg,
-        }}>
-          <div style={{width:'100%',height:'100%',borderRadius:'50%',background:T.paper,
-            display:'flex',alignItems:'center',justifyContent:'center',
+      {/* Date + Trophy row */}
+      <div style={{display:'flex',alignItems:'center',gap:8}}>
+        {/* Circle date button */}
+        <div style={{position:'relative',userSelect:'none',WebkitUserSelect:'none'}}
+          onMouseDown={lpStart} onMouseUp={lpEnd} onMouseLeave={lpEnd}
+          onTouchStart={lpStart} onTouchEnd={lpEnd}
+          onContextMenu={e=>e.preventDefault()}>
+          <div style={{width:38,height:38,borderRadius:'50%',
+            background:`conic-gradient(${T.mocha} 0deg,${T.butter} 80deg,${T.sage} 185deg,${T.sky} 290deg,${T.rose} 340deg,${T.mocha} 360deg)`,
+            padding:3,cursor:'pointer',boxShadow:T.shadowLg,
           }}>
-            <span style={{fontSize:pLabel.length>3?10:pLabel.length>2?12:18,fontWeight:900,color:T.mochaDk,letterSpacing:-0.5,lineHeight:1}}>{pLabel}</span>
+            <div style={{width:'100%',height:'100%',borderRadius:'50%',background:T.paper,
+              display:'flex',alignItems:'center',justifyContent:'center',
+            }}>
+              <span style={{fontSize:pLabel.length>3?8:pLabel.length>2?10:14,fontWeight:900,color:T.mochaDk,letterSpacing:-0.5,lineHeight:1}}>{pLabel}</span>
+            </div>
           </div>
         </div>
-      </div>
-      {/* Trophy button → badge wall (right of date, same size) */}
-      <div onClick={()=>setScreen('badgewall')} style={{position:'absolute',left:270,top:'auto',width:48,height:48,borderRadius:14,
-        background:`conic-gradient(${T.butter},${T.mocha},${T.rose},${T.butter})`,
-        padding:3,cursor:'pointer',boxShadow:T.shadow}}>
-        <div style={{width:'100%',height:'100%',borderRadius:11,background:T.paper,
-          display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:0}}>
-          <span style={{fontSize:18,lineHeight:1}}>🏆</span>
-          <span style={{fontSize:6,fontWeight:800,color:T.mochaDk,letterSpacing:-0.2}}>勋章</span>
+        {/* Trophy button → badge wall */}
+        <div onClick={()=>setScreen('badgewall')} style={{
+          position:'absolute',left:260,
+          width:38,height:38,borderRadius:13,
+          background:`conic-gradient(${T.butter},${T.mocha},${T.rose},${T.butter})`,
+          padding:3,cursor:'pointer',boxShadow:T.shadow,
+        }}>
+          <div style={{width:'100%',height:'100%',borderRadius:11,background:T.paper,
+            display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:0}}>
+            <span style={{fontSize:17,lineHeight:1}}>🏆</span>
+            <span style={{fontSize:5.5,fontWeight:800,color:T.mochaDk,letterSpacing:-0.2}}>勋章</span>
+          </div>
         </div>
       </div>
     </div>
@@ -810,7 +933,7 @@ function Portfolio({month,setMonth,setScreen}) {
             {[1,2,3,4,5,6,7].map(i=>(<div key={i} style={{width:16,height:16,borderRadius:8,background:i%2===0?T.mocha+'22':T.sage+'22',border:`1px solid ${i%2===0?T.mocha+'44':T.sage+'44'}`}}/>))}
           </div>
           <div style={{flex:1,padding:'12px 16px 16px'}}>
-            {PORTFOLIO_DAYS.map((day,i)=>(<div key={i} onClick={()=>setSelectedDay(selectedDay===i?null:i)} style={{marginBottom:16,cursor:'pointer'}}>
+            {PORTFOLIO_DAYS.map((day,i)=>(<div key={i} onClick={()=>{if(editDay===null){setSelectedDay(selectedDay===i?null:i);}else{setEditDay(null);}}} style={{marginBottom:16,cursor:editDay===i?'default':'pointer'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
                 <div style={{display:'flex',alignItems:'center',gap:8}}>
                   <div style={{fontSize:15,fontWeight:800,color:T.ink}}>{day.date}</div>
@@ -819,6 +942,7 @@ function Portfolio({month,setMonth,setScreen}) {
                 <div style={{display:'flex',alignItems:'center',gap:6}}>
                   <span style={{fontSize:14}}>{day.weather}</span>
                   <span style={{fontSize:14}}>{day.mood}</span>
+                  <div onClick={(e)=>{e.stopPropagation();setEditDay(i);setEditNote(day.note||'');setEditMood(day.mood||'');}} style={{fontSize:11,padding:'2px 8px',borderRadius:8,background:T.sand,cursor:'pointer',color:T.ink3,marginLeft:4}}>编辑</div>
                 </div>
               </div>
               <div style={{display:'flex',gap:8,flexWrap:'wrap',padding:'10px 12px',background:i%2===0?T.sand+'44':'transparent',borderRadius:16,border:`0.5px dashed ${T.line}`}}>
@@ -830,6 +954,26 @@ function Portfolio({month,setMonth,setScreen}) {
               {selectedDay===i&&(<div style={{marginTop:8,padding:'8px 12px',background:T.butter+'33',borderRadius:12,fontSize:11,color:T.ink2}}>📝 {day.note}</div>)}
             </div>))}
           </div>
+        </div>
+      </div>
+    </div>)}
+    {editDay!==null&&(<div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.4)',zIndex:300,display:'flex',alignItems:'center',justifyContent:'center',padding:20}} onClick={()=>setEditDay(null)}>
+      <div style={{background:T.paper,borderRadius:20,padding:20,width:'100%',maxWidth:340,boxShadow:T.shadow}} onClick={e=>e.stopPropagation()}>
+        <div style={{fontSize:14,fontWeight:700,color:T.ink,marginBottom:16}}>编辑记录</div>
+        <div style={{marginBottom:12}}>
+          <div style={{fontSize:10,color:T.ink3,marginBottom:6}}>心情</div>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+            {['😊','😌','☀️','🌸','🔥','🍃','🌤️','😴','🤩','🥰'].map(m=>(<div key={m} onClick={()=>setEditMood(m)} style={{padding:'6px 12px',borderRadius:10,background:editMood===m?T.mocha+'33':T.sand,border:`0.5px solid ${editMood===m?T.mocha:T.line}`,fontSize:16,cursor:'pointer'}}>{m}</div>))}
+          </div>
+        </div>
+        <div style={{marginBottom:16}}>
+          <div style={{fontSize:10,color:T.ink3,marginBottom:6}}>笔记</div>
+          <textarea value={editNote} onChange={e=>setEditNote(e.target.value)} rows={3} style={{width:'100%',padding:'8px 10px',borderRadius:10,border:`0.5px solid ${T.line}`,fontSize:13,outline:'none',resize:'none',background:T.paper,boxSizing:'border-box',fontFamily:'inherit'}}/>
+        </div>
+        <div style={{display:'flex',gap:8}}>
+          <div onClick={()=>saveDayEdit(editDay)} style={{flex:1,padding:'10px',borderRadius:10,background:T.mocha,color:'#fff',textAlign:'center',fontSize:12,fontWeight:700,cursor:'pointer'}}>保存</div>
+          <div onClick={()=>setEditDay(null)} style={{padding:'10px 16px',borderRadius:10,background:T.sand,color:T.ink,fontSize:12,cursor:'pointer'}}>取消</div>
+          <div onClick={()=>{setPORTFOLIO_DAYS(prev=>prev.filter((_,j)=>j!==editDay));setEditDay(null);}} style={{padding:'10px 14px',borderRadius:10,background:T.rose+'33',color:T.rose,fontSize:12,cursor:'pointer'}}>删除</div>
         </div>
       </div>
     </div>)}
@@ -900,21 +1044,29 @@ function Portfolio({month,setMonth,setScreen}) {
 /* ═══════════════ MED ═══════════════ */
 function Med({periodTracking}) {
   const scrollRef = React.useRef(null);
-  const [schedules, setSchedules] = React.useState([
-    {id:1,e:'💊',n:'维生素D',d:'400IU',t:'饭后 30 分钟',done:true,completed:false,c:T.rose,type:'western'},
-    {id:2,e:'🌿',n:'四君子汤',d:'一剂',t:'早晚各一次',done:true,completed:false,c:T.sage,type:'chinese'},
-    {id:3,e:'⚪',n:'Omega-3',d:'2粒',t:'随晚餐',done:false,completed:false,c:T.sky,type:'capsule'},
-    {id:4,e:'👁️',n:'人工泪液',d:'1滴',t:'每天 3 次',done:false,completed:false,c:T.plum,type:'eyeDrop'},
-    {id:5,e:'🩹',n:'止痛贴',d:'1贴',t:'睡前',done:false,completed:true,c:T.mocha,type:'patch',completedAt:'🎉🎊🎆✨'},
-  ]);
+  const [schedules, setSchedules] = React.useState(()=>{
+    try{const s=localStorage.getItem('easset-meds');return s?JSON.parse(s):[
+    {id:1,e:'💊',n:'维生素D',d:'400IU',t:'饭后 30 分钟',done:true,completed:false,c:T.rose,type:'western',startDate:'2026-04-01'},
+    {id:2,e:'🌿',n:'四君子汤',d:'一剂',t:'早晚各一次',done:true,completed:false,c:T.sage,type:'chinese',startDate:'2026-04-05'},
+    {id:3,e:'⚪',n:'Omega-3',d:'2粒',t:'随晚餐',done:false,completed:false,c:T.sky,type:'capsule',startDate:'2026-04-10'},
+    {id:4,e:'👁️',n:'人工泪液',d:'1滴',t:'每天 3 次',done:false,completed:false,c:T.plum,type:'eyeDrop',startDate:'2026-04-08'},
+    {id:5,e:'🩹',n:'止痛贴',d:'1贴',t:'睡前',done:false,completed:true,c:T.mocha,type:'patch',completedAt:'🎉🎊🎆✨',startDate:'2026-03-15',endDate:'2026-04-10'},
+  ];}catch{return[];}
+  });
+  React.useEffect(()=>{localStorage.setItem('easset-meds',JSON.stringify(schedules));},[schedules]);
   const [showAddForm, setShowAddForm] = React.useState(false);
   const [aiInput, setAiInput] = React.useState('');
   const [parseResult, setParseResult] = React.useState(null);
   const [filterType, setFilterType] = React.useState('all');
-  const [customTypes, setCustomTypes] = React.useState([]);
+  const [customTypes, setCustomTypes] = React.useState(()=>{try{const s=localStorage.getItem('easset-medtypes');return s?JSON.parse(s):[];}catch{return[];}});
+  React.useEffect(()=>{localStorage.setItem('easset-medtypes',JSON.stringify(customTypes));},[customTypes]);
   const [showAddType, setShowAddType] = React.useState(false);
   const [newType, setNewType] = React.useState({emoji:'💊',name:''});
   const [selectedType, setSelectedType] = React.useState(null);
+  const [addStartDate,setAddStartDate]=React.useState('');
+  const [addEndDate,setAddEndDate]=React.useState('');
+  const [medLogs,setMedLogs]=React.useState(()=>{try{const s=localStorage.getItem('easset-medlogs');return s?JSON.parse(s):[];}catch{return[];}});
+  React.useEffect(()=>{localStorage.setItem('easset-medlogs',JSON.stringify(medLogs));},[medLogs]);
 
   const defaultTypes = [
     {e:'💊',l:'西药',c:T.rose,type:'western'},
@@ -1051,17 +1203,21 @@ function Med({periodTracking}) {
   const addMed = () => {
     if (!aiInput.trim() || !parseResult) return;
     const typeInfo = selectedType || allTypes[0];
+    const medName = aiInput.replace(/每天|每周|服药|用药|吃|服用|一次|两次|三次|各\s*\d+\s*次|\d+\s*天.*?(一次|两次|三次)|早晚|早餐后|午餐后|晚餐后|饭后|睡前|早上|中午|晚上|上午|下午|夜间|隔天|每隔.*?(天|日|周)/g,'').split(/[，,、\s]+/)[0] || typeInfo.l;
     parseResult.times.forEach((time, idx) => {
       const newItem = {
         id: Date.now() + idx,
         e: typeInfo.e,
-        n: aiInput.split('，')[0].split(' ')[0] || typeInfo.l,
+        n: medName,
         d: '1次',
         t: parseResult.description,
         done: false,
         completed: false,
         c: typeInfo.c,
-        type: typeInfo.type
+        type: typeInfo.type,
+        _nextDate: time,
+        startDate: addStartDate || new Date().toISOString().split('T')[0],
+        endDate: addEndDate || null
       };
       setSchedules(prev => [newItem, ...prev]);
     });
@@ -1069,6 +1225,8 @@ function Med({periodTracking}) {
     setParseResult(null);
     setSelectedType(null);
     setShowAddForm(false);
+    setAddStartDate('');
+    setAddEndDate('');
     setTimeout(scrollToTop, 100);
   };
 
@@ -1110,7 +1268,7 @@ function Med({periodTracking}) {
         <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:4,fontSize:10,color:T.ink3,marginBottom:4,textAlign:'center'}}>{['日','一','二','三','四','五','六'].map(d=><div key={d}>{d}</div>)}</div>
         <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:5}}>
           {Array.from({length:3}).map((_,i)=><div key={`e${i}`}/>)}
-          {Array.from({length:30}).map((_,i)=>{const day=i+1; const tg=[]; if([2,5,9,12,16,19,23,27].includes(day)) tg.push('💊'); if([3,10,17,24].includes(day)) tg.push('🌿'); if([5,11,18,25].includes(day)) tg.push('⚪'); const isToday=day===19; const isCompleted=[5].includes(day); return(<div key={day} style={{aspectRatio:'1/1',borderRadius:12,background:isToday?T.ink:(isCompleted?T.sage+'22':(tg.length?T.sand:'transparent')),color:isToday?'#fff':T.ink,padding:4,display:'flex',flexDirection:'column',justifyContent:'space-between',border:isToday?'none':`0.5px solid ${T.line}`}}><div style={{fontSize:11,fontWeight:700}}>{day}</div><div style={{display:'flex',gap:1,flexWrap:'wrap',justifyContent:'flex-end',fontSize:8,lineHeight:1}}>{isCompleted?<span>🎉</span>:tg.slice(0,3).map((t,j)=><span key={j}>{t}</span>)}</div></div>);})}
+          {Array.from({length:30}).map((_,i)=>{const day=i+1; const daySchedules=schedules.filter(s=>{const sd=new Date();return sd.getDate()===day||(s._nextDate&&new Date(s._nextDate).getDate()===day);});const tg=daySchedules.length>0?[...new Set(daySchedules.map(s=>s.e))]:[];const isToday=day===19;const isCompleted=daySchedules.some(s=>s.completed);return(<div key={day} style={{aspectRatio:'1/1',borderRadius:12,background:isToday?T.ink:(isCompleted?T.sage+'22':(tg.length?T.sand:'transparent')),color:isToday?'#fff':T.ink,padding:4,display:'flex',flexDirection:'column',justifyContent:'space-between',border:isToday?'none':`0.5px solid ${T.line}`}}><div style={{fontSize:11,fontWeight:700}}>{day}</div><div style={{display:'flex',gap:1,flexWrap:'wrap',justifyContent:'flex-end',fontSize:8,lineHeight:1}}>{isCompleted?<span>🎉</span>:tg.slice(0,3).map((t,j)=><span key={j}>{t}</span>)}</div></div>);})}
         </div>
       </Bento>
     </div>
@@ -1128,8 +1286,16 @@ function Med({periodTracking}) {
           <div style={{marginBottom:10}}>
             <div style={{fontSize:10,color:T.ink3,marginBottom:6}}>药物类型</div>
             <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-              {filteredTypes.slice(0,6).map((t,i)=>(<div key={i} onClick={()=>setSelectedType(t)} style={{padding:'4px 8px',borderRadius:8,background:selectedType===t?t.c+'44':T.sand,border:`0.5px solid ${selectedType===t?t.c:T.line}`,fontSize:10,cursor:'pointer'}}>{t.e}{t.l}</div>))}
+              {filteredTypes.map((t,i)=>(<div key={i} onClick={()=>setSelectedType(t)} style={{padding:'4px 8px',borderRadius:8,background:selectedType===t?t.c+'44':T.sand,border:`0.5px solid ${selectedType===t?t.c:T.line}`,fontSize:10,cursor:'pointer'}}>{t.e}{t.l}</div>))}
             </div>
+          </div>
+          <div style={{marginBottom:8}}>
+            <div style={{fontSize:10,color:T.ink3,marginBottom:6}}>开始日期</div>
+            <input type='date' value={addStartDate} onChange={e=>setAddStartDate(e.target.value)} style={{width:'100%',padding:'8px 10px',borderRadius:10,border:`0.5px solid ${T.line}`,fontSize:12,outline:'none',background:T.paper,boxSizing:'border-box'}}/>
+          </div>
+          <div style={{marginBottom:8}}>
+            <div style={{fontSize:10,color:T.ink3,marginBottom:6}}>结束日期（可选）</div>
+            <input type='date' value={addEndDate} onChange={e=>setAddEndDate(e.target.value)} style={{width:'100%',padding:'8px 10px',borderRadius:10,border:`0.5px solid ${T.line}`,fontSize:12,outline:'none',background:T.paper,boxSizing:'border-box'}}/>
           </div>
           <div style={{display:'flex',gap:8}}>
             <div onClick={addMed} style={{flex:1,padding:'10px',borderRadius:10,background:parseResult?T.ink:T.sand,color:parseResult?'#fff':T.ink3,textAlign:'center',fontSize:12,fontWeight:700,cursor:parseResult?'pointer':'default'}}>✨ 添加计划</div>
@@ -1149,7 +1315,8 @@ function Med({periodTracking}) {
       <div style={{fontSize:13,fontWeight:700,color:T.ink,padding:'8px 4px'}}>进行中的计划</div>
       {activeMeds.length === 0 ? <Bento style={{padding:20,textAlign:'center'}}><div style={{fontSize:24,marginBottom:6}}>🌸</div><div style={{fontSize:12,color:T.ink3}}>暂无进行中的计划</div></Bento> : activeMeds.map((m,i)=>(<div key={m.id} style={{background:T.paper,borderRadius:20,padding:'12px 14px',display:'flex',alignItems:'center',gap:12,marginBottom:8,boxShadow:T.shadow,border:`0.5px solid ${T.line}`}}>
         <div style={{width:44,height:44,borderRadius:14,background:m.c+'44',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22}}>{m.e}</div>
-        <div style={{flex:1}}><div style={{fontSize:14,fontWeight:700,color:T.ink}}>{m.n}</div><div style={{fontSize:10,color:T.ink3}}>{m.d} · {m.t}</div></div>
+        <div style={{flex:1}}><div style={{fontSize:14,fontWeight:700,color:T.ink}}>{m.n}</div><div style={{fontSize:10,color:T.ink3}}>{m.d} · {m.t}{m.startDate?` · ${m.startDate}`:''}</div></div>
+        <div onClick={()=>{const now=new Date();setMedLogs(prev=>[...prev,{id:Date.now(),medId:m.id,medName:m.n,emoji:m.e,date:now.toISOString(),taken:true}]);}} style={{padding:'4px 8px',borderRadius:8,background:T.sky+'33',border:`0.5px solid ${T.sky}`,fontSize:10,fontWeight:700,color:T.sky,cursor:'pointer'}}>记录</div>
         <div onClick={()=>completeMed(m.id)} style={{padding:'4px 8px',borderRadius:8,background:T.sage+'33',border:`0.5px solid ${T.sage}`,fontSize:10,fontWeight:700,color:T.sage,cursor:'pointer',marginRight:4}}>完成</div>
         <div onClick={()=>toggleMed(m.id)} style={{width:28,height:28,borderRadius:14,background:m.done?T.sageDk:'transparent',border:m.done?'none':`2px solid ${T.ink3}`,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>{m.done && <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12 L10 17 L19 7" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>}</div>
       </div>))}
@@ -1163,6 +1330,16 @@ function Med({periodTracking}) {
         <div style={{flex:1}}><div style={{fontSize:13,fontWeight:700,color:T.ink}}>{m.n}</div><div style={{fontSize:10,color:T.ink3}}>{m.d}</div></div>
         <div style={{fontSize:16}}>{m.completedAt || '🎉'}</div>
         <div onClick={()=>deleteMed(m.id)} style={{padding:'4px 8px',borderRadius:6,background:T.sand,fontSize:10,color:T.ink3,cursor:'pointer'}}>删除</div>
+      </div>))}
+    </div>}
+
+    {/* Medication Logs */}
+    {medLogs.length > 0 && <div style={{padding:'8px 16px 16px'}}>
+      <div style={{fontSize:12,fontWeight:700,color:T.ink,marginBottom:8,padding:'4px'}}>📋 用药记录</div>
+      {medLogs.slice(-5).reverse().map((log)=>(<div key={log.id} style={{background:T.sky+'11',borderRadius:12,padding:'8px 12px',display:'flex',alignItems:'center',gap:8,marginBottom:6,border:`0.5px solid ${T.sky}33`}}>
+        <span style={{fontSize:16}}>{log.emoji}</span>
+        <div style={{flex:1}}><div style={{fontSize:12,fontWeight:700,color:T.ink}}>{log.medName}</div><div style={{fontSize:10,color:T.ink3}}>{new Date(log.date).toLocaleString('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div>
+        <div style={{fontSize:12,color:T.sage,fontWeight:700}}>✓</div>
       </div>))}
     </div>}
 
@@ -1215,41 +1392,92 @@ function Med({periodTracking}) {
       </Bento>
 
       {/* Symptom quick-log */}
-      <Bento style={{padding:14,marginBottom:10}}>
-        <div style={{fontSize:11,fontWeight:700,color:T.ink,marginBottom:8}}>今日症状快记</div>
-        <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-          {[['😮‍💨','腹胀',false],['🤕','头痛',true],['😴','疲劳',true],['💢','情绪波动',false],['🌡️','发热',false],['💧','分泌物',false],['🍫','渴望甜食',true],['🤢','恶心',false]].map(([e,l,active],i)=>(
-            <div key={i} style={{padding:'5px 10px',borderRadius:10,
-              background:active?T.plum+'44':T.sand,
-              border:`0.5px solid ${active?T.plum:T.line}`,
-              fontSize:11,fontWeight:active?700:400,color:active?T.plum:T.ink2,
-              cursor:'pointer',display:'flex',alignItems:'center',gap:4}}>
-              <span>{e}</span><span>{l}</span>
-            </div>
-          ))}
-        </div>
-      </Bento>
+      {(()=>{
+        const symptomList=[['😮‍💨','腹胀',false],['🤕','头痛',false],['😴','疲劳',false],['💢','情绪波动',false],['🌡️','发热',false],['💧','分泌物',false],['🍫','渴望甜食',false],['🤢','恶心',false]];
+        const [symptoms,setSymptoms]=React.useState(()=>{
+          try{const saved=localStorage.getItem('med-symptoms-'+new Date().toDateString());return saved?JSON.parse(saved):symptomList.map(([e,l])=>({e,l,a:false}));}catch{return symptomList.map(([e,l])=>({e,l,a:false}));}
+        });
+        React.useEffect(()=>{localStorage.setItem('med-symptoms-'+new Date().toDateString(),JSON.stringify(symptoms));},[symptoms]);
+        const toggle=(i)=>setSymptoms(prev=>prev.map((s,j)=>j===i?{...s,a:!s.a}:s));
+        const active=symptoms.filter(s=>s.a);
+        return(<Bento style={{padding:14,marginBottom:10}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+            <div style={{fontSize:11,fontWeight:700,color:T.ink}}>今日症状快记</div>
+            {active.length>0&&<div style={{fontSize:10,color:T.plum,fontWeight:700}}>{active.length}项</div>}
+          </div>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+            {symptoms.map((s,i)=>(
+              <div key={i} onClick={()=>toggle(i)} style={{padding:'5px 10px',borderRadius:10,
+                background:s.a?T.plum+'44':T.sand,
+                border:`0.5px solid ${s.a?T.plum:T.line}`,
+                fontSize:11,fontWeight:s.a?700:400,color:s.a?T.plum:T.ink2,
+                cursor:'pointer',display:'flex',alignItems:'center',gap:4}}>
+                <span>{s.e}</span><span>{s.l}</span>
+              </div>
+            ))}
+          </div>
+          {active.length>0&&(<div style={{marginTop:8,padding:'6px 10px',background:T.plum+'22',borderRadius:8,fontSize:10,color:T.plum}}>已记录：{active.map(s=>s.e).join(' ')}</div>)}
+        </Bento>);
+      })()}
 
     {/* Cycle history mini */}
-    <Bento bg={'#E8A0BF11'} style={{padding:14}}>
-      <div style={{fontSize:11,fontWeight:700,color:T.ink,marginBottom:8}}>近期周期</div>
-      <div style={{display:'flex',gap:8}}>
-        {[{m:'2月',d:27},{m:'3月',d:29},{m:'4月',d:28}].map((c,i)=>(
-          <div key={i} style={{flex:1,borderRadius:12,padding:'8px 6px',background:'#E8A0BF22',border:'0.5px solid #E8A0BF',textAlign:'center'}}>
-            <div style={{fontSize:10,color:T.ink3}}>{c.m}</div>
-            <div style={{fontSize:16,fontWeight:800,color:'#B5648E'}}>{c.d}</div>
-            <div style={{fontSize:9,color:T.ink3}}>天</div>
+    {(()=>{
+      const [cycles,setCycles]=React.useState(()=>{
+        try{const s=localStorage.getItem('med-cycles');return s?JSON.parse(s):[{m:'2月',d:27},{m:'3月',d:29},{m:'4月',d:28}];}catch{return [{m:'2月',d:27},{m:'3月',d:29},{m:'4月',d:28}];}
+      });
+      const [addOpen,setAddOpen]=React.useState(false);
+      const [newCycle,setNewCycle]=React.useState({month:'',days:28});
+      const months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+      React.useEffect(()=>{localStorage.setItem('med-cycles',JSON.stringify(cycles));},[cycles]);
+      const addCycle=()=>{
+        if(!newCycle.month)return;
+        const label=newCycle.month+(newCycle.days?` · ${newCycle.days}天`:'');
+        setCycles(prev=>[{m:label,d:newCycle.days||28},...prev.slice(0,5)]);
+        setNewCycle({month:'',days:28});setAddOpen(false);
+      };
+      const delCycle=(i)=>setCycles(prev=>prev.filter((_,j)=>j!==i));
+      return(<>
+        <Bento bg={'#E8A0BF11'} style={{padding:14}}>
+          <div style={{fontSize:11,fontWeight:700,color:T.ink,marginBottom:8}}>近期周期</div>
+          <div style={{display:'flex',gap:8}}>
+            {cycles.map((c,i)=>(
+              <div key={i} style={{flex:1,borderRadius:12,padding:'8px 6px',background:'#E8A0BF22',border:'0.5px solid #E8A0BF',textAlign:'center',position:'relative',group:'relative'}}>
+                <div onClick={()=>delCycle(i)} style={{position:'absolute',top:-6,right:-4,width:16,height:16,borderRadius:8,background:T.rose,color:'#fff',fontSize:10,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',opacity:0}} className="del-cycle">✕</div>
+                <div style={{fontSize:10,color:T.ink3}}>{c.m}</div>
+                <div style={{fontSize:16,fontWeight:800,color:'#B5648E'}}>{c.d}</div>
+                <div style={{fontSize:9,color:T.ink3}}>天</div>
+              </div>
+            ))}
+            <div onClick={()=>setAddOpen(true)} style={{flex:1,borderRadius:12,padding:'8px 6px',background:T.sand,border:`0.5px solid ${T.line}`,textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
+              <div style={{fontSize:18,color:T.ink3}}>+</div>
+              <div style={{fontSize:9,color:T.ink3}}>记录</div>
+            </div>
           </div>
-        ))}
-        <div style={{flex:1,borderRadius:12,padding:'8px 6px',background:T.sand,border:`0.5px solid ${T.line}`,textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-          <div style={{fontSize:18,color:T.ink3}}>+</div>
-          <div style={{fontSize:9,color:T.ink3}}>记录</div>
-        </div>
-      </div>
-    </Bento>
+        </Bento>
+        {addOpen&&(<div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.4)',zIndex:300,display:'flex',alignItems:'center',justifyContent:'center',padding:20}} onClick={()=>setAddOpen(false)}>
+          <div style={{background:T.paper,borderRadius:20,padding:20,width:'100%',maxWidth:300,boxShadow:T.shadow}} onClick={e=>e.stopPropagation()}>
+            <div style={{fontSize:14,fontWeight:700,color:T.ink,marginBottom:16}}>记录经期</div>
+            <div style={{marginBottom:12}}>
+              <div style={{fontSize:10,color:T.ink3,marginBottom:6}}>选择月份</div>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:6}}>
+                {months.map(m=>(<div key={m} onClick={()=>setNewCycle(p=>({...p,month:m}))} style={{padding:'8px 4px',borderRadius:8,background:newCycle.month===m?'#E8A0BF33':T.sand,border:`0.5px solid ${newCycle.month===m?'#E8A0BF':T.line}`,textAlign:'center',fontSize:11,cursor:'pointer',color:T.ink}}>{m}</div>))}
+              </div>
+            </div>
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:10,color:T.ink3,marginBottom:6}}>周期天数</div>
+              <input type="number" value={newCycle.days} onChange={e=>setNewCycle(p=>({...p,days:parseInt(e.target.value)||28}))} min={1} max={99} style={{width:'100%',padding:'8px 10px',borderRadius:10,border:`0.5px solid ${T.line}`,fontSize:13,outline:'none',background:T.paper,boxSizing:'border-box'}}/>
+            </div>
+            <div style={{display:'flex',gap:8}}>
+              <div onClick={addCycle} style={{flex:1,padding:'10px',borderRadius:10,background:newCycle.month?T.plum:'#ccc',color:'#fff',textAlign:'center',fontSize:12,fontWeight:700,cursor:newCycle.month?'pointer':'default'}}>保存</div>
+              <div onClick={()=>{setAddOpen(false);setNewCycle({month:'',days:28});}} style={{padding:'10px 16px',borderRadius:10,background:T.sand,color:T.ink,fontSize:12,cursor:'pointer'}}>取消</div>
+            </div>
+          </div>
+        </div>)}
+      </>);
+    })()}
     </div>}
-
-  </div>);}
+  </div>);
+}
 
 /* ═══════════════ WILD BADGE ═══════════════ */
 function WildBadge({icon,title,level,desc,bg,earned}) {
@@ -1463,8 +1691,12 @@ function Water() {
   const viewDate=new Date(today.getTime()+dateOffset*86400000);
   const isToday=dateOffset===0;
   const fmtDate=d=>{const m=d.getMonth()+1,day=d.getDate(),wd=['日','一','二','三','四','五','六'][d.getDay()];return `${m}月${day}日 · 周${wd}`;};
+  const dateKey=`water-${viewDate.getFullYear()}-${viewDate.getMonth()+1}-${viewDate.getDate()}`;
 
-  const [logs,setLogs]=React.useState([{t:'08:00',a:250},{t:'10:30',a:300},{t:'13:00',a:200},{t:'15:30',a:350}]);
+  const [logs,setLogs]=React.useState(()=>{
+    try{const s=localStorage.getItem(dateKey);return s?JSON.parse(s):[{t:'08:00',a:250}];}catch{return [{t:'08:00',a:250}];}
+  });
+  React.useEffect(()=>{localStorage.setItem(dateKey,JSON.stringify(logs));},[logs,dateKey]);
   const total=logs.reduce((s,x)=>s+x.a,0);
   const target=2000;
   const pct=Math.min(100,Math.round((total/target)*100));
@@ -1528,6 +1760,7 @@ function Water() {
       {logs.map((l,i)=>(<div key={i} style={{background:T.paper,borderRadius:16,padding:'10px 14px',display:'flex',alignItems:'center',gap:12,marginBottom:8,boxShadow:T.shadow,border:`0.5px solid ${T.line}`}}>
         <div style={{width:32,height:32,borderRadius:10,background:T.sky+'44',display:'flex',alignItems:'center',justifyContent:'center'}}><Sticker kind="water" size={22}/></div>
         <div style={{flex:1}}><div style={{fontSize:13,fontWeight:700,color:T.ink}}>{l.a} ml</div><div style={{fontSize:10,color:T.ink3}}>{l.t}</div></div>
+        <div onClick={()=>setLogs(logs.filter((_,j)=>j!==i))} style={{padding:'4px 8px',borderRadius:6,background:T.sand,fontSize:10,color:T.ink3,cursor:'pointer'}}>删除</div>
         <div style={{width:24,height:24,borderRadius:12,background:'#84A8B633',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12}}>💧</div>
       </div>))}
     </div>
@@ -1685,7 +1918,7 @@ function BadgeWallScreen({setScreen}) {
   return (<div style={{paddingBottom:140}}>
     {/* Header with back */}
     <div style={{padding:'18px 20px 12px',display:'flex',alignItems:'center',gap:12}}>
-      <div onClick={()=>setScreen('portfolio')} style={{width:36,height:36,borderRadius:11,background:T.sand,
+      <div onClick={()=>setScreen('today')} style={{width:36,height:36,borderRadius:11,background:T.sand,
         display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',fontSize:18,color:T.ink2,fontWeight:700}}>‹</div>
       <div>
         <div style={{fontSize:26,fontWeight:800,color:T.ink,letterSpacing:-0.5}}>🏆 成就图鉴</div>
@@ -1737,6 +1970,8 @@ function App() {
   const [screen,setScreen]=React.useState(()=>localStorage.getItem('easset.screen')||tweaks.startScreen);
   const [scene,setScene]=React.useState('collect');
   const [month,setMonth]=React.useState(3);
+  const [winSize,setWinSize]=React.useState({w:window.innerWidth,h:window.innerHeight});
+  React.useEffect(()=>{const rh=()=>setWinSize({w:window.innerWidth,h:window.innerHeight});window.addEventListener('resize',rh);return()=>window.removeEventListener('resize',rh);},[]);
   React.useEffect(()=>{localStorage.setItem('easset.screen',screen);},[screen]);
   const setTweak=(p)=>{setTweaks({...tweaks,...p}); try{window.parent.postMessage({type:'__edit_mode_set_keys',edits:p},'*');}catch{}};
   React.useEffect(()=>{const h=(e)=>{if(!e.data||!e.data.type)return;if(e.data.type==='__activate_edit_mode')setTweaksOpen(true);if(e.data.type==='__deactivate_edit_mode')setTweaksOpen(false);};window.addEventListener('message',h);try{window.parent.postMessage({type:'__edit_mode_available'},'*');}catch{}return ()=>window.removeEventListener('message',h);},[]);
@@ -1765,9 +2000,11 @@ function App() {
     {renderScreen()}
   </div>);
 
+  const phoneHeight=Math.min(winSize.h-80,874);
+  const phoneWidth=Math.round(phoneHeight*0.46);
   const phone=(<div style={{position:'relative'}}>
-    <div style={{width:402,height:874,borderRadius:48,overflow:'hidden',position:'relative',background:phoneBg,boxShadow:'0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.12)'}}>
-      <div style={{position:'absolute',top:11,left:'50%',transform:'translateX(-50%)',width:126,height:37,borderRadius:24,background:'#000',zIndex:50}}/>
+    <div style={{width:phoneWidth,height:phoneHeight,borderRadius:Math.round(phoneHeight*0.055),overflow:'hidden',position:'relative',background:phoneBg,boxShadow:'0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.12)',maxWidth:'100%'}}>
+      <div style={{position:'absolute',top:Math.round(phoneHeight*0.012),left:'50%',transform:'translateX(-50%)',width:Math.round(phoneWidth*0.31),height:Math.round(phoneHeight*0.042),borderRadius:24,background:'#000',zIndex:50}}/>
       <div style={{height:'100%',overflowY:'auto'}}>{inner}</div>
       <div style={{position:'absolute',bottom:0,left:0,right:0,zIndex:60,height:34,display:'flex',justifyContent:'center',alignItems:'flex-end',paddingBottom:8,pointerEvents:'none'}}>
         <div style={{width:139,height:5,borderRadius:100,background:(screen==='capture'||isWild)?'rgba(255,255,255,0.5)':'rgba(0,0,0,0.25)'}}/>
@@ -1799,7 +2036,7 @@ function App() {
       </div>
       <div style={{marginTop:14,fontSize:10,color:T.ink3,lineHeight:1.5}}>免责声明：Easset 为生活记录工具，非医疗设备。<br/>AI 建议仅供参考，请咨询专业医疗人员。</div>
     </div>
-    {tweaks.showFrame?phone:(<div style={{width:402,borderRadius:32,overflow:'hidden',boxShadow:'0 20px 60px rgba(0,0,0,0.12)',background:'#fff',position:'relative'}}>{inner}<Dock screen={screen} setScreen={setScreen} scene={scene} setScene={setScene} wildIsNight={wildIsNight}/></div>)}
+    {tweaks.showFrame?phone:(<div style={{width:phoneWidth,borderRadius:Math.round(phoneWidth*0.08),overflow:'hidden',boxShadow:'0 20px 60px rgba(0,0,0,0.12)',background:'#fff',position:'relative'}}>{inner}<Dock screen={screen} setScreen={setScreen} scene={scene} setScene={setScene} wildIsNight={wildIsNight}/></div>)}
     {tweaksOpen && <TweaksPanel state={tweaks} setState={setTweak} onClose={()=>setTweaksOpen(false)}/>}
   </div>);
 }

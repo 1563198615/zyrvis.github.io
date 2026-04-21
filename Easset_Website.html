@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Easset — 视觉饮食资产收藏簿</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Nunito',-apple-system,'PingFang SC',system-ui,sans-serif;background:#E7DFD0;color:#2A2520;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::-webkit-scrollbar{display:none}
+em{font-style:italic}
+:root{
+  --cream:#F6F1E7;--paper:#FFFDF8;--sand:#EDE4D2;
+  --ink:#2A2520;--ink2:#6B6158;--ink3:#A89E91;
+  --mocha:#B08A5B;--mochaDk:#8A6740;--mochaLt:#D9C2A4;
+  --sage:#A8B89A;--sageDk:#7D9274;--rose:#D9A9A2;
+  --sky:#B8CFD9;--butter:#F2D58A;--plum:#9E7BA0;
+  --line:rgba(42,37,32,0.08);
+  --shadow:0 1px 2px rgba(42,37,32,0.04),0 4px 14px rgba(42,37,32,0.06);
+  --shadowLg:0 2px 4px rgba(42,37,32,0.05),0 10px 28px rgba(42,37,32,0.08);
+}
+
+/* ── CAPSULE NAV ── */
+.sidenav{
+  position:fixed;left:20px;top:50%;transform:translateY(-50%);
+  width:44px;z-index:9999;overflow:visible;
+  background:rgba(255,253,248,0.88);
+  backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);
+  border:0.5px solid rgba(255,253,248,0.9);border-radius:28px;
+  padding:14px 0;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  box-shadow:0 8px 32px rgba(42,37,32,0.12),0 1px 4px rgba(42,37,32,0.06),inset 0 1px 1px rgba(255,255,255,0.9);
+}
+/* logo mark */
+.sc-logo{
+  font-family:'Fraunces',Georgia,serif;font-size:14px;font-weight:800;
+  color:var(--ink);cursor:pointer;width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:10px;transition:background 0.15s;
+  text-decoration:none;
+}
+.sc-logo:hover{background:rgba(42,37,32,0.07)}
+/* divider */
+.sc-sep{width:20px;height:0.5px;background:var(--line);margin:4px 0;flex-shrink:0}
+/* section dots */
+.sc-dot{
+  width:28px;height:28px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;text-decoration:none;
+  position:relative;transition:background 0.15s;
+  flex-shrink:0;
+}
+.sc-dot::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:var(--ink3);transition:all 0.2s;
+}
+.sc-dot.active::before{background:var(--ink);transform:scale(1.25)}
+.sc-dot:hover::before{background:var(--ink2);transform:scale(1.1)}
+/* tooltip */
+.sc-dot::after,.sc-logo::after,.sc-cta::after,.sc-back::after{
+  content:attr(data-tip);
+  position:absolute;left:calc(100% + 14px);top:50%;transform:translateY(-50%);
+  background:rgba(42,37,32,0.9);color:#fff;
+  padding:5px 11px;border-radius:10px;
+  font-size:11px;font-weight:700;white-space:nowrap;
+  font-family:'Nunito',sans-serif;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.15s;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+.sc-dot:hover::after,.sc-logo:hover::after,.sc-cta:hover::after,.sc-back:hover::after{opacity:1}
+/* CTA dot */
+.sc-cta{
+  width:28px;height:28px;border-radius:10px;
+  background:var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;text-decoration:none;
+  font-size:11px;font-weight:900;
+  transition:opacity 0.15s;position:relative;
+  border:none;font-family:'Nunito',sans-serif;
+}
+.sc-cta:hover{opacity:0.8}
+/* ZYRVIS back link */
+.sc-back{
+  width:28px;height:28px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;text-decoration:none;
+  font-size:9px;font-weight:900;color:var(--ink3);
+  letter-spacing:0.5px;transition:all 0.15s;position:relative;
+}
+.sc-back:hover{color:var(--ink);background:rgba(42,37,32,0.06)}
+
+/* ── HERO SECTION ── */
+.hero-section{width:100%;height:100vh;position:relative;overflow:hidden;background:var(--cream)}
+.hero-section iframe{width:100%;height:100%;border:none;display:block}
+.scroll-cta{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  background:rgba(255,253,248,0.92);backdrop-filter:blur(14px);
+  border:0.5px solid var(--line);border-radius:999px;
+  padding:11px 22px;font-size:13px;font-weight:800;color:var(--ink2);
+  cursor:pointer;box-shadow:0 4px 20px rgba(42,37,32,0.12);
+  display:flex;align-items:center;gap:8px;z-index:100;
+  animation:float 2.5s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-7px)}}
+
+/* ── FEATURE SECTIONS ── */
+.feature-section{min-height:100vh;padding:100px 64px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.feature-inner{max-width:1080px;width:100%;display:flex;align-items:center;gap:80px;flex-wrap:wrap}
+.feature-inner.rev{flex-direction:row-reverse}
+.feature-text{flex:1;min-width:300px}
+.feature-visual{flex:0 0 auto;display:flex;justify-content:center}
+
+.feat-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;border:0.5px solid var(--line);background:rgba(255,253,248,0.7);font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:22px}
+.feat-h2{font-family:'Fraunces',Georgia,serif;font-size:clamp(38px,4.5vw,58px);font-weight:800;line-height:1.07;color:var(--ink);letter-spacing:-1.2px;margin-bottom:20px}
+.feat-h2 em{font-style:italic}
+.feat-desc{font-size:15.5px;line-height:1.68;color:var(--ink2);max-width:400px;margin-bottom:28px}
+.feat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:999px;background:var(--paper);border:0.5px solid var(--line);font-size:12px;font-weight:700;color:var(--ink2);box-shadow:var(--shadow)}
+.feat-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.feat-card{background:var(--paper);border-radius:20px;padding:18px 16px;border:0.5px solid var(--line);box-shadow:var(--shadow)}
+.feat-card-icon{font-size:24px;margin-bottom:9px}
+.feat-card-title{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:5px}
+.feat-card-desc{font-size:11px;color:var(--ink2);line-height:1.5}
+
+/* dark section overrides */
+.on-dark .feat-tag{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.65)}
+.on-dark .feat-h2{color:#fff}
+.on-dark .feat-h2 em{color:var(--butter)}
+.on-dark .feat-desc{color:rgba(255,255,255,0.6)}
+.on-dark .chip{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.8)}
+.on-dark .feat-card{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.1)}
+.on-dark .feat-card-title{color:#fff}
+.on-dark .feat-card-desc{color:rgba(255,255,255,0.52)}
+
+/* ── PHONE FRAME ── */
+.phone{width:264px;height:545px;border-radius:42px;overflow:hidden;position:relative;box-shadow:0 40px 90px rgba(0,0,0,0.24),0 0 0 1px rgba(0,0,0,0.09);flex-shrink:0}
+.phone.light{background:#F2F2F7}
+.phone.dark-bg{background:#1a1510}
+.phone.med-bg{background:#FFFDF8}
+.phone-notch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:84px;height:22px;border-radius:11px;background:#000;z-index:20}
+.phone-screen{padding-top:50px;height:100%;overflow:hidden}
+
+/* small dual phone */
+.phone.sm{width:192px;height:398px;border-radius:32px}
+.phone.sm .phone-notch{width:64px;height:18px;border-radius:9px}
+.phone.sm .phone-screen{padding-top:38px}
+
+/* ── CAPTURE SCREEN ── */
+.cap-wrap{background:#1a1510;height:100%;padding:6px 10px 10px}
+.cap-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 4px 8px}
+.cap-back{width:32px;height:32px;border-radius:16px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
+.cap-mode{background:rgba(255,255,255,0.12);border-radius:999px;padding:4px 12px;font-size:10px;font-weight:700;color:var(--butter)}
+.cap-view{
+  border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#2e1c10,#1a1208);
+  position:relative;flex:1;display:flex;align-items:center;justify-content:center;
+  height:220px;margin-bottom:9px;
+}
+.cap-sticker{font-size:80px;line-height:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.5))}
+.cap-corner{position:absolute;width:16px;height:16px;opacity:0.65}
+.cap-corner.tl{top:10px;left:10px;border-top:2px solid #fff;border-left:2px solid #fff;border-radius:3px 0 0 0}
+.cap-corner.tr{top:10px;right:10px;border-top:2px solid #fff;border-right:2px solid #fff;border-radius:0 3px 0 0}
+.cap-corner.bl{bottom:10px;left:10px;border-bottom:2px solid #fff;border-left:2px solid #fff;border-radius:0 0 0 3px}
+.cap-corner.br{bottom:10px;right:10px;border-bottom:2px solid #fff;border-right:2px solid #fff;border-radius:0 0 3px 0}
+.cap-focus{position:absolute;inset:28px;border:1.5px dashed rgba(242,213,138,0.6);border-radius:12px}
+.cap-aibar{position:absolute;bottom:8px;left:8px;right:8px;background:rgba(26,21,16,0.88);backdrop-filter:blur(8px);border-radius:12px;padding:8px 11px;display:flex;align-items:center;gap:8px}
+.cap-ai-dot{width:22px;height:22px;border-radius:11px;background:#52C41A;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;color:#fff;font-weight:800}
+.cap-ai-txt{font-size:10px;font-weight:700;color:#fff;line-height:1.3}
+.cap-ai-sub{font-size:8.5px;color:rgba(255,255,255,0.5);margin-top:1px}
+.scene-row{display:flex;gap:5px;overflow-x:auto;padding-bottom:3px;margin-bottom:8px}
+.scene-chip{flex-shrink:0;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.08);font-size:9.5px;color:rgba(255,255,255,0.65);font-weight:700;display:flex;align-items:center;gap:3px}
+.scene-chip.active{background:rgba(242,213,138,0.2);border-color:#F2D58A;color:#F2D58A}
+.cap-btns{display:flex;align-items:center;justify-content:center;gap:28px;padding:4px 0 2px}
+.cap-side{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:15px}
+.cap-shoot{width:58px;height:58px;border-radius:50%;border:2.5px solid rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center}
+.cap-shoot-inner{width:46px;height:46px;border-radius:50%;background:var(--butter)}
+
+/* ── PORTFOLIO SCREEN ── */
+.port-wrap{background:#F6F1E7;height:100%;padding:0 12px;overflow:hidden}
+.port-topbar{padding:10px 2px 8px;display:flex;align-items:center;justify-content:space-between}
+.port-title{font-family:'Fraunces',Georgia,serif;font-size:16px;font-weight:800;color:#2A2520}
+.view-tabs{display:flex;gap:3px;background:#EDE4D2;border-radius:10px;padding:3px}
+.view-tab{padding:4px 11px;border-radius:7px;font-size:10px;font-weight:700;color:#6B6158;cursor:pointer}
+.view-tab.active{background:#fff;color:#2A2520;box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+.sticker-wall{background:repeating-linear-gradient(45deg,rgba(237,228,210,0.6) 0 1.5px,transparent 1.5px 14px);border:1px dashed rgba(42,37,32,0.18);border-radius:16px;height:128px;position:relative;overflow:hidden;margin-bottom:8px}
+.sw-s{position:absolute;line-height:1;user-select:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.15))}
+.day-card{background:#FFFDF8;border-radius:14px;padding:9px 12px;border:0.5px solid rgba(42,37,32,0.07);margin-bottom:6px;box-shadow:0 1px 2px rgba(0,0,0,0.04),0 2px 8px rgba(0,0,0,0.04)}
+.dc-date{font-size:9.5px;font-weight:700;color:#6B6158;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.dc-day{opacity:0.6;font-weight:600}
+.dc-stickers{display:flex;gap:4px;flex-wrap:wrap}
+.dc-s{width:30px;height:30px;border-radius:8px;background:#EDE4D2;display:flex;align-items:center;justify-content:center;font-size:17px}
+
+/* ── WILD SCREEN ── */
+.wild-wrap{background:linear-gradient(180deg,#080018 0%,#1A0040 50%,#0E0030 100%);height:100%;padding:0 10px;overflow:hidden}
+.wild-top{padding:10px 2px 8px;display:flex;align-items:center;justify-content:space-between}
+.wild-title{font-family:'Fraunces',Georgia,serif;font-size:14px;font-weight:800;color:#fff}
+.wild-pill-sm{background:rgba(255,26,108,0.2);border:0.5px solid rgba(255,26,108,0.45);color:#FF1A6C;padding:3px 10px;border-radius:999px;font-size:8.5px;font-weight:800}
+.wild-stats{display:flex;gap:6px;margin-bottom:10px}
+.wild-stat{flex:1;background:rgba(255,255,255,0.06);border-radius:12px;padding:8px 6px;text-align:center;border:0.5px solid rgba(255,26,108,0.15)}
+.ws-num{font-size:18px;font-weight:900;color:#fff;line-height:1;font-family:'Fraunces',Georgia,serif}
+.ws-label{font-size:8px;color:rgba(255,255,255,0.45);margin-top:2px;font-weight:700}
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.badge-card{border-radius:11px;padding:7px 5px;text-align:center;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.06)}
+.badge-card.earned{background:rgba(255,26,108,0.14);border-color:rgba(255,26,108,0.35)}
+.bc-icon{font-size:20px;line-height:1;margin-bottom:2px}
+.bc-name{font-size:7px;font-weight:800;color:rgba(255,255,255,0.85);line-height:1.3}
+.bc-lv{font-size:6.5px;color:rgba(255,26,108,0.75);font-weight:700;margin-top:1px}
+.bc-lock{font-size:7px;color:rgba(255,255,255,0.3);font-weight:700;margin-top:1px}
+
+/* ── MED SCREEN ── */
+.med-wrap{background:#FFFDF8;height:100%;padding:0 10px;overflow:hidden}
+.med-topbar{padding:8px 2px 6px;font-family:'Fraunces',Georgia,serif;font-size:13px;font-weight:800;color:#2A2520}
+.med-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2.5px;margin-bottom:8px}
+.mc{aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:#6B6158;background:#EDE4D2}
+.mc.today{background:#2A2520;color:#fff}
+.mc.marked{background:#D9A9A222;border:0.5px solid #D9A9A2;color:#B47A74}
+.mc.dot-m::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:3px;height:3px;border-radius:50%;background:#9E7BA0}
+.mc{position:relative}
+.med-item{background:#FFFDF8;border-radius:10px;padding:7px 9px;display:flex;align-items:center;gap:7px;margin-bottom:4px;border:0.5px solid rgba(42,37,32,0.08);box-shadow:0 1px 2px rgba(0,0,0,0.04)}
+.mi-emoji{font-size:18px;flex-shrink:0}
+.mi-info{flex:1}
+.mi-name{font-size:10px;font-weight:800;color:#2A2520}
+.mi-time{font-size:8px;color:#A89E91;margin-top:1px}
+.mi-check{width:16px;height:16px;border-radius:5px;border:1.5px solid #A89E91;flex-shrink:0}
+.mi-check.done{background:#7D9274;border-color:#7D9274;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px}
+
+/* ── WATER SCREEN ── */
+.water-wrap{background:#EAF1F6;height:100%;padding:0 10px;overflow:hidden}
+.water-topbar{padding:8px 2px 4px;font-family:'Fraunces',Georgia,serif;font-size:13px;font-weight:800;color:#507489}
+.water-big{font-size:32px;font-weight:900;color:#2A2520;text-align:center;padding:10px 0 2px;font-family:'Fraunces',Georgia,serif;line-height:1}
+.water-sub{font-size:9px;color:#507489;text-align:center;font-weight:700;margin-bottom:10px}
+.water-bars-row{display:flex;gap:4px;justify-content:center;margin-bottom:10px}
+.wb{width:20px;height:52px;border-radius:6px;background:rgba(255,255,255,0.6);overflow:hidden;position:relative}
+.wb-fill{position:absolute;bottom:0;left:0;right:0;background:#84A8B6;border-radius:6px;transition:height 0.3s}
+.water-btns-row{display:flex;gap:5px;justify-content:center;margin-bottom:8px}
+.water-btn-sm{padding:6px 10px;border-radius:9px;background:#507489;color:#fff;font-size:9px;font-weight:800;border:none;cursor:pointer;font-family:'Nunito',sans-serif}
+.water-suggest{padding:7px 9px;background:rgba(80,116,137,0.12);border-radius:9px;font-size:8.5px;color:#507489;line-height:1.45;margin-top:4px}
+.period-banner{background:linear-gradient(135deg,#E8A0BF22,#C8A9C022);border:0.5px solid #E8A0BF;border-radius:10px;padding:7px 9px;margin-top:6px;font-size:8.5px;color:#B5648E;font-weight:700}
+
+/* ── TODAY SCREEN (for overview) ── */
+.today-wrap{background:#F6F1E7;height:100%;padding:0 12px;overflow:hidden}
+.today-greeting{font-size:18px;font-weight:800;color:#2A2520;padding:12px 0 6px;font-family:'Fraunces',Georgia,serif}
+.today-mode-card{background:#FFFDF8;border-radius:16px;padding:12px;margin-bottom:8px;border:0.5px solid rgba(42,37,32,0.07);display:flex;gap:10px;align-items:center;box-shadow:var(--shadow)}
+.tm-ring{width:54px;height:54px;border-radius:50%;border:5px solid #EDE4D2;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;position:relative}
+.tm-ring::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:5px solid transparent;border-top-color:#B08A5B;border-right-color:#B08A5B;clip-path:inset(0 0 50% 0)}
+.tm-info-title{font-size:11px;font-weight:800;color:#2A2520;margin-bottom:3px}
+.tm-info-desc{font-size:9.5px;color:#6B6158;line-height:1.4}
+.today-sticker-wall{background:repeating-linear-gradient(45deg,rgba(237,228,210,0.5) 0 1.5px,transparent 1.5px 14px);border:1px dashed rgba(42,37,32,0.18);border-radius:14px;height:80px;position:relative;overflow:hidden;margin-bottom:8px}
+.today-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.tg-card{border-radius:12px;padding:9px 10px;border:0.5px solid rgba(42,37,32,0.07);box-shadow:var(--shadow)}
+
+/* ── SECTION BACKGROUNDS ── */
+.sec-cream{background:radial-gradient(circle at 80% 10%,#D9C2A422,transparent 50%),radial-gradient(circle at 10% 90%,#D9A9A218,transparent 50%),var(--cream)}
+.sec-dark{background:#2A2520}
+.sec-warm{background:radial-gradient(circle at 70% 20%,#F2D58A18,transparent 55%),radial-gradient(circle at 20% 80%,#D9A9A222,transparent 55%),#FFFDF8}
+.sec-night{background:linear-gradient(160deg,#05000F 0%,#120030 50%,#08001A 100%)}
+.sec-health{background:linear-gradient(135deg,#EAF1F6 0%,#EFF5EE 55%,#F5EEF8 100%)}
+.sec-cta{background:radial-gradient(circle at 25% 75%,rgba(176,138,91,0.28),transparent 55%),radial-gradient(circle at 80% 20%,rgba(158,123,160,0.22),transparent 50%),#1A1208}
+
+/* ── THREE-MODE SECTION ── */
+.modes-row{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
+.mode-card{flex:1;min-width:220px;border-radius:24px;padding:24px 20px;border:0.5px solid var(--line);position:relative;overflow:hidden}
+.mode-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;opacity:0.18}
+.mode-loose{background:linear-gradient(135deg,#A8B89A22,#7D927422)}
+.mode-loose::before{background:#A8B89A}
+.mode-standard{background:linear-gradient(135deg,#B08A5B22,#8A674022)}
+.mode-standard::before{background:#B08A5B}
+.mode-strict{background:linear-gradient(135deg,#E69A7822,#C5755022)}
+.mode-strict::before{background:#E69A78}
+.mode-glyph{font-size:28px;margin-bottom:10px}
+.mode-label{font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.mode-desc{font-size:12px;color:var(--ink2);line-height:1.5;margin-bottom:12px}
+.mode-detail{font-size:11px;color:var(--ink2);padding:8px 10px;background:rgba(255,253,248,0.6);border-radius:10px;line-height:1.5;border:0.5px solid var(--line)}
+.mode-tag{display:inline-block;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:800;margin-bottom:8px}
+.mode-loose .mode-tag{background:#A8B89A33;color:#5E7556}
+.mode-standard .mode-tag{background:#B08A5B33;color:#7A5B33}
+.mode-strict .mode-tag{background:#E69A7833;color:#9A5A38}
+
+/* ── CTA SECTION ── */
+.cta-section{min-height:100vh;padding:80px 60px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.cta-h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(52px,7vw,88px);font-weight:800;line-height:1.02;color:#fff;letter-spacing:-2px;margin-bottom:22px}
+.cta-h1 em{color:var(--mochaLt);font-style:italic}
+.cta-sub{font-size:17px;color:rgba(255,255,255,0.55);max-width:480px;margin:0 auto 36px;line-height:1.65}
+.cta-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:40px}
+.cta-chip{padding:6px 16px;border-radius:999px;background:rgba(255,253,248,0.08);border:0.5px solid rgba(255,253,248,0.18);font-size:12px;font-weight:700;color:rgba(255,255,255,0.65)}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cta-btn-primary{background:#fff;color:#2A2520;border:none;padding:15px 38px;border-radius:999px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 6px 24px rgba(0,0,0,0.18);transition:transform 0.2s}
+.cta-btn-primary:hover{transform:scale(1.04)}
+.cta-btn-secondary{background:transparent;color:rgba(255,255,255,0.7);border:0.5px solid rgba(255,255,255,0.25);padding:15px 28px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s}
+.cta-btn-secondary:hover{color:#fff;border-color:rgba(255,255,255,0.55)}
+.cta-note{margin-top:22px;font-size:12px;color:rgba(255,255,255,0.3)}
+.cta-features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:56px;max-width:700px;width:100%}
+.cta-feat-item{padding:18px 16px;border-radius:18px;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);text-align:left}
+.cfi-icon{font-size:22px;margin-bottom:9px}
+.cfi-title{font-size:13px;font-weight:800;color:#fff;margin-bottom:4px}
+.cfi-desc{font-size:11px;color:rgba(255,255,255,0.48);line-height:1.45}
+
+/* ── FOOTER ── */
+.footer{background:#0F0A05;padding:40px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-logo{font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.3)}
+.footer-links{display:flex;gap:22px}
+.footer-link{font-size:12px;font-weight:700;color:rgba(255,255,255,0.38);text-decoration:none;cursor:pointer;transition:color 0.2s}
+.footer-link:hover{color:rgba(255,255,255,0.75)}
+
+/* ── REVEAL ANIMATION ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.75s ease,transform 0.75s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal.delay-1{transition-delay:0.1s}
+.reveal.delay-2{transition-delay:0.2s}
+.reveal.delay-3{transition-delay:0.3s}
+
+/* ── DUAL PHONE ── */
+.dual-phones{display:flex;gap:18px;align-items:flex-start}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  .sidenav{display:none}
+  .feature-section{padding:72px 28px}
+  .feature-inner{flex-direction:column!important;gap:48px}
+  .feature-text{min-width:unset}
+  .modes-row{flex-direction:column}
+  .cta-features{grid-template-columns:repeat(2,1fr)}
+  .footer{flex-direction:column;text-align:center;padding:36px 28px}
+  .footer-links{justify-content:center}
+  .cta-section{padding:72px 28px}
+}
+@media(max-width:500px){
+  .cta-features{grid-template-columns:1fr}
+  .cta-h1{font-size:44px}
+}
+</style>
+</head>
+<body>
+
+<!-- ────────────────── CAPSULE NAV ────────────────── -->
+<nav class="sidenav" id="sidenav">
+  <a class="sc-logo" data-tip="Easset" href="#section-0">E</a>
+  <div class="sc-sep"></div>
+  <a class="sc-dot active" data-idx="0" data-tip="首页 · 完整演示" href="#section-0"></a>
+  <a class="sc-dot" data-idx="1" data-tip="AI 视觉抠图" href="#capture"></a>
+  <a class="sc-dot" data-idx="2" data-tip="手帐系统" href="#portfolio"></a>
+  <a class="sc-dot" data-idx="3" data-tip="三档 AI 模式" href="#modes"></a>
+  <a class="sc-dot" data-idx="4" data-tip="豁出去模式" href="#wild"></a>
+  <a class="sc-dot" data-idx="5" data-tip="禅意日历" href="#health"></a>
+  <a class="sc-dot" data-idx="6" data-tip="Early Access" href="#cta"></a>
+  <div class="sc-sep"></div>
+  <a class="sc-cta" data-tip="加入候补" href="#cta">→</a>
+  <a class="sc-back" data-tip="ZYRVIS.COM" href="index.html">Z</a>
+</nav>
+
+<!-- ────────────────── § 0  HERO (App Demo) ────────────────── -->
+<section class="hero-section" id="section-0" data-idx="0">
+  <iframe src="Easset.html" title="Easset — 完整功能演示" loading="eager" allowfullscreen></iframe>
+  <div class="scroll-cta" id="scrollCta" onclick="document.getElementById('capture').scrollIntoView({behavior:'smooth'})">
+    <span>↓</span> 向下探索功能详解
+  </div>
+</section>
+
+<!-- ────────────────── § 1  CAPTURE ────────────────── -->
+<section class="feature-section sec-dark" id="capture" data-idx="1">
+  <div class="feature-inner rev">
+    <div class="feature-text on-dark reveal">
+      <span class="feat-tag">📷 AI 视觉抠图</span>
+      <h2 class="feat-h2">一拍，<br/>即成<em>贴纸</em>。</h2>
+      <p class="feat-desc">不需要任何网络请求。MobileSAM 端侧分割，所有 AI 计算在你的设备本地完成。对准食物，按下快门，贴纸即刻生成。</p>
+      <div class="feat-chips">
+        <span class="chip">⚡ 端侧 MobileSAM</span>
+        <span class="chip">🔒 图片不上传</span>
+        <span class="chip">🎨 三种贴纸风格</span>
+        <span class="chip">🍜 30+ 场景类型</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card">
+          <div class="feat-card-icon">🧠</div>
+          <div class="feat-card-title">端侧 AI 分割</div>
+          <div class="feat-card-desc">MobileSAM 完全在设备本地运行，你的食物照片绝不会离开手机</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">🎨</div>
+          <div class="feat-card-title">三种贴纸风格</div>
+          <div class="feat-card-desc">白描边 / 漫画风 / 真实感，同一张照片生成三套风格任选</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">🍲</div>
+          <div class="feat-card-title">30+ 场景覆盖</div>
+          <div class="feat-card-desc">咖啡、奶茶、火锅、寿司、米线、药物……全餐饮场景一网打尽</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">⚡</div>
+          <div class="feat-card-title">1.2 秒成贴</div>
+          <div class="feat-card-desc">拍完即存，自动入库当日手帐，贴纸立即可拖拽排版</div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="phone dark-bg">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="cap-wrap" style="display:flex;flex-direction:column;height:100%">
+            <div class="cap-topbar">
+              <div class="cap-back">←</div>
+              <div class="cap-mode">🔥 标准 · Vision</div>
+              <div style="width:32px"></div>
+            </div>
+            <div class="cap-view">
+              <div class="cap-sticker">☕</div>
+              <div class="cap-corner tl"></div><div class="cap-corner tr"></div>
+              <div class="cap-corner bl"></div><div class="cap-corner br"></div>
+              <div class="cap-focus"></div>
+              <div class="cap-aibar">
+                <div class="cap-ai-dot">✓</div>
+                <div>
+                  <div class="cap-ai-txt">贴纸生成完毕！</div>
+                  <div class="cap-ai-sub">美式 · 大杯 · 约 120 kcal · 端侧分割</div>
+                </div>
+              </div>
+            </div>
+            <div class="scene-row">
+              <div class="scene-chip active">☕ 咖啡</div>
+              <div class="scene-chip">🧋 奶茶</div>
+              <div class="scene-chip">🧁 甜点</div>
+              <div class="scene-chip">🍜 正餐</div>
+              <div class="scene-chip">🍲 火锅</div>
+              <div class="scene-chip">🍣 寿司</div>
+            </div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-bottom:6px;letter-spacing:0.5px;padding:0 2px">最近贴纸 · 拖拽到手账</div>
+            <div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:10px">
+              <div style="flex-shrink:0;width:52px;height:52px;border-radius:12px;background:rgba(242,213,138,0.2);border:0.5px solid #F2D58A;display:flex;align-items:center;justify-content:center;font-size:30px">☕</div>
+              <div style="flex-shrink:0;width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:30px">🧋</div>
+              <div style="flex-shrink:0;width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:30px">🎂</div>
+              <div style="flex-shrink:0;width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:30px">🥗</div>
+            </div>
+            <div class="cap-btns">
+              <div class="cap-side">🖼</div>
+              <div class="cap-shoot"><div class="cap-shoot-inner"></div></div>
+              <div class="cap-side">✨</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────── § 2  PORTFOLIO ────────────────── -->
+<section class="feature-section sec-cream" id="portfolio" data-idx="2">
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="phone light">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="port-wrap">
+            <div class="port-topbar">
+              <span class="port-title">手帐 📖</span>
+              <div class="view-tabs">
+                <div class="view-tab active">周</div>
+                <div class="view-tab">月</div>
+                <div class="view-tab">年</div>
+              </div>
+            </div>
+            <div class="sticker-wall">
+              <div class="sw-s" style="left:12px;top:22px;font-size:48px;transform:rotate(-8deg)">☕</div>
+              <div class="sw-s" style="left:72px;top:38px;font-size:36px;transform:rotate(5deg)">🧋</div>
+              <div class="sw-s" style="left:126px;top:18px;font-size:44px;transform:rotate(-4deg)">🎂</div>
+              <div class="sw-s" style="left:180px;top:34px;font-size:32px;transform:rotate(7deg)">🥗</div>
+              <div class="sw-s" style="left:44px;top:72px;font-size:30px;transform:rotate(-11deg)">🍲</div>
+              <div class="sw-s" style="left:155px;top:70px;font-size:38px;transform:rotate(9deg)">🍣</div>
+              <div style="position:absolute;right:10px;bottom:8px;background:#fff;border-radius:8px;padding:2px 8px;font-size:9px;color:#6B6158;font-weight:700;box-shadow:var(--shadow)">4月第3周</div>
+            </div>
+            <div class="day-card">
+              <div class="dc-date">4月19日 <span class="dc-day">周六</span> <span style="margin-left:auto;font-size:9px">☁️ 😊</span></div>
+              <div class="dc-stickers">
+                <div class="dc-s">☕</div><div class="dc-s">🧋</div><div class="dc-s">🎂</div><div class="dc-s">💧</div>
+              </div>
+              <div style="font-size:8.5px;color:#A89E91;margin-top:5px;padding:4px 6px;background:#F6F1E7;border-radius:6px">"下午茶时光 ☁️"</div>
+            </div>
+            <div class="day-card">
+              <div class="dc-date">4月18日 <span class="dc-day">周五</span> <span style="margin-left:auto;font-size:9px">🌤️ 😄</span></div>
+              <div class="dc-stickers">
+                <div class="dc-s">🧋</div><div class="dc-s">🥗</div><div class="dc-s">🍲</div>
+              </div>
+            </div>
+            <div class="day-card">
+              <div class="dc-date">4月17日 <span class="dc-day">周四</span> <span style="margin-left:auto;font-size:9px">🌡️ 🔥</span></div>
+              <div class="dc-stickers">
+                <div class="dc-s">🍲</div><div class="dc-s">🍺</div><div class="dc-s">🎂</div>
+              </div>
+              <div style="font-size:8.5px;color:#A89E91;margin-top:5px;padding:4px 6px;background:#F6F1E7;border-radius:6px">"火锅局超开心 🔥🔥🔥"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">📖 手帐系统</span>
+      <h2 class="feat-h2">把每一口，<br/>做成<em>收藏品</em>。</h2>
+      <p class="feat-desc">贴纸按日期自动整理，就像一本真实的手帐。翻开它，你能看到每一天的滋味、每一刻的心情。</p>
+      <div class="feat-chips">
+        <span class="chip">📅 周 / 月 / 年三档视图</span>
+        <span class="chip">🎨 随机旋转贴纸</span>
+        <span class="chip">😊 心情 & 天气标记</span>
+        <span class="chip">✍️ 随手文字备注</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card">
+          <div class="feat-card-icon">📅</div>
+          <div class="feat-card-title">三档时间视图</div>
+          <div class="feat-card-desc">周视图逐日回顾，月视图统计饮食构成，年视图一眼看尽全年吃喝</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">🎨</div>
+          <div class="feat-card-title">手帐风格布局</div>
+          <div class="feat-card-desc">贴纸随机旋转，模拟真实手帐纸感，可拖拽自由排版</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">📊</div>
+          <div class="feat-card-title">月度统计图表</div>
+          <div class="feat-card-desc">美食分类饼图、周均贴纸数、连续打卡天数，数据一目了然</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">✍️</div>
+          <div class="feat-card-title">情绪与备注</div>
+          <div class="feat-card-desc">心情 emoji、天气、文字备注、⭐ 星级评分，记录生活质感</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────── § 3  THREE MODES ────────────────── -->
+<section class="feature-section sec-warm" id="modes" data-idx="3">
+  <div style="max-width:1080px;width:100%">
+    <div class="reveal" style="text-align:center;margin-bottom:56px">
+      <span class="feat-tag" style="margin-bottom:18px">📊 三档 AI 建议</span>
+      <h2 class="feat-h2" style="font-size:clamp(36px,4.5vw,56px);margin-bottom:16px">你说了算。<br/>AI <em>按你的节奏</em>说话。</h2>
+      <p class="feat-desc" style="max-width:560px;margin:0 auto;text-align:center;font-size:15px">不是每一天都适合同一套标准。Easset 提供三档模式，切换一下，整个 App 的语气、数字、建议都会跟着变。</p>
+    </div>
+    <div class="modes-row reveal delay-1">
+      <div class="mode-card mode-loose">
+        <div class="mode-glyph">🍀</div>
+        <div class="mode-tag">宽松模式</div>
+        <div class="mode-label">随心所欲</div>
+        <div class="mode-desc">完全隐藏热量数字，仅二级菜单可见。今天的你，不需要被数字评判。</div>
+        <div class="mode-detail">
+          「☕ 想喝就喝，今天也要好好犒劳自己。」<br/>
+          「🍰 下午茶时间到，给自己来点小确幸。」
+        </div>
+      </div>
+      <div class="mode-card mode-standard">
+        <div class="mode-glyph">🔥</div>
+        <div class="mode-tag">标准模式</div>
+        <div class="mode-label">理性管家</div>
+        <div class="mode-desc">用 🔥 数量模糊表示摄入强度，有感知但不焦虑。</div>
+        <div class="mode-detail">
+          「☕ 下午茶时间到，今天的第二杯要来了哦。」<br/>
+          「🌧️ 雨天和热饮最配，今天想喝什么？」
+        </div>
+      </div>
+      <div class="mode-card mode-strict">
+        <div class="mode-glyph">⚖️</div>
+        <div class="mode-tag">严厉模式</div>
+        <div class="mode-label">硬核教练</div>
+        <div class="mode-desc">实时显示 kcal、蛋白质、碳水、脂肪，BMR 动态配色预警。</div>
+        <div class="mode-detail">
+          「早安 ☀️ 今天第一杯咖啡已记录，热量较低。」<br/>
+          「🍜 午餐摄入偏高，下午茶建议无糖款。」
+        </div>
+      </div>
+    </div>
+    <div class="reveal delay-2" style="margin-top:32px;padding:20px 24px;background:var(--paper);border-radius:20px;border:0.5px solid var(--line);box-shadow:var(--shadow);display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="font-size:22px">💡</div>
+      <div style="flex:1;min-width:200px">
+        <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:4px">随时切换，实时生效</div>
+        <div style="font-size:12px;color:var(--ink2);line-height:1.5">在首页卡片轻点即可切换模式，所有文案、数据显示、建议语气立即变化。模式偏好自动保存。</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <span style="padding:5px 12px;border-radius:999px;background:#A8B89A22;font-size:11px;font-weight:700;color:#5E7556;border:0.5px solid #A8B89A44">🍀 宽松</span>
+        <span style="padding:5px 12px;border-radius:999px;background:#B08A5B22;font-size:11px;font-weight:700;color:#7A5B33;border:0.5px solid #B08A5B44">🔥 标准</span>
+        <span style="padding:5px 12px;border-radius:999px;background:#E69A7822;font-size:11px;font-weight:700;color:#9A5A38;border:0.5px solid #E69A7844">⚖️ 严厉</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────── § 4  WILD MODE ────────────────── -->
+<section class="feature-section sec-night" id="wild" data-idx="4">
+  <div class="feature-inner">
+    <div class="feature-text on-dark reveal">
+      <span class="feat-tag">⭐ 豁出去模式</span>
+      <h2 class="feat-h2">今夜，<br/><em>横扫一切</em>。</h2>
+      <p class="feat-desc">有些时刻，本来就不该被数字评判。Wild Mode 下，热量退场，勋章出战——你的吃喝，只记战绩。</p>
+      <div class="feat-chips">
+        <span class="chip">🌙 昼夜双主题</span>
+        <span class="chip">🏆 18+ 成就勋章</span>
+        <span class="chip">🔥 战绩时间线</span>
+        <span class="chip">📸 真实照片记录</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card">
+          <div class="feat-card-icon">🌙</div>
+          <div class="feat-card-title">昼夜双主题</div>
+          <div class="feat-card-desc">20:00 后自动切换深夜战神主题，白天是多巴胺爆炸橙红渐变</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">🏆</div>
+          <div class="feat-card-title">18+ 成就勋章</div>
+          <div class="feat-card-desc">达成条件自动解锁，午夜烤肉神、火锅终结者、深夜酒神……</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">📸</div>
+          <div class="feat-card-title">真实照片模式</div>
+          <div class="feat-card-desc">可关闭抠图，直接上传原始照片到时间轴，不需要分割</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">⚡</div>
+          <div class="feat-card-title">战场指数</div>
+          <div class="feat-card-desc">今日道菜数、时长、战神评级，一屏看尽今晚战绩</div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="phone" style="background:linear-gradient(180deg,#080018 0%,#1A0040 50%,#0E0030 100%)">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="wild-wrap">
+            <div class="wild-top">
+              <span class="wild-title">⭐ 豁出去</span>
+              <span class="wild-pill-sm">⚡ 深夜战斗</span>
+            </div>
+            <div class="wild-stats">
+              <div class="wild-stat"><div class="ws-num">7</div><div class="ws-label">道菜</div></div>
+              <div class="wild-stat"><div class="ws-num">~3h</div><div class="ws-label">时长</div></div>
+              <div class="wild-stat"><div class="ws-num">⚡</div><div class="ws-label">战神</div></div>
+            </div>
+            <div style="font-size:8.5px;color:rgba(255,255,255,0.45);margin-bottom:7px;font-weight:700;letter-spacing:0.5px">成就勋章墙</div>
+            <div class="badge-grid">
+              <div class="badge-card earned"><div class="bc-icon">🌙</div><div class="bc-name">午夜烤肉神</div><div class="bc-lv">Lv3 ✓</div></div>
+              <div class="badge-card earned"><div class="bc-icon">🍲</div><div class="bc-name">火锅终结者</div><div class="bc-lv">Lv2 ✓</div></div>
+              <div class="badge-card earned"><div class="bc-icon">🍔</div><div class="bc-name">人均贡献王</div><div class="bc-lv">Lv2 ✓</div></div>
+              <div class="badge-card earned"><div class="bc-icon">🥩</div><div class="bc-name">全家桶达人</div><div class="bc-lv">Lv1 ✓</div></div>
+              <div class="badge-card earned"><div class="bc-icon">⚡</div><div class="bc-name">今日吃货</div><div class="bc-lv">Lv1 ✓</div></div>
+              <div class="badge-card earned"><div class="bc-icon">🍗</div><div class="bc-name">炸鸡终结者</div><div class="bc-lv">Lv2 ✓</div></div>
+              <div class="badge-card"><div class="bc-icon">🍣</div><div class="bc-name">刺身战神</div><div class="bc-lock">🔒 未解锁</div></div>
+              <div class="badge-card"><div class="bc-icon">🍕</div><div class="bc-name">披萨统治者</div><div class="bc-lock">🔒 未解锁</div></div>
+              <div class="badge-card"><div class="bc-icon">🌅</div><div class="bc-name">黎明使者</div><div class="bc-lock">🔒 未解锁</div></div>
+            </div>
+            <div style="margin-top:9px;padding:8px 10px;background:rgba(255,26,108,0.12);border-radius:12px;border:0.5px solid rgba(255,26,108,0.3)">
+              <div style="font-size:9px;font-weight:800;color:#FF1A6C;margin-bottom:3px">「⚡ 夜场战神上线！热量归零，只计战绩。」</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.45)">今晚还差 1 个勋章解锁「深夜传说」</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────── § 5  HEALTH (Med + Water) ────────────────── -->
+<section class="feature-section sec-health" id="health" data-idx="5">
+  <div class="feature-inner rev">
+    <div class="feature-text reveal">
+      <span class="feat-tag">💊 禅意日历 + 💧 喝水联动</span>
+      <h2 class="feat-h2">身心，<br/>都要<em>关照</em>。</h2>
+      <p class="feat-desc">用药计划智能提醒，经期周期可视追踪，喝水目标与餐饮记录联动——一个 App，全面守护你的身体。</p>
+      <div class="feat-chips">
+        <span class="chip">💊 用药 + 经期追踪</span>
+        <span class="chip">🌸 周期预测</span>
+        <span class="chip">💧 智能补水提醒</span>
+        <span class="chip">📅 30天日历视图</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card">
+          <div class="feat-card-icon">📅</div>
+          <div class="feat-card-title">禅意药物日历</div>
+          <div class="feat-card-desc">30天日历视图，用药计划可视化，到时推送提醒，智能 AI 解析添加</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">🌸</div>
+          <div class="feat-card-title">经期周期追踪</div>
+          <div class="feat-card-desc">记录周期天数，自动预测下次经期，症状快记，阶段可视化圆弧</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">💧</div>
+          <div class="feat-card-title">喝水联动提醒</div>
+          <div class="feat-card-desc">餐饮记录后智能推算补水需求，8格进度条，一键+300/+500 ml</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-icon">🧘</div>
+          <div class="feat-card-title">症状快记</div>
+          <div class="feat-card-desc">腹胀、头痛、疲劳、情绪波动……一屏快速标记，自动保存到当日</div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="dual-phones">
+        <!-- Med phone -->
+        <div class="phone sm" style="background:#FFFDF8">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="med-wrap">
+              <div class="med-topbar">禅意日历 💊</div>
+              <div class="med-cal">
+                <div class="mc" style="font-size:7.5px;color:#A89E91;background:transparent">日</div>
+                <div class="mc" style="font-size:7.5px;color:#A89E91;background:transparent">一</div>
+                <div class="mc" style="font-size:7.5px;color:#A89E91;background:transparent">二</div>
+                <div class="mc" style="font-size:7.5px;color:#A89E91;background:transparent">三</div>
+                <div class="mc" style="font-size:7.5px;color:#A89E91;background:transparent">四</div>
+                <div class="mc" style="font-size:7.5px;color:#A89E91;background:transparent">五</div>
+                <div class="mc" style="font-size:7.5px;color:#A89E91;background:transparent">六</div>
+                <div class="mc marked">1</div><div class="mc">2</div><div class="mc">3</div><div class="mc">4</div><div class="mc">5</div><div class="mc marked">6</div><div class="mc marked">7</div>
+                <div class="mc">8</div><div class="mc">9</div><div class="mc">10</div><div class="mc">11</div><div class="mc">12</div><div class="mc">13</div><div class="mc">14</div>
+                <div class="mc">15</div><div class="mc">16</div><div class="mc">17</div><div class="mc">18</div><div class="mc today">19</div><div class="mc">20</div><div class="mc">21</div>
+                <div class="mc dot-m">22</div><div class="mc dot-m">23</div><div class="mc">24</div><div class="mc">25</div><div class="mc">26</div><div class="mc">27</div><div class="mc">28</div>
+              </div>
+              <div style="font-size:9px;color:#6B6158;font-weight:700;margin-bottom:6px;padding:0 2px">今日用药</div>
+              <div class="med-item">
+                <div class="mi-emoji">💊</div>
+                <div class="mi-info"><div class="mi-name">维生素 D</div><div class="mi-time">饭后 30 分钟 · 还剩 2h</div></div>
+                <div class="mi-check done">✓</div>
+              </div>
+              <div class="med-item">
+                <div class="mi-emoji">🌿</div>
+                <div class="mi-info"><div class="mi-name">四君子汤</div><div class="mi-time">早晚各一次</div></div>
+                <div class="mi-check"></div>
+              </div>
+              <div class="med-item">
+                <div class="mi-emoji">⚪</div>
+                <div class="mi-info"><div class="mi-name">Omega-3</div><div class="mi-time">随晚餐</div></div>
+                <div class="mi-check"></div>
+              </div>
+              <div style="margin-top:6px;padding:6px 8px;background:#E8A0BF18;border:0.5px solid #E8A0BF;border-radius:10px">
+                <div style="font-size:8px;font-weight:800;color:#B5648E">🌸 经期追踪</div>
+                <div style="font-size:7.5px;color:#B5648E;opacity:0.8;margin-top:2px">当前：黄体期 第19天 · 下次预计 4月29日</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Water phone -->
+        <div class="phone sm" style="background:#EAF1F6;margin-top:40px">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="water-wrap">
+              <div class="water-topbar">喝水 💧</div>
+              <div class="water-big">1.2L</div>
+              <div class="water-sub">目标 2.0L · 完成 60%</div>
+              <div class="water-bars-row">
+                <div class="wb"><div class="wb-fill" style="height:100%"></div></div>
+                <div class="wb"><div class="wb-fill" style="height:100%"></div></div>
+                <div class="wb"><div class="wb-fill" style="height:100%"></div></div>
+                <div class="wb"><div class="wb-fill" style="height:100%"></div></div>
+                <div class="wb"><div class="wb-fill" style="height:85%"></div></div>
+                <div class="wb"><div class="wb-fill" style="height:0"></div></div>
+                <div class="wb"><div class="wb-fill" style="height:0"></div></div>
+                <div class="wb"><div class="wb-fill" style="height:0"></div></div>
+              </div>
+              <div class="water-btns-row">
+                <button class="water-btn-sm">+ 200ml</button>
+                <button class="water-btn-sm">+ 300ml</button>
+                <button class="water-btn-sm">+ 500ml</button>
+              </div>
+              <div class="water-suggest">吃了重口味午餐，建议今天多喝 +300ml 💡</div>
+              <div style="margin-top:8px;padding:7px 9px;background:#fff;border-radius:10px;border:0.5px solid rgba(42,37,32,0.07);box-shadow:var(--shadow)">
+                <div style="font-size:8px;font-weight:800;color:#6B6158;margin-bottom:4px">今日喝水记录</div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap">
+                  <span style="padding:2px 7px;border-radius:6px;background:#EAF1F6;font-size:8px;color:#507489;font-weight:700">09:30 · 300ml</span>
+                  <span style="padding:2px 7px;border-radius:6px;background:#EAF1F6;font-size:8px;color:#507489;font-weight:700">11:00 · 200ml</span>
+                  <span style="padding:2px 7px;border-radius:6px;background:#EAF1F6;font-size:8px;color:#507489;font-weight:700">13:40 · 500ml</span>
+                  <span style="padding:2px 7px;border-radius:6px;background:#EAF1F6;font-size:8px;color:#507489;font-weight:700">15:20 · 200ml</span>
+                </div>
+              </div>
+              <div class="period-banner">🌸 生理期第 1 天，可以多补水和热饮 ❤️</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────── § 6  CTA ────────────────── -->
+<section class="cta-section sec-cta" id="cta" data-idx="6">
+  <div class="reveal">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(255,253,248,0.1);border:0.5px solid rgba(255,253,248,0.2);font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:24px">
+      🎨 Easset · iOS 17+ · 现已接受内测申请
+    </div>
+    <h1 class="cta-h1">准备好了吗？<br/>你的<em>视觉饮食日记</em><br/>等你来写。</h1>
+    <p class="cta-sub">像收集贴纸一样记录生活，像经营资产一样关爱健康。Easset 重新定义你与食物的关系。</p>
+    <div class="cta-chips">
+      <span class="cta-chip">📷 AI 视觉抠图</span>
+      <span class="cta-chip">🏆 30+ 成就勋章</span>
+      <span class="cta-chip">📖 周月年手帐</span>
+      <span class="cta-chip">💊 禅意药物日历</span>
+      <span class="cta-chip">⭐ 豁出去模式</span>
+      <span class="cta-chip">💧 喝水联动</span>
+      <span class="cta-chip">🔒 隐私优先</span>
+    </div>
+    <div class="cta-btns">
+      <button class="cta-btn-primary">加入早期体验候补 →</button>
+      <button class="cta-btn-secondary">查看演示</button>
+    </div>
+    <p class="cta-note">首批内测限量 500 名 · 邮件邀请</p>
+  </div>
+  <div class="cta-features reveal delay-2">
+    <div class="cta-feat-item">
+      <div class="cfi-icon">🔒</div>
+      <div class="cfi-title">隐私第一</div>
+      <div class="cfi-desc">MobileSAM 端侧运行，所有图片在本机处理，数据只在你的设备上</div>
+    </div>
+    <div class="cta-feat-item">
+      <div class="cfi-icon">📱</div>
+      <div class="cfi-title">原生 iOS</div>
+      <div class="cfi-desc">专为 iPhone 设计，iOS 17+ 原生体验，SwiftUI + On-Device AI</div>
+    </div>
+    <div class="cta-feat-item">
+      <div class="cfi-icon">🎯</div>
+      <div class="cfi-title">不焦虑设计</div>
+      <div class="cfi-desc">三档模式按你的状态说话，从不强迫你计数，记录生活的快乐优先</div>
+    </div>
+    <div class="cta-feat-item">
+      <div class="cfi-icon">✨</div>
+      <div class="cfi-title">Bento 布局</div>
+      <div class="cfi-desc">苹果风格 Bento Grid，视觉信息层次清晰，每一屏都是一幅画</div>
+    </div>
+    <div class="cta-feat-item">
+      <div class="cfi-icon">🌙</div>
+      <div class="cfi-title">豁出去模式</div>
+      <div class="cfi-desc">专门的放飞自我时刻记录，勋章、战绩时间线、昼夜双主题</div>
+    </div>
+    <div class="cta-feat-item">
+      <div class="cfi-icon">📊</div>
+      <div class="cfi-title">数据可视化</div>
+      <div class="cfi-desc">波形图、环图、饼图、柱图，饮食习惯数据化，美观且实用</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-logo">Easset</div>
+  <div class="footer-copy">© 2026 Easset · Your Visual Diet Diary · iOS 17+</div>
+  <div class="footer-links">
+    <a class="footer-link" href="#">隐私政策</a>
+    <a class="footer-link" href="#">使用条款</a>
+    <a class="footer-link" href="#">联系我们</a>
+    <a class="footer-link" href="#">About</a>
+  </div>
+  <div style="width:100%;text-align:center;margin-top:20px;padding-top:20px;border-top:0.5px solid rgba(255,255,255,0.08)">
+    <a href="#" style="font-size:11px;font-weight:800;color:rgba(255,255,255,0.28);letter-spacing:2.5px;text-decoration:none;text-transform:uppercase;transition:color 0.2s" onmouseover="this.style.color='rgba(255,255,255,0.65)'" onmouseout="this.style.color='rgba(255,255,255,0.28)'">ZYRVIS.COM</a>
+  </div>
+</footer>
+
+<script>
+/* ── CAPSULE NAV: smooth scroll ── */
+const sections = document.querySelectorAll('[data-idx]');
+const navLinks = document.querySelectorAll('.sc-dot, .sc-logo, .sc-cta, .sc-back');
+
+navLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+
+/* ── SECTION OBSERVER (capsule dot highlight) ── */
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && entry.intersectionRatio > 0.35) {
+      const idx = entry.target.dataset.idx;
+      document.querySelectorAll('.sc-dot').forEach(d => d.classList.remove('active'));
+      const active = document.querySelector(`.sc-dot[data-idx="${idx}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.35 });
+sections.forEach(s => navObserver.observe(s));
+
+/* ── REVEAL ANIMATION ── */
+const reveals = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(r => revealObs.observe(r));
+
+/* ── SCROLL CTA: fade out after hero ── */
+const scrollCta = document.getElementById('scrollCta');
+window.addEventListener('scroll', () => {
+  const heroHeight = document.getElementById('section-0').offsetHeight;
+  const gone = window.scrollY > heroHeight * 0.28;
+  scrollCta.style.opacity = gone ? '0' : '1';
+  scrollCta.style.pointerEvents = gone ? 'none' : 'auto';
+}, { passive: true });
+
+/* ── CTA BUTTONS ── */
+document.querySelector('.cta-btn-primary').addEventListener('click', () => {
+  alert('感谢你的兴趣！正式上线时我们会第一时间通知你 🎉');
+});
+document.querySelector('.cta-btn-secondary').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+</body>
+</html>
