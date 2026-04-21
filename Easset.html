@@ -771,7 +771,7 @@ function Portfolio({month,setMonth,setScreen}) {
         </div>
       </div>
       {/* Trophy button → badge wall (right of date, same size) */}
-      <div onClick={()=>setScreen('badgewall')} style={{position:'absolute',left:270,top:0,width:48,height:48,borderRadius:14,
+      <div onClick={()=>setScreen('badgewall')} style={{position:'absolute',left:270,top:'auto',width:48,height:48,borderRadius:14,
         background:`conic-gradient(${T.butter},${T.mocha},${T.rose},${T.butter})`,
         padding:3,cursor:'pointer',boxShadow:T.shadow}}>
         <div style={{width:'100%',height:'100%',borderRadius:11,background:T.paper,
