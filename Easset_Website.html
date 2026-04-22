@@ -257,14 +257,14 @@ em{font-style:italic}
 .footer{background:#080808;border-top:0.5px solid rgba(255,255,255,0.07)}
 
 /* ── GLOBAL DARK TEXT ── */
-.feat-tag{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.6)}
+.feat-tag{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.18);color:rgba(255,255,255,0.82)}
 .feat-h2{color:#fff}
 .feat-h2 em{color:var(--butter)}
-.feat-desc{color:rgba(255,255,255,0.58)}
-.chip{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.75)}
-.feat-card{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.09)}
+.feat-desc{color:rgba(255,255,255,0.76)}
+.chip{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.16);color:rgba(255,255,255,0.9)}
+.feat-card{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12)}
 .feat-card-title{color:#fff}
-.feat-card-desc{color:rgba(255,255,255,0.5)}
+.feat-card-desc{color:rgba(255,255,255,0.72)}
 
 /* ── MODE CARDS DARK ── */
 .mode-card{border-color:rgba(255,255,255,0.1)}
@@ -273,8 +273,8 @@ em{font-style:italic}
 .mode-standard{background:linear-gradient(135deg,rgba(176,138,91,0.18),rgba(138,103,64,0.08));border-color:rgba(176,138,91,0.28)}
 .mode-strict{background:linear-gradient(135deg,rgba(230,154,120,0.18),rgba(197,117,80,0.08));border-color:rgba(230,154,120,0.28)}
 .mode-label{color:#fff}
-.mode-desc{color:rgba(255,255,255,0.58)}
-.mode-detail{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.09);color:rgba(255,255,255,0.5)}
+.mode-desc{color:rgba(255,255,255,0.76)}
+.mode-detail{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.72)}
 .mode-loose .mode-tag{background:rgba(168,184,154,0.22);color:#A8B89A}
 .mode-standard .mode-tag{background:rgba(176,138,91,0.22);color:#D9C2A4}
 .mode-strict .mode-tag{background:rgba(230,154,120,0.22);color:#E69A78}
@@ -331,12 +331,12 @@ em{font-style:italic}
 .cfi-desc{font-size:11px;color:rgba(255,255,255,0.48);line-height:1.45}
 
 /* ── FOOTER ── */
-.footer{background:#0F0A05;padding:40px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer{background:#080808;padding:48px 32px 32px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;border-top:0.5px solid rgba(255,255,255,0.08)}
 .footer-logo{font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:800;color:#fff;letter-spacing:-0.5px}
-.footer-copy{font-size:12px;color:rgba(255,255,255,0.3)}
-.footer-links{display:flex;gap:22px}
-.footer-link{font-size:12px;font-weight:700;color:rgba(255,255,255,0.38);text-decoration:none;cursor:pointer;transition:color 0.2s}
-.footer-link:hover{color:rgba(255,255,255,0.75)}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.55)}
+.footer-links{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+.footer-link{font-size:12px;font-weight:700;color:rgba(255,255,255,0.55);text-decoration:none;cursor:pointer;transition:color 0.2s}
+.footer-link:hover{color:#fff}
 
 /* ── REVEAL ANIMATION ── */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity 0.75s ease,transform 0.75s ease}
@@ -351,18 +351,30 @@ em{font-style:italic}
 /* ── RESPONSIVE ── */
 @media(max-width:960px){
   .sidenav{display:none}
-  .feature-section{padding:72px 28px}
-  .feature-inner{flex-direction:column!important;gap:48px}
+  .shape{display:none}
+  .feature-section{padding:72px 24px}
+  .feature-inner{flex-direction:column!important;gap:44px}
   .feature-text{min-width:unset}
   .modes-row{flex-direction:column}
   .cta-features{grid-template-columns:repeat(2,1fr)}
-  .footer{flex-direction:column;text-align:center;padding:36px 28px}
-  .footer-links{justify-content:center}
-  .cta-section{padding:72px 28px}
+  .footer{padding:40px 24px}
+  .cta-section{padding:72px 24px}
+  .dual-phones{justify-content:center}
 }
-@media(max-width:500px){
+@media(max-width:600px){
+  .phone{width:220px;height:454px;border-radius:35px}
+  .phone-notch{width:68px;height:18px}
+  .phone-screen{padding-top:42px}
+  .phone.sm{width:148px;height:306px;border-radius:25px}
+  .phone.sm .phone-notch{width:52px;height:14px}
+  .phone.sm .phone-screen{padding-top:30px}
+  .dual-phones{gap:10px}
+  .feat-h2{font-size:clamp(30px,8vw,44px)}
+  .cta-h1{font-size:clamp(36px,10vw,52px)}
   .cta-features{grid-template-columns:1fr}
-  .cta-h1{font-size:44px}
+  .cta-section{padding:56px 20px}
+  .feature-section{padding:56px 20px}
+  .modes-row{gap:10px}
 }
 </style>
 </head>
@@ -898,16 +910,14 @@ em{font-style:italic}
 <!-- ── FOOTER ── -->
 <footer class="footer">
   <div class="footer-logo">Easset</div>
-  <div class="footer-copy">© 2026 Easset · Your Visual Diet Diary · iOS 17+</div>
   <div class="footer-links">
     <a class="footer-link" href="#">隐私政策</a>
     <a class="footer-link" href="#">使用条款</a>
     <a class="footer-link" href="#">联系我们</a>
     <a class="footer-link" href="#">About</a>
   </div>
-  <div style="width:100%;text-align:center;margin-top:20px;padding-top:20px;border-top:0.5px solid rgba(255,255,255,0.08)">
-    <a href="#" style="font-size:11px;font-weight:800;color:rgba(255,255,255,0.28);letter-spacing:2.5px;text-decoration:none;text-transform:uppercase;transition:color 0.2s" onmouseover="this.style.color='rgba(255,255,255,0.65)'" onmouseout="this.style.color='rgba(255,255,255,0.28)'">ZYRVIS.COM</a>
-  </div>
+  <div class="footer-copy">© 2026 Easset · Your Visual Diet Diary · iOS 17+</div>
+  <a href="index.html" style="font-size:11px;font-weight:800;color:rgba(255,255,255,0.35);letter-spacing:2.5px;text-decoration:none;text-transform:uppercase;margin-top:6px;transition:color 0.2s" onmouseover="this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">ZYRVIS.COM</a>
 </footer>
 
 <script>
