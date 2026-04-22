@@ -96,13 +96,14 @@ em{font-style:italic}
 .hero-section{width:100%;height:100vh;position:relative;overflow:hidden;background:var(--cream)}
 .hero-section iframe{width:100%;height:100%;border:none;display:block}
 .scroll-cta{
-  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  position:fixed;bottom:32px;left:50%;transform:translateX(-50%);
   background:rgba(255,253,248,0.92);backdrop-filter:blur(14px);
   border:0.5px solid var(--line);border-radius:999px;
   padding:11px 22px;font-size:13px;font-weight:800;color:var(--ink2);
   cursor:pointer;box-shadow:0 4px 20px rgba(42,37,32,0.12);
   display:flex;align-items:center;gap:8px;z-index:100;
   animation:float 2.5s ease-in-out infinite;
+  transition:opacity 0.4s ease;
 }
 @keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-7px)}}
 
@@ -258,6 +259,56 @@ em{font-style:italic}
 .sec-night{background:linear-gradient(160deg,#05000F 0%,#120030 50%,#08001A 100%)}
 .sec-health{background:linear-gradient(135deg,#EAF1F6 0%,#EFF5EE 55%,#F5EEF8 100%)}
 .sec-cta{background:radial-gradient(circle at 25% 75%,rgba(176,138,91,0.28),transparent 55%),radial-gradient(circle at 80% 20%,rgba(158,123,160,0.22),transparent 50%),#1A1208}
+
+/* ── SECTION TRANSITION BLENDS ── */
+/* Hero: fade bottom edge toward capture dark */
+.hero-section::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:100px;
+  background:linear-gradient(to bottom,transparent,#2A2520);
+  pointer-events:none;z-index:10;
+}
+/* § 1 Capture: blend entry from hero cream */
+#capture{
+  background:
+    linear-gradient(180deg,#F6F1E7 0,transparent 90px),
+    #2A2520;
+}
+/* § 2 Portfolio: blend entry from dark capture */
+#portfolio{
+  background:
+    linear-gradient(180deg,#2A2520 0,transparent 90px),
+    radial-gradient(circle at 80% 10%,#D9C2A422,transparent 50%),
+    radial-gradient(circle at 10% 90%,#D9A9A218,transparent 50%),
+    var(--cream);
+}
+/* § 3 Modes: subtle blend from cream portfolio */
+#modes{
+  background:
+    linear-gradient(180deg,var(--cream) 0,transparent 60px),
+    radial-gradient(circle at 70% 20%,#F2D58A18,transparent 55%),
+    radial-gradient(circle at 20% 80%,#D9A9A222,transparent 55%),
+    #FFFDF8;
+}
+/* § 4 Wild: blend entry from warm-white modes */
+#wild{
+  background:
+    linear-gradient(180deg,#FFFDF8 0,transparent 90px),
+    linear-gradient(160deg,#05000F 0%,#120030 50%,#08001A 100%);
+}
+/* § 5 Health: blend entry from dark wild */
+#health{
+  background:
+    linear-gradient(180deg,#08001A 0,transparent 90px),
+    linear-gradient(135deg,#EAF1F6 0%,#EFF5EE 55%,#F5EEF8 100%);
+}
+/* § 6 CTA: blend entry from light health */
+#cta{
+  background:
+    linear-gradient(180deg,#EFF5EE 0,transparent 90px),
+    radial-gradient(circle at 25% 75%,rgba(176,138,91,0.28),transparent 55%),
+    radial-gradient(circle at 80% 20%,rgba(158,123,160,0.22),transparent 50%),
+    #1A1208;
+}
 
 /* ── THREE-MODE SECTION ── */
 .modes-row{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
