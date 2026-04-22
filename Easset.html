@@ -891,7 +891,6 @@ function Portfolio({month,setMonth,setScreen}) {
         </div>
         {/* Trophy button → badge wall */}
         <div onClick={()=>setScreen('badgewall')} style={{
-          position:'absolute',left:260,
           width:38,height:38,borderRadius:13,
           background:`conic-gradient(${T.butter},${T.mocha},${T.rose},${T.butter})`,
           padding:3,cursor:'pointer',boxShadow:T.shadow,
@@ -1868,7 +1867,7 @@ function TweaksPanel({state,setState,onClose}) {
       <div style={{fontSize:14,fontWeight:800,color:T.ink}}>Tweaks</div>
       <div onClick={onClose} style={{cursor:'pointer',width:24,height:24,borderRadius:12,background:'#f1eadf',display:'flex',alignItems:'center',justifyContent:'center'}}>✕</div>
     </div>
-    {row('起始屏幕',<div style={{display:'flex',flexWrap:'wrap',gap:6}}>{['today','capture','portfolio','water','wild','med','settings'].map(s=>chip(state.startScreen===s,()=>setState({startScreen:s}),({today:'主页',capture:'拍摄',portfolio:'档案',water:'喝水',wild:'豁出去',med:'药物',settings:'设置'})[s]))}</div>)}
+    {row('起始屏幕',<div style={{display:'flex',flexWrap:'wrap',gap:6}}>{['today','capture','portfolio','water','wild','med','settings'].map(s=>chip(state.startScreen===s,()=>setState({startScreen:s}),({today:'主页',capture:'拍摄',portfolio:'手帐',water:'喝水',wild:'豁出去',med:'药物',settings:'设置'})[s]))}</div>)}
     {row('AI 建议力度',<div style={{display:'flex',gap:6}}>{MODES.map(m=>chip(state.adviceMode===m.key,()=>setState({adviceMode:m.key}),<><span style={{marginRight:4}}>{m.glyph}</span>{m.label}</>,m.color))}</div>)}
     {row('今日心情',<div style={{display:'flex',gap:6,flexWrap:'wrap'}}>{MOODS.map(m=>chip(state.mood===m.key,()=>setState({mood:m.key}),m.label,m.ring))}</div>)}
     {row('设备外框',<div style={{display:'flex',gap:6}}>{chip(state.showFrame,()=>setState({showFrame:true}),'iPhone')}{chip(!state.showFrame,()=>setState({showFrame:false}),'无框')}</div>)}
@@ -2031,8 +2030,8 @@ function App() {
       </div>
       <div style={{marginTop:22,padding:14,background:T.paper,borderRadius:18,border:`0.5px solid ${T.line}`,boxShadow:T.shadow}}>
         <div style={{fontSize:11,color:T.mocha,fontWeight:800,letterSpacing:1}}>当前屏幕</div>
-        <div style={{fontSize:15,fontWeight:700,color:T.ink,marginTop:4}}>{({today:'主页 · Bento Dashboard',capture:'拍摄 · AI 抠图生成贴纸',portfolio:'档案 · 手帐周月年视图',water:'喝水追踪 · 智能补水提醒',med:'禅意药物日历 · 经期追踪',wild:'豁出去模式 · 战绩记录',settings:'设置',badgewall:'勋章墙 · 成就展示'})[screen]}</div>
-        <div style={{display:'flex',gap:6,marginTop:10,flexWrap:'wrap'}}>{[['today','主页'],['capture','拍摄'],['portfolio','档案'],['water','喝水'],['med','药物'],['wild','豁出去'],['badgewall','勋章'],['settings','设置']].map(([k,lbl])=>(<div key={k} onClick={()=>setScreen(k)} style={{padding:'6px 11px',borderRadius:999,background:screen===k?T.mocha:T.sand,color:screen===k?'#fff':T.ink2,fontSize:11,fontWeight:700,cursor:'pointer'}}>{lbl}</div>))}</div>
+        <div style={{fontSize:15,fontWeight:700,color:T.ink,marginTop:4}}>{({today:'主页 · Bento Dashboard',capture:'拍摄 · AI 抠图生成贴纸',portfolio:'手帐 · 周月年视图',water:'喝水追踪 · 智能补水提醒',med:'禅意药物日历 · 经期追踪',wild:'豁出去模式 · 战绩记录',settings:'设置',badgewall:'勋章墙 · 成就展示'})[screen]}</div>
+        <div style={{display:'flex',gap:6,marginTop:10,flexWrap:'wrap'}}>{[['today','主页'],['capture','拍摄'],['portfolio','手帐'],['water','喝水'],['med','药物'],['wild','豁出去'],['badgewall','勋章'],['settings','设置']].map(([k,lbl])=>(<div key={k} onClick={()=>setScreen(k)} style={{padding:'6px 11px',borderRadius:999,background:screen===k?T.mocha:T.sand,color:screen===k?'#fff':T.ink2,fontSize:11,fontWeight:700,cursor:'pointer'}}>{lbl}</div>))}</div>
       </div>
       <div style={{marginTop:14,fontSize:10,color:T.ink3,lineHeight:1.5}}>免责声明：Easset 为生活记录工具，非医疗设备。<br/>AI 建议仅供参考，请咨询专业医疗人员。</div>
     </div>

@@ -261,50 +261,85 @@ em{font-style:italic}
 .sec-cta{background:radial-gradient(circle at 25% 75%,rgba(176,138,91,0.28),transparent 55%),radial-gradient(circle at 80% 20%,rgba(158,123,160,0.22),transparent 50%),#1A1208}
 
 /* ── SECTION TRANSITION BLENDS ── */
-/* Hero: fade bottom edge toward capture dark */
+/* Hero: fade bottom edge toward capture dark — eased */
 .hero-section::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:100px;
-  background:linear-gradient(to bottom,transparent,#2A2520);
+  content:'';position:absolute;bottom:0;left:0;right:0;height:180px;
+  background:linear-gradient(to bottom,
+    transparent 0%,
+    rgba(42,37,32,0.18) 35%,
+    rgba(42,37,32,0.6) 65%,
+    rgba(42,37,32,0.92) 88%,
+    #2A2520 100%
+  );
   pointer-events:none;z-index:10;
 }
-/* § 1 Capture: blend entry from hero cream */
+/* § 1 Capture: eased blend in from hero cream */
 #capture{
   background:
-    linear-gradient(180deg,#F6F1E7 0,transparent 90px),
+    linear-gradient(to bottom,
+      rgba(246,241,231,1) 0px,
+      rgba(246,241,231,0.72) 40px,
+      rgba(246,241,231,0.3) 90px,
+      rgba(246,241,231,0) 160px
+    ),
     #2A2520;
 }
-/* § 2 Portfolio: blend entry from dark capture */
+/* § 2 Portfolio: eased blend in from dark capture */
 #portfolio{
   background:
-    linear-gradient(180deg,#2A2520 0,transparent 90px),
+    linear-gradient(to bottom,
+      rgba(42,37,32,1) 0px,
+      rgba(42,37,32,0.7) 40px,
+      rgba(42,37,32,0.28) 90px,
+      rgba(42,37,32,0) 160px
+    ),
     radial-gradient(circle at 80% 10%,#D9C2A422,transparent 50%),
     radial-gradient(circle at 10% 90%,#D9A9A218,transparent 50%),
     var(--cream);
 }
-/* § 3 Modes: subtle blend from cream portfolio */
+/* § 3 Modes: subtle eased blend from cream */
 #modes{
   background:
-    linear-gradient(180deg,var(--cream) 0,transparent 60px),
+    linear-gradient(to bottom,
+      rgba(230,222,210,1) 0px,
+      rgba(230,222,210,0.55) 30px,
+      rgba(230,222,210,0) 80px
+    ),
     radial-gradient(circle at 70% 20%,#F2D58A18,transparent 55%),
     radial-gradient(circle at 20% 80%,#D9A9A222,transparent 55%),
     #FFFDF8;
 }
-/* § 4 Wild: blend entry from warm-white modes */
+/* § 4 Wild: eased blend in from warm-white modes */
 #wild{
   background:
-    linear-gradient(180deg,#FFFDF8 0,transparent 90px),
+    linear-gradient(to bottom,
+      rgba(255,253,248,1) 0px,
+      rgba(255,253,248,0.72) 40px,
+      rgba(255,253,248,0.3) 90px,
+      rgba(255,253,248,0) 160px
+    ),
     linear-gradient(160deg,#05000F 0%,#120030 50%,#08001A 100%);
 }
-/* § 5 Health: blend entry from dark wild */
+/* § 5 Health: eased blend in from dark wild */
 #health{
   background:
-    linear-gradient(180deg,#08001A 0,transparent 90px),
+    linear-gradient(to bottom,
+      rgba(8,0,26,1) 0px,
+      rgba(8,0,26,0.68) 40px,
+      rgba(8,0,26,0.25) 90px,
+      rgba(8,0,26,0) 160px
+    ),
     linear-gradient(135deg,#EAF1F6 0%,#EFF5EE 55%,#F5EEF8 100%);
 }
-/* § 6 CTA: blend entry from light health */
+/* § 6 CTA: eased blend in from light health */
 #cta{
   background:
-    linear-gradient(180deg,#EFF5EE 0,transparent 90px),
+    linear-gradient(to bottom,
+      rgba(239,245,238,1) 0px,
+      rgba(239,245,238,0.7) 40px,
+      rgba(239,245,238,0.28) 90px,
+      rgba(239,245,238,0) 160px
+    ),
     radial-gradient(circle at 25% 75%,rgba(176,138,91,0.28),transparent 55%),
     radial-gradient(circle at 80% 20%,rgba(158,123,160,0.22),transparent 50%),
     #1A1208;
