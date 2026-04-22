@@ -8,7 +8,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;scroll-behavior:smooth}
-body{font-family:'Nunito',-apple-system,'PingFang SC',system-ui,sans-serif;background:#E7DFD0;color:#2A2520;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{font-family:'Nunito',-apple-system,'PingFang SC',system-ui,sans-serif;background:#080808;color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 ::-webkit-scrollbar{display:none}
 em{font-style:italic}
 :root{
@@ -93,7 +93,7 @@ em{font-style:italic}
 .sc-back:hover{color:var(--ink);background:rgba(42,37,32,0.06)}
 
 /* ── HERO SECTION ── */
-.hero-section{width:100%;height:100vh;position:relative;overflow:hidden;background:var(--cream)}
+.hero-section{width:100%;height:100vh;position:relative;overflow:hidden;background:#080808}
 .hero-section iframe{width:100%;height:100%;border:none;display:block}
 .scroll-cta{
   position:fixed;bottom:32px;left:50%;transform:translateX(-50%);
@@ -252,98 +252,45 @@ em{font-style:italic}
 .today-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 .tg-card{border-radius:12px;padding:9px 10px;border:0.5px solid rgba(42,37,32,0.07);box-shadow:var(--shadow)}
 
-/* ── SECTION BACKGROUNDS ── */
-.sec-cream{background:radial-gradient(circle at 80% 10%,#D9C2A422,transparent 50%),radial-gradient(circle at 10% 90%,#D9A9A218,transparent 50%),var(--cream)}
-.sec-dark{background:#2A2520}
-.sec-warm{background:radial-gradient(circle at 70% 20%,#F2D58A18,transparent 55%),radial-gradient(circle at 20% 80%,#D9A9A222,transparent 55%),#FFFDF8}
-.sec-night{background:linear-gradient(160deg,#05000F 0%,#120030 50%,#08001A 100%)}
-.sec-health{background:linear-gradient(135deg,#EAF1F6 0%,#EFF5EE 55%,#F5EEF8 100%)}
-.sec-cta{background:radial-gradient(circle at 25% 75%,rgba(176,138,91,0.28),transparent 55%),radial-gradient(circle at 80% 20%,rgba(158,123,160,0.22),transparent 50%),#1A1208}
+/* ── ALL SECTIONS: UNIFIED BLACK ── */
+.feature-section,.cta-section{background:#080808}
+.footer{background:#080808;border-top:0.5px solid rgba(255,255,255,0.07)}
 
-/* ── SECTION TRANSITION BLENDS ── */
-/* Hero: fade bottom edge toward capture dark — eased */
-.hero-section::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:180px;
-  background:linear-gradient(to bottom,
-    transparent 0%,
-    rgba(42,37,32,0.18) 35%,
-    rgba(42,37,32,0.6) 65%,
-    rgba(42,37,32,0.92) 88%,
-    #2A2520 100%
-  );
-  pointer-events:none;z-index:10;
-}
-/* § 1 Capture: eased blend in from hero cream */
-#capture{
-  background:
-    linear-gradient(to bottom,
-      rgba(246,241,231,1) 0px,
-      rgba(246,241,231,0.72) 40px,
-      rgba(246,241,231,0.3) 90px,
-      rgba(246,241,231,0) 160px
-    ),
-    #2A2520;
-}
-/* § 2 Portfolio: eased blend in from dark capture */
-#portfolio{
-  background:
-    linear-gradient(to bottom,
-      rgba(42,37,32,1) 0px,
-      rgba(42,37,32,0.7) 40px,
-      rgba(42,37,32,0.28) 90px,
-      rgba(42,37,32,0) 160px
-    ),
-    radial-gradient(circle at 80% 10%,#D9C2A422,transparent 50%),
-    radial-gradient(circle at 10% 90%,#D9A9A218,transparent 50%),
-    var(--cream);
-}
-/* § 3 Modes: subtle eased blend from cream */
-#modes{
-  background:
-    linear-gradient(to bottom,
-      rgba(230,222,210,1) 0px,
-      rgba(230,222,210,0.55) 30px,
-      rgba(230,222,210,0) 80px
-    ),
-    radial-gradient(circle at 70% 20%,#F2D58A18,transparent 55%),
-    radial-gradient(circle at 20% 80%,#D9A9A222,transparent 55%),
-    #FFFDF8;
-}
-/* § 4 Wild: eased blend in from warm-white modes */
-#wild{
-  background:
-    linear-gradient(to bottom,
-      rgba(255,253,248,1) 0px,
-      rgba(255,253,248,0.72) 40px,
-      rgba(255,253,248,0.3) 90px,
-      rgba(255,253,248,0) 160px
-    ),
-    linear-gradient(160deg,#05000F 0%,#120030 50%,#08001A 100%);
-}
-/* § 5 Health: eased blend in from dark wild */
-#health{
-  background:
-    linear-gradient(to bottom,
-      rgba(8,0,26,1) 0px,
-      rgba(8,0,26,0.68) 40px,
-      rgba(8,0,26,0.25) 90px,
-      rgba(8,0,26,0) 160px
-    ),
-    linear-gradient(135deg,#EAF1F6 0%,#EFF5EE 55%,#F5EEF8 100%);
-}
-/* § 6 CTA: eased blend in from light health */
-#cta{
-  background:
-    linear-gradient(to bottom,
-      rgba(239,245,238,1) 0px,
-      rgba(239,245,238,0.7) 40px,
-      rgba(239,245,238,0.28) 90px,
-      rgba(239,245,238,0) 160px
-    ),
-    radial-gradient(circle at 25% 75%,rgba(176,138,91,0.28),transparent 55%),
-    radial-gradient(circle at 80% 20%,rgba(158,123,160,0.22),transparent 50%),
-    #1A1208;
-}
+/* ── GLOBAL DARK TEXT ── */
+.feat-tag{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.6)}
+.feat-h2{color:#fff}
+.feat-h2 em{color:var(--butter)}
+.feat-desc{color:rgba(255,255,255,0.58)}
+.chip{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.75)}
+.feat-card{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.09)}
+.feat-card-title{color:#fff}
+.feat-card-desc{color:rgba(255,255,255,0.5)}
+
+/* ── MODE CARDS DARK ── */
+.mode-card{border-color:rgba(255,255,255,0.1)}
+.mode-card::before{opacity:0.12}
+.mode-loose{background:linear-gradient(135deg,rgba(168,184,154,0.18),rgba(125,146,116,0.08));border-color:rgba(168,184,154,0.28)}
+.mode-standard{background:linear-gradient(135deg,rgba(176,138,91,0.18),rgba(138,103,64,0.08));border-color:rgba(176,138,91,0.28)}
+.mode-strict{background:linear-gradient(135deg,rgba(230,154,120,0.18),rgba(197,117,80,0.08));border-color:rgba(230,154,120,0.28)}
+.mode-label{color:#fff}
+.mode-desc{color:rgba(255,255,255,0.58)}
+.mode-detail{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.09);color:rgba(255,255,255,0.5)}
+.mode-loose .mode-tag{background:rgba(168,184,154,0.22);color:#A8B89A}
+.mode-standard .mode-tag{background:rgba(176,138,91,0.22);color:#D9C2A4}
+.mode-strict .mode-tag{background:rgba(230,154,120,0.22);color:#E69A78}
+
+/* ── SHAPES: stacking ── */
+.shape{position:absolute;pointer-events:none;z-index:0}
+.feature-inner{position:relative;z-index:1}
+.modes-content{position:relative;z-index:1}
+.cta-section>.reveal,.cta-section>.cta-features{position:relative;z-index:1}
+
+/* ── SHAPE ANIMATIONS ── */
+@keyframes sFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+@keyframes sDrift{0%,100%{transform:translateX(0)}50%{transform:translateX(20px)}}
+@keyframes sPulse{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.27;transform:scale(1.07)}}
+@keyframes sBob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-16px) scale(1.04)}}
+@keyframes sSpin{0%,100%{transform:rotate(0deg)}50%{transform:rotate(12deg) translateX(8px)}}
 
 /* ── THREE-MODE SECTION ── */
 .modes-row{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
@@ -446,7 +393,11 @@ em{font-style:italic}
 </section>
 
 <!-- ────────────────── § 1  CAPTURE ────────────────── -->
-<section class="feature-section sec-dark" id="capture" data-idx="1">
+<section class="feature-section" id="capture" data-idx="1">
+  <!-- shapes -->
+  <div class="shape" style="width:400px;height:400px;border-radius:50%;background:rgba(242,213,138,0.13);top:-100px;right:-100px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:230px;height:62px;border-radius:999px;background:rgba(176,138,91,0.22);bottom:90px;left:-30px;animation:sDrift 8s ease-in-out infinite 1s"></div>
+  <div class="shape" style="width:92px;height:92px;border-radius:50%;background:rgba(217,169,162,0.28);top:42%;right:60px;animation:sBob 5s ease-in-out infinite 0.5s"></div>
   <div class="feature-inner rev">
     <div class="feature-text on-dark reveal">
       <span class="feat-tag">📷 AI 视觉抠图</span>
@@ -532,7 +483,11 @@ em{font-style:italic}
 </section>
 
 <!-- ────────────────── § 2  PORTFOLIO ────────────────── -->
-<section class="feature-section sec-cream" id="portfolio" data-idx="2">
+<section class="feature-section" id="portfolio" data-idx="2">
+  <!-- shapes -->
+  <div class="shape" style="width:310px;height:430px;border-radius:40px;background:rgba(237,228,210,0.09);top:-30px;right:-70px;animation:sFloat 9s ease-in-out infinite"></div>
+  <div class="shape" style="width:340px;height:170px;border-radius:0 0 170px 170px;background:rgba(217,169,162,0.14);bottom:0;left:-40px;animation:sDrift 8s ease-in-out infinite 2s"></div>
+  <div class="shape" style="width:155px;height:44px;border-radius:999px;background:rgba(242,213,138,0.22);top:90px;left:50%;margin-left:-77px;animation:sBob 6s ease-in-out infinite 1s"></div>
   <div class="feature-inner">
     <div class="feature-visual reveal">
       <div class="phone light">
@@ -617,8 +572,12 @@ em{font-style:italic}
 </section>
 
 <!-- ────────────────── § 3  THREE MODES ────────────────── -->
-<section class="feature-section sec-warm" id="modes" data-idx="3">
-  <div style="max-width:1080px;width:100%">
+<section class="feature-section" id="modes" data-idx="3">
+  <!-- shapes -->
+  <div class="shape" style="width:260px;height:260px;border-radius:50%;background:rgba(168,184,154,0.15);top:-60px;left:-60px;animation:sPulse 8s ease-in-out infinite"></div>
+  <div class="shape" style="width:290px;height:68px;border-radius:999px;background:rgba(176,138,91,0.2);top:55px;right:-40px;animation:sDrift 7s ease-in-out infinite 1.5s"></div>
+  <div class="shape" style="width:200px;height:200px;border-radius:36px;background:rgba(230,154,120,0.15);bottom:-40px;right:50px;animation:sFloat 7s ease-in-out infinite 3s"></div>
+  <div class="modes-content" style="max-width:1080px;width:100%">
     <div class="reveal" style="text-align:center;margin-bottom:56px">
       <span class="feat-tag" style="margin-bottom:18px">📊 三档 AI 建议</span>
       <h2 class="feat-h2" style="font-size:clamp(36px,4.5vw,56px);margin-bottom:16px">你说了算。<br/>AI <em>按你的节奏</em>说话。</h2>
@@ -656,23 +615,27 @@ em{font-style:italic}
         </div>
       </div>
     </div>
-    <div class="reveal delay-2" style="margin-top:32px;padding:20px 24px;background:var(--paper);border-radius:20px;border:0.5px solid var(--line);box-shadow:var(--shadow);display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <div class="reveal delay-2" style="margin-top:32px;padding:20px 24px;background:rgba(255,255,255,0.06);border-radius:20px;border:0.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:16px;flex-wrap:wrap">
       <div style="font-size:22px">💡</div>
       <div style="flex:1;min-width:200px">
-        <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:4px">随时切换，实时生效</div>
-        <div style="font-size:12px;color:var(--ink2);line-height:1.5">在首页卡片轻点即可切换模式，所有文案、数据显示、建议语气立即变化。模式偏好自动保存。</div>
+        <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:4px">随时切换，实时生效</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.58);line-height:1.5">在首页卡片轻点即可切换模式，所有文案、数据显示、建议语气立即变化。模式偏好自动保存。</div>
       </div>
       <div style="display:flex;gap:8px;flex-shrink:0">
-        <span style="padding:5px 12px;border-radius:999px;background:#A8B89A22;font-size:11px;font-weight:700;color:#5E7556;border:0.5px solid #A8B89A44">🍀 宽松</span>
-        <span style="padding:5px 12px;border-radius:999px;background:#B08A5B22;font-size:11px;font-weight:700;color:#7A5B33;border:0.5px solid #B08A5B44">🔥 标准</span>
-        <span style="padding:5px 12px;border-radius:999px;background:#E69A7822;font-size:11px;font-weight:700;color:#9A5A38;border:0.5px solid #E69A7844">⚖️ 严厉</span>
+        <span style="padding:5px 12px;border-radius:999px;background:rgba(168,184,154,0.2);font-size:11px;font-weight:700;color:#A8B89A;border:0.5px solid rgba(168,184,154,0.35)">🍀 宽松</span>
+        <span style="padding:5px 12px;border-radius:999px;background:rgba(176,138,91,0.2);font-size:11px;font-weight:700;color:#D9C2A4;border:0.5px solid rgba(176,138,91,0.35)">🔥 标准</span>
+        <span style="padding:5px 12px;border-radius:999px;background:rgba(230,154,120,0.2);font-size:11px;font-weight:700;color:#E69A78;border:0.5px solid rgba(230,154,120,0.35)">⚖️ 严厉</span>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ────────────────── § 4  WILD MODE ────────────────── -->
-<section class="feature-section sec-night" id="wild" data-idx="4">
+<section class="feature-section" id="wild" data-idx="4">
+  <!-- shapes -->
+  <div class="shape" style="width:450px;height:225px;border-radius:225px 225px 0 0;background:rgba(255,26,108,0.18);top:0;right:-80px;animation:sPulse 5s ease-in-out infinite"></div>
+  <div class="shape" style="width:360px;height:78px;border-radius:999px;background:rgba(158,123,160,0.24);bottom:100px;left:-70px;animation:sDrift 9s ease-in-out infinite 2s"></div>
+  <div class="shape" style="width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,0.14);top:38%;left:52%;animation:sBob 4s ease-in-out infinite 1s"></div>
   <div class="feature-inner">
     <div class="feature-text on-dark reveal">
       <span class="feat-tag">⭐ 豁出去模式</span>
@@ -745,7 +708,11 @@ em{font-style:italic}
 </section>
 
 <!-- ────────────────── § 5  HEALTH (Med + Water) ────────────────── -->
-<section class="feature-section sec-health" id="health" data-idx="5">
+<section class="feature-section" id="health" data-idx="5">
+  <!-- shapes -->
+  <div class="shape" style="width:370px;height:290px;border-radius:44px;background:rgba(184,207,217,0.14);top:-40px;right:-60px;animation:sFloat 8s ease-in-out infinite 0.5s"></div>
+  <div class="shape" style="width:350px;height:175px;border-radius:0 0 175px 175px;background:rgba(168,184,154,0.16);bottom:0;left:-50px;animation:sDrift 7s ease-in-out infinite 2s"></div>
+  <div class="shape" style="width:200px;height:54px;border-radius:999px;background:rgba(217,169,162,0.22);top:50%;right:30px;animation:sBob 6s ease-in-out infinite 3s"></div>
   <div class="feature-inner rev">
     <div class="feature-text reveal">
       <span class="feat-tag">💊 禅意日历 + 💧 喝水联动</span>
@@ -867,7 +834,12 @@ em{font-style:italic}
 </section>
 
 <!-- ────────────────── § 6  CTA ────────────────── -->
-<section class="cta-section sec-cta" id="cta" data-idx="6">
+<section class="cta-section" id="cta" data-idx="6">
+  <!-- shapes -->
+  <div class="shape" style="width:420px;height:420px;border-radius:50%;background:rgba(242,213,138,0.11);top:-110px;right:-110px;animation:sPulse 8s ease-in-out infinite"></div>
+  <div class="shape" style="width:280px;height:76px;border-radius:999px;background:rgba(184,207,217,0.2);bottom:80px;left:-50px;animation:sDrift 7s ease-in-out infinite 1.5s"></div>
+  <div class="shape" style="width:108px;height:108px;border-radius:50%;background:rgba(217,169,162,0.22);top:38%;left:70px;animation:sBob 5s ease-in-out infinite 0.8s"></div>
+  <div class="shape" style="width:170px;height:50px;border-radius:999px;background:rgba(176,138,91,0.2);top:62%;right:90px;animation:sFloat 6s ease-in-out infinite 2.5s"></div>
   <div class="reveal">
     <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(255,253,248,0.1);border:0.5px solid rgba(255,253,248,0.2);font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:24px">
       🎨 Easset · iOS 17+ · 现已接受内测申请
