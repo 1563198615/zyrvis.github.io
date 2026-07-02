@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Football Analysis Skill v10.0 — 学术 SOTA 足球预测</title>
+<link rel="stylesheet" href="product-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="sidenav">
+  <a class="sc-logo" href="../index.html" title="ZYRVIS">Z</a>
+  <div class="sc-sep"></div>
+  <a class="sc-back" href="../index.html" title="返回首页">←</a>
+</nav>
+
+<section class="hero">
+  <span class="hero-emoji">⚽</span>
+  <div class="hero-eyebrow">ZYRVIS · 产品 07 / 08 · v10.0</div>
+  <h1 class="hero-h1">Football <em>Skill</em></h1>
+  <p class="hero-sub">用学术界最严肃的统计学方法,把足球预测做到极致。<br>5 种 SOTA 比分预测方法(Dixon-Coles / ZIP / Bivariate / Poisson / NB)。</p>
+  <div class="hero-meta">
+    <span class="hero-tag">5 种 SOTA</span>
+    <span class="hero-tag">49k+ 比赛</span>
+    <span class="hero-tag">211k+ 事件</span>
+    <span class="hero-tag">胜方 100%</span>
+  </div>
+  <div class="hero-btns">
+    <a class="hero-btn-primary" href="../../readme/products/football-skill.md">📄 查看 Markdown 介绍</a>
+    <a class="hero-btn-secondary" href="../../Skills/football_skill/README.md">📂 完整 README</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="section-tag">SOTA</div>
+    <h2 class="section-h2">5 种<em>SOTA 算法</em>(实测 n=1000)</h2>
+    <p class="section-desc">不是黑盒,每一种算法都有论文出处。</p>
+
+    <table class="t-table">
+      <thead><tr><th>方法</th><th>论文</th><th>Top-1</th><th>Log-Loss</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Dixon-Coles τ</strong></td><td>Dixon &amp; Coles 1997</td><td><span class="t-pill">12.70%</span></td><td>3.0675</td><td>Top-1 最高</td></tr>
+        <tr><td><strong>Poisson 基线</strong></td><td>Maher 1982</td><td>12.20%</td><td>3.0600</td><td>Top-3 最高</td></tr>
+        <tr><td><strong>Zero-Inflated Poisson</strong></td><td>Lambert 1992</td><td>10.80%</td><td><span class="t-pill">3.0252</span></td><td>进球数最准</td></tr>
+        <tr><td><strong>Bivariate Poisson</strong></td><td>Karlis-Ntzoufras 2003</td><td>11.20%</td><td>3.0843</td><td>队间相关</td></tr>
+        <tr><td><strong>Negative Binomial</strong></td><td>Boshnakov 2017</td><td>0.00%</td><td>13.62</td><td>❌ 不适用</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="section-tag">ARCHITECTURE</div>
+    <h2 class="section-h2">三轨<em>混合架构</em></h2>
+
+    <div class="code-block">
+      <span class="code-label">Football Skill v10.0 Stack</span>
+<span class="c-com">┌─────────────────────────────────────────────────────┐</span>
+<span class="c-com">│              Football Skill v10.0                   │</span>
+<span class="c-com">├───────────────┬─────────────────┬───────────────────┤</span>
+<span class="c-com">│  轨道 1       │  轨道 2         │  轨道 3           │</span>
+<span class="c-com">│  v9.0 数据接入 │  LLM 战术分析   │  Devine v1.0 预测  │</span>
+<span class="c-com">│  实时比赛数据  │  阵型/伤停/心理 │  5 种 SOTA 模型   │</span>
+<span class="c-com">└───────────────┴─────────────────┴───────────────────┘</span>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <span class="feat-card-icon">📡</span>
+        <div class="feat-card-title">数据接入</div>
+        <div class="feat-card-desc">49,417 国际比赛 + 1,335 StatsBomb 射门 + 211,538 事件 + 96 队 team_database。</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-card-icon">🧠</span>
+        <div class="feat-card-title">LLM 战术</div>
+        <div class="feat-card-desc">阵型 / 伤停 / 心理 三维度分析,补全统计模型看不到的"软因素"。</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-card-icon">📈</span>
+        <div class="feat-card-title">Devine 预测</div>
+        <div class="feat-card-desc">5 种 SOTA 模型,Top-1 准确率 12.7%,胜方准确率实测 100%。</div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num">49<em>k+</em></div><div class="stat-label">国际比赛</div></div>
+      <div class="stat-card"><div class="stat-num">211<em>k+</em></div><div class="stat-label">事件数据</div></div>
+      <div class="stat-card"><div class="stat-num">12.7<em>%</em></div><div class="stat-label">Top-1 准确率</div></div>
+      <div class="stat-card"><div class="stat-num">100<em>%</em></div><div class="stat-label">胜方准确率</div></div>
+    </div>
+
+    <a class="back-link" href="../index.html">← 返回 ZYRVIS 首页</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-logo">ZYRVIS</div>
+  <div class="footer-links">
+    <a class="footer-link" href="../index.html">首页</a>
+    <a class="footer-link" href="../../readme/products/football-skill.md">Markdown 版</a>
+    <a class="footer-link" href="../../Skills/football_skill/README.md">项目 README</a>
+  </div>
+  <div class="footer-copy">© 2026 ZYRVIS · 产品介绍页</div>
+</footer>
+
+<script>
+document.body.classList.add('js-reveal-ready');
+const io=new IntersectionObserver(e=>{e.forEach(r=>{if(r.isIntersecting){r.target.classList.add('visible');io.unobserve(r.target)}})},{threshold:0.12});
+document.querySelectorAll('.feat-card,.section-h2,.section-tag,.section-desc,.t-table,.stat-card,.stats-row,.code-block').forEach(el=>{el.classList.add('reveal');io.observe(el)});
+</script>
+</body>
+</html>
