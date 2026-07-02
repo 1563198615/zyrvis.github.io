@@ -4,115 +4,160 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Wavedio — AI 收音机</title>
-<link rel="stylesheet" href="product-base.css">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="apple-base.css">
 </head>
 <body>
-<nav class="sidenav">
-  <a class="sc-logo" href="../index.html" title="ZYRVIS">Z</a>
-  <div class="sc-sep"></div>
-  <a class="sc-back" href="../index.html" title="返回首页">←</a>
+
+<nav class="ap-nav">
+  <a class="ap-logo" href="../index.html">ZYRVIS</a>
+  <div class="ap-nav-links">
+    <a href="../index.html">首页</a>
+    <a href="wavedio.html" class="on">Wavedio</a>
+  </div>
 </nav>
 
-<section class="hero">
-  <span class="hero-emoji">📻</span>
-  <div class="hero-eyebrow">ZYRVIS · 产品 06 / 08</div>
-  <h1 class="hero-h1">Wave<em>dio</em></h1>
-  <p class="hero-sub">AI 收音机 — 真实的电台体验,AI 主播陪你听 🎧<br>像调 FM 一样简单,但拥有专属 AI 主播的陪伴体验。</p>
-  <div class="hero-meta">
-    <span class="hero-tag">AI 主播</span>
-    <span class="hero-tag">5 电台</span>
-    <span class="hero-tag">复古 UI</span>
-    <span class="hero-tag">FM 旋钮</span>
-  </div>
-  <div class="hero-btns">
-    <a class="hero-btn-primary" href="../../readme/products/wavedio.md">📄 查看 Markdown 介绍</a>
-    <a class="hero-btn-secondary" href="../../Projects/Wavedio/README.md">📂 完整 README</a>
+<section class="ap-hero">
+  <span class="ap-eyebrow">PRODUCT · 06</span>
+  <h1 class="ap-title">Wavedio</h1>
+  <p class="ap-sub">真实的电台体验,AI 主播陪你听。像调 FM 一样简单。</p>
+  <div class="ap-cta">
+    <a class="ap-btn-primary" href="#">下载 iOS</a>
+    <a class="ap-btn-link" href="#features">了解功能 →</a>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">HOSTS</div>
-    <h2 class="section-h2">五位<em>AI 主播</em></h2>
-    <p class="section-desc">每个电台有专属 AI 主播,有自己的人设、声音、情感风格。</p>
-
-    <table class="t-table">
-      <thead><tr><th>主播</th><th>电台</th><th>人设</th><th>声音风格</th></tr></thead>
-      <tbody>
-        <tr><td><strong>老爵士</strong></td><td>Jazz FM</td><td>优雅老派绅士</td><td>浑厚、有格调</td></tr>
-        <tr><td><strong>阿杰</strong></td><td>Hip-Hop FM</td><td>街头文化达人</td><td>随性、带点 swag</td></tr>
-        <tr><td><strong>苏苏</strong></td><td>Lo-Fi FM</td><td>文艺慢生活博主</td><td>温柔、慵懒</td></tr>
-        <tr><td><strong>小北</strong></td><td>Pop FM</td><td>阳光活泼的都市女孩</td><td>温暖、明快</td></tr>
-        <tr><td><strong>阿 Rock</strong></td><td>Rock FM</td><td>粗犷摇滚老炮</td><td>低沉、有磁性</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">FEATURES</div>
-    <h2 class="section-h2">核心<em>特性</em></h2>
-
-    <div class="feat-grid">
-      <div class="feat-card">
-        <span class="feat-card-icon">🎙️</span>
-        <div class="feat-card-title">AI 主播</div>
-        <div class="feat-card-desc">专属人设 + 声音 + 情感,不只是 TTS,而是有<em>人味儿</em>的陪伴。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🔄</span>
-        <div class="feat-card-title">主播轮换</div>
-        <div class="feat-card-desc">每 2-3 小时自动换主播,声音/情感变化,无缝衔接继续播放。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">📀</span>
-        <div class="feat-card-title">真实歌曲</div>
-        <div class="feat-card-desc">AI 主播串联真实歌曲,边听音乐边听主播讲述故事、分享心情。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🎚️</span>
-        <div class="feat-card-title">复古 UI</div>
-        <div class="feat-card-desc">FM 旋钮真实刻度,调频白噪音杂音,LCARS / 80s 收音机风格。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🌙</span>
-        <div class="feat-card-title">背景运行</div>
-        <div class="feat-card-desc">锁屏后继续播放,模拟真实电台 — 不是我听歌,是<em>我在听广播</em>。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🎵</span>
-        <div class="feat-card-title">电台编排</div>
-        <div class="feat-card-desc">2-3 小时同风格歌单 + 主播串场,串场 = 歌曲故事 + 心情 + 时光絮语。</div>
+<!-- 渲染图:收音机界面 -->
+<section class="ap-render">
+  <div class="ap-render-tag">RENDER · 收音机界面</div>
+  <div class="ap-mockup">
+    <div class="ap-phone">
+      <div class="ap-phone-bar">Jazz FM</div>
+      <div class="ap-radio">
+        <div class="ap-radio-dial">
+          <div class="ap-radio-freq">102.4</div>
+          <div class="ap-radio-stations">
+            <span>88</span><span>92</span><span>96</span><span class="on">100</span><span>104</span><span>108</span>
+          </div>
+        </div>
+        <div class="ap-radio-knob">●</div>
+        <div class="ap-radio-now">
+          <div class="ap-radio-cover">🎷</div>
+          <div class="ap-radio-info">
+            <div class="ap-radio-song">Take Five</div>
+            <div class="ap-radio-host">老爵士 · 主持中</div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">AI 主播</div></div>
-      <div class="stat-card"><div class="stat-num">2-3<em>h</em></div><div class="stat-label">轮换周期</div></div>
-      <div class="stat-card"><div class="stat-num">100<em>%</em></div><div class="stat-label">真实歌曲</div></div>
-      <div class="stat-card"><div class="stat-num"><em>∞</em></div><div class="stat-label">电台时长</div></div>
-    </div>
-
-    <a class="back-link" href="../index.html">← 返回 ZYRVIS 首页</a>
   </div>
 </section>
 
-<footer class="footer">
-  <div class="footer-logo">ZYRVIS</div>
-  <div class="footer-links">
-    <a class="footer-link" href="../index.html">首页</a>
-    <a class="footer-link" href="../../readme/products/wavedio.md">Markdown 版</a>
-    <a class="footer-link" href="../../Projects/Wavedio/README.md">项目 README</a>
+<!-- 功能 1 -->
+<section class="ap-feature" id="features">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">01 · 5 位 AI 主播</span>
+    <h2>每位主播有<br>自己的人设和声音。</h2>
+    <p>老爵士(优雅绅士)/ 阿杰(街头达人)/ 苏苏(慢生活)/ 小北(都市女孩)/ 阿 Rock(摇滚老炮)。</p>
   </div>
-  <div class="footer-copy">© 2026 ZYRVIS · 产品介绍页</div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🎙️</div>
+      <div class="ap-mockup-label">5 AI Hosts</div>
+    </div>
+  </div>
+</section>
+
+<!-- 功能 2 -->
+<section class="ap-feature rev">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">02 · 2-3 小时轮换</span>
+    <h2>听久了不腻,<br>主播会换。</h2>
+    <p>每隔 2-3 小时,自动换主播 — 声音变化、情感变化、无缝衔接。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🔄</div>
+      <div class="ap-mockup-label">Auto Switch</div>
+    </div>
+  </div>
+</section>
+
+<!-- 渲染图:主播库 -->
+<section class="ap-render alt">
+  <div class="ap-render-tag">DEMO · 主播库</div>
+  <div class="ap-mockup">
+    <div class="ap-hosts">
+      <div class="ap-host">
+        <div class="ap-host-avatar jazz">🎷</div>
+        <div class="ap-host-name">老爵士</div>
+        <div class="ap-host-station">Jazz FM</div>
+        <div class="ap-host-style">"今晚给大家来一首 Coltrane 的名曲..."</div>
+      </div>
+      <div class="ap-host">
+        <div class="ap-host-avatar lofi">🎧</div>
+        <div class="ap-host-name">苏苏</div>
+        <div class="ap-host-station">Lo-Fi FM</div>
+        <div class="ap-host-style">"嗯…这首曲子,适合泡杯热茶..."</div>
+      </div>
+      <div class="ap-host">
+        <div class="ap-host-avatar pop">🌆</div>
+        <div class="ap-host-name">小北</div>
+        <div class="ap-host-station">Pop FM</div>
+        <div class="ap-host-style">"嗨各位!准备好迎接今天的新歌了吗?"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 功能 3 -->
+<section class="ap-feature">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">03 · 真实歌曲 + 串场</span>
+    <h2>不只是 TTS,<br>是有人味儿的陪伴。</h2>
+    <p>AI 主播串联真实歌曲,在间隙讲歌曲故事、分享心情、时光絮语。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">📀</div>
+      <div class="ap-mockup-label">Real Songs</div>
+    </div>
+  </div>
+</section>
+
+<footer class="ap-footer">
+  <div class="ap-foot-logo">ZYRVIS</div>
+  <div class="ap-foot-links">
+    <a href="../index.html">首页</a>
+    <a href="wavedio.html">Wavedio</a>
+  </div>
+  <div class="ap-foot-copy">© 2026 ZYRVIS · Wavedio</div>
 </footer>
 
-<script>
-document.body.classList.add('js-reveal-ready');
-const io=new IntersectionObserver(e=>{e.forEach(r=>{if(r.isIntersecting){r.target.classList.add('visible');io.unobserve(r.target)}})},{threshold:0.12});
-document.querySelectorAll('.feat-card,.section-h2,.section-tag,.section-desc,.t-table,.stat-card,.stats-row').forEach(el=>{el.classList.add('reveal');io.observe(el)});
-</script>
+<style>
+.ap-radio{padding:20px;background:linear-gradient(135deg,#2a1a0a 0%,#1a0a00 100%);height:480px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.ap-radio::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(255,255,255,0.02) 2px,rgba(255,255,255,0.02) 4px);pointer-events:none}
+.ap-radio-dial{text-align:center;width:100%;padding:30px 20px;background:rgba(255,255,255,0.04);border-radius:16px;backdrop-filter:blur(8px)}
+.ap-radio-freq{font-size:54px;font-weight:200;color:#ff9500;letter-spacing:4px;font-variant-numeric:tabular-nums;text-shadow:0 0 20px rgba(255,149,0,0.4)}
+.ap-radio-stations{display:flex;justify-content:space-between;margin-top:16px;padding:0 8px}
+.ap-radio-stations span{font-size:10px;color:rgba(255,255,255,0.3);font-weight:600}
+.ap-radio-stations span.on{color:#ff9500;font-size:13px}
+.ap-radio-knob{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#4a4a4a,#1a1a1a);box-shadow:0 4px 16px rgba(0,0,0,0.5),inset 0 1px 2px rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:#ff9500;font-size:32px;line-height:1}
+.ap-radio-now{display:flex;gap:14px;padding:14px 16px;background:rgba(0,0,0,0.4);border-radius:14px;width:100%;align-items:center}
+.ap-radio-cover{width:50px;height:50px;border-radius:10px;background:linear-gradient(135deg,#ff9500,#ff3b30);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.ap-radio-info{flex:1;min-width:0;text-align:left}
+.ap-radio-song{font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap-radio-host{font-size:11px;color:rgba(255,255,255,0.5)}
+
+.ap-hosts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;width:100%;max-width:920px}
+.ap-host{background:#fff;border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.04);text-align:center}
+.ap-host-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px}
+.ap-host-avatar.jazz{background:linear-gradient(135deg,#8b4513,#d2691e)}
+.ap-host-avatar.lofi{background:linear-gradient(135deg,#e6a8d7,#a890c2)}
+.ap-host-avatar.pop{background:linear-gradient(135deg,#ff6b6b,#ffa500)}
+.ap-host-name{font-size:16px;font-weight:600;color:#1d1d1f;margin-bottom:2px}
+.ap-host-station{font-size:11px;color:#86868b;font-weight:600;letter-spacing:0.5px;margin-bottom:12px}
+.ap-host-style{font-size:12px;color:#1d1d1f;line-height:1.5;font-style:italic;background:rgba(0,0,0,0.04);padding:10px 12px;border-radius:10px}
+</style>
+
 </body>
 </html>

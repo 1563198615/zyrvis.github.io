@@ -3,112 +3,164 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Football Analysis Skill v10.0 — 学术 SOTA 足球预测</title>
-<link rel="stylesheet" href="product-base.css">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<title>Football Skill — 学术 SOTA 足球预测</title>
+<link rel="stylesheet" href="apple-base.css">
 </head>
 <body>
-<nav class="sidenav">
-  <a class="sc-logo" href="../index.html" title="ZYRVIS">Z</a>
-  <div class="sc-sep"></div>
-  <a class="sc-back" href="../index.html" title="返回首页">←</a>
+
+<nav class="ap-nav">
+  <a class="ap-logo" href="../index.html">ZYRVIS</a>
+  <div class="ap-nav-links">
+    <a href="../index.html">首页</a>
+    <a href="football-skill.html" class="on">Football</a>
+  </div>
 </nav>
 
-<section class="hero">
-  <span class="hero-emoji">⚽</span>
-  <div class="hero-eyebrow">ZYRVIS · 产品 07 / 08 · v10.0</div>
-  <h1 class="hero-h1">Football <em>Skill</em></h1>
-  <p class="hero-sub">用学术界最严肃的统计学方法,把足球预测做到极致。<br>5 种 SOTA 比分预测方法(Dixon-Coles / ZIP / Bivariate / Poisson / NB)。</p>
-  <div class="hero-meta">
-    <span class="hero-tag">5 种 SOTA</span>
-    <span class="hero-tag">49k+ 比赛</span>
-    <span class="hero-tag">211k+ 事件</span>
-    <span class="hero-tag">胜方 100%</span>
-  </div>
-  <div class="hero-btns">
-    <a class="hero-btn-primary" href="../../readme/products/football-skill.md">📄 查看 Markdown 介绍</a>
-    <a class="hero-btn-secondary" href="../../Skills/football_skill/README.md">📂 完整 README</a>
+<section class="ap-hero">
+  <span class="ap-eyebrow">PRODUCT · 07 · v10.0</span>
+  <h1 class="ap-title">Football</h1>
+  <p class="ap-sub">用学术界最严肃的统计学方法,把足球预测做到极致。</p>
+  <div class="ap-cta">
+    <a class="ap-btn-primary" href="#">GitHub 仓库</a>
+    <a class="ap-btn-link" href="#features">了解功能 →</a>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">SOTA</div>
-    <h2 class="section-h2">5 种<em>SOTA 算法</em>(实测 n=1000)</h2>
-    <p class="section-desc">不是黑盒,每一种算法都有论文出处。</p>
-
-    <table class="t-table">
-      <thead><tr><th>方法</th><th>论文</th><th>Top-1</th><th>Log-Loss</th><th>用途</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Dixon-Coles τ</strong></td><td>Dixon &amp; Coles 1997</td><td><span class="t-pill">12.70%</span></td><td>3.0675</td><td>Top-1 最高</td></tr>
-        <tr><td><strong>Poisson 基线</strong></td><td>Maher 1982</td><td>12.20%</td><td>3.0600</td><td>Top-3 最高</td></tr>
-        <tr><td><strong>Zero-Inflated Poisson</strong></td><td>Lambert 1992</td><td>10.80%</td><td><span class="t-pill">3.0252</span></td><td>进球数最准</td></tr>
-        <tr><td><strong>Bivariate Poisson</strong></td><td>Karlis-Ntzoufras 2003</td><td>11.20%</td><td>3.0843</td><td>队间相关</td></tr>
-        <tr><td><strong>Negative Binomial</strong></td><td>Boshnakov 2017</td><td>0.00%</td><td>13.62</td><td>❌ 不适用</td></tr>
-      </tbody>
-    </table>
+<!-- 渲染图:比赛预测 -->
+<section class="ap-render">
+  <div class="ap-render-tag">RENDER · 比赛预测</div>
+  <div class="ap-mockup">
+    <div class="ap-fb-match">
+      <div class="ap-fb-h">法国 vs 塞内加尔</div>
+      <div class="ap-fb-teams">
+        <div class="ap-fb-team"><div class="ap-fb-flag">🇫🇷</div><div class="ap-fb-name">法国</div></div>
+        <div class="ap-fb-vs">VS</div>
+        <div class="ap-fb-team"><div class="ap-fb-flag">🇸🇳</div><div class="ap-fb-name">塞内加尔</div></div>
+      </div>
+      <div class="ap-fb-bars">
+        <div class="ap-fb-row"><span>主胜</span><div class="ap-fb-bar"><div class="ap-fb-fill win" style="width:56%"></div></div><em>56.4%</em></div>
+        <div class="ap-fb-row"><span>平局</span><div class="ap-fb-bar"><div class="ap-fb-fill draw" style="width:24%"></div></div><em>24.1%</em></div>
+        <div class="ap-fb-row"><span>客胜</span><div class="ap-fb-bar"><div class="ap-fb-fill lose" style="width:19.5%"></div></div><em>19.5%</em></div>
+      </div>
+      <div class="ap-fb-pick">★ 推荐:主胜 2-1</div>
+    </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">ARCHITECTURE</div>
-    <h2 class="section-h2">三轨<em>混合架构</em></h2>
-
-    <div class="code-block">
-      <span class="code-label">Football Skill v10.0 Stack</span>
-<span class="c-com">┌─────────────────────────────────────────────────────┐</span>
-<span class="c-com">│              Football Skill v10.0                   │</span>
-<span class="c-com">├───────────────┬─────────────────┬───────────────────┤</span>
-<span class="c-com">│  轨道 1       │  轨道 2         │  轨道 3           │</span>
-<span class="c-com">│  v9.0 数据接入 │  LLM 战术分析   │  Devine v1.0 预测  │</span>
-<span class="c-com">│  实时比赛数据  │  阵型/伤停/心理 │  5 种 SOTA 模型   │</span>
-<span class="c-com">└───────────────┴─────────────────┴───────────────────┘</span>
+<!-- 功能 1 -->
+<section class="ap-feature" id="features">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">01 · 5 种 SOTA 算法</span>
+    <h2>不是黑盒,<br>每种都有论文出处。</h2>
+    <p>Dixon-Coles / Maher Poisson / ZIP / Bivariate / Negative Binomial — 1997、1982、1992、2003、2017 学术经典。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🧮</div>
+      <div class="ap-mockup-label">5 SOTA Models</div>
     </div>
-
-    <div class="feat-grid">
-      <div class="feat-card">
-        <span class="feat-card-icon">📡</span>
-        <div class="feat-card-title">数据接入</div>
-        <div class="feat-card-desc">49,417 国际比赛 + 1,335 StatsBomb 射门 + 211,538 事件 + 96 队 team_database。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🧠</span>
-        <div class="feat-card-title">LLM 战术</div>
-        <div class="feat-card-desc">阵型 / 伤停 / 心理 三维度分析,补全统计模型看不到的"软因素"。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">📈</span>
-        <div class="feat-card-title">Devine 预测</div>
-        <div class="feat-card-desc">5 种 SOTA 模型,Top-1 准确率 12.7%,胜方准确率实测 100%。</div>
-      </div>
-    </div>
-
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num">49<em>k+</em></div><div class="stat-label">国际比赛</div></div>
-      <div class="stat-card"><div class="stat-num">211<em>k+</em></div><div class="stat-label">事件数据</div></div>
-      <div class="stat-card"><div class="stat-num">12.7<em>%</em></div><div class="stat-label">Top-1 准确率</div></div>
-      <div class="stat-card"><div class="stat-num">100<em>%</em></div><div class="stat-label">胜方准确率</div></div>
-    </div>
-
-    <a class="back-link" href="../index.html">← 返回 ZYRVIS 首页</a>
   </div>
 </section>
 
-<footer class="footer">
-  <div class="footer-logo">ZYRVIS</div>
-  <div class="footer-links">
-    <a class="footer-link" href="../index.html">首页</a>
-    <a class="footer-link" href="../../readme/products/football-skill.md">Markdown 版</a>
-    <a class="footer-link" href="../../Skills/football_skill/README.md">项目 README</a>
+<!-- 功能 2 -->
+<section class="ap-feature rev">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">02 · 49k+ 真实数据</span>
+    <h2>49,417 国际比赛 + 211k 事件。</h2>
+    <p>从 FIFA 国际赛事到 StatsBomb 射门级数据。数据资产本身就是壁垒。</p>
   </div>
-  <div class="footer-copy">© 2026 ZYRVIS · 产品介绍页</div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">📊</div>
+      <div class="ap-mockup-label">49k+ Matches</div>
+    </div>
+  </div>
+</section>
+
+<!-- 渲染图:三轨架构 -->
+<section class="ap-render alt">
+  <div class="ap-render-tag">ARCHITECTURE · 三轨混合</div>
+  <div class="ap-mockup">
+    <div class="ap-fb-arch">
+      <div class="ap-fb-track">
+        <div class="ap-fb-track-num">01</div>
+        <div class="ap-fb-track-icon">📡</div>
+        <div class="ap-fb-track-t">数据接入</div>
+        <div class="ap-fb-track-d">v9.0 · 实时比赛</div>
+      </div>
+      <div class="ap-fb-arrow">→</div>
+      <div class="ap-fb-track">
+        <div class="ap-fb-track-num">02</div>
+        <div class="ap-fb-track-icon">🧠</div>
+        <div class="ap-fb-track-t">LLM 战术</div>
+        <div class="ap-fb-track-d">阵型 / 伤停 / 心理</div>
+      </div>
+      <div class="ap-fb-arrow">→</div>
+      <div class="ap-fb-track">
+        <div class="ap-fb-track-num">03</div>
+        <div class="ap-fb-track-icon">📈</div>
+        <div class="ap-fb-track-t">Devine 预测</div>
+        <div class="ap-fb-track-d">5 SOTA · Top-1 12.7%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 功能 3 -->
+<section class="ap-feature">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">03 · 实测胜方 100%</span>
+    <h2>v9.0 vs v8.7.2,<br>胜方准确率 +50%。</h2>
+    <p>对比 v8.7.2 的 50% 胜方准确率,v9.0 实测 100%(4/4 场)。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🏆</div>
+      <div class="ap-mockup-label">100% Win-Side</div>
+    </div>
+  </div>
+</section>
+
+<footer class="ap-footer">
+  <div class="ap-foot-logo">ZYRVIS</div>
+  <div class="ap-foot-links">
+    <a href="../index.html">首页</a>
+    <a href="football-skill.html">Football</a>
+  </div>
+  <div class="ap-foot-copy">© 2026 ZYRVIS · Football Skill v10.0</div>
 </footer>
 
-<script>
-document.body.classList.add('js-reveal-ready');
-const io=new IntersectionObserver(e=>{e.forEach(r=>{if(r.isIntersecting){r.target.classList.add('visible');io.unobserve(r.target)}})},{threshold:0.12});
-document.querySelectorAll('.feat-card,.section-h2,.section-tag,.section-desc,.t-table,.stat-card,.stats-row,.code-block').forEach(el=>{el.classList.add('reveal');io.observe(el)});
-</script>
+<style>
+.ap-fb-match{width:100%;max-width:520px;background:#fff;border-radius:18px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.04)}
+.ap-fb-h{text-align:center;font-size:14px;color:#86868b;font-weight:600;margin-bottom:18px}
+.ap-fb-teams{display:flex;align-items:center;justify-content:space-around;margin-bottom:24px;padding:20px;background:rgba(0,0,0,0.03);border-radius:14px}
+.ap-fb-team{text-align:center}
+.ap-fb-flag{font-size:42px;line-height:1;margin-bottom:6px}
+.ap-fb-name{font-size:14px;font-weight:600;color:#1d1d1f}
+.ap-fb-vs{font-size:18px;font-weight:700;color:#86868b;letter-spacing:2px}
+.ap-fb-bars{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+.ap-fb-row{display:flex;align-items:center;gap:10px}
+.ap-fb-row>span{font-size:12px;color:#1d1d1f;font-weight:500;width:36px}
+.ap-fb-bar{flex:1;height:10px;background:rgba(0,0,0,0.05);border-radius:5px;overflow:hidden}
+.ap-fb-fill{height:100%;border-radius:5px;transition:width 0.6s}
+.ap-fb-fill.win{background:linear-gradient(90deg,#34c759,#30d158)}
+.ap-fb-fill.draw{background:linear-gradient(90deg,#ff9500,#ffcc00)}
+.ap-fb-fill.lose{background:linear-gradient(90deg,#ff3b30,#ff453a)}
+.ap-fb-row em{font-size:12px;font-weight:600;color:#1d1d1f;width:50px;text-align:right}
+.ap-fb-pick{text-align:center;background:linear-gradient(135deg,#34c759,#30d158);color:#fff;padding:12px;border-radius:12px;font-size:15px;font-weight:600}
+
+.ap-fb-arch{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:center;width:100%;max-width:920px}
+.ap-fb-track{background:#fff;border-radius:18px;padding:24px 20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.04)}
+.ap-fb-track-num{font-size:11px;color:#86868b;font-weight:600;letter-spacing:1px;margin-bottom:10px}
+.ap-fb-track-icon{font-size:36px;margin-bottom:10px}
+.ap-fb-track-t{font-size:16px;font-weight:600;color:#1d1d1f;margin-bottom:4px}
+.ap-fb-track-d{font-size:11px;color:#86868b}
+.ap-fb-arrow{font-size:24px;color:#86868b;font-weight:300}
+@media(max-width:760px){
+  .ap-fb-arch{grid-template-columns:1fr}
+  .ap-fb-arrow{display:none}
+}
+</style>
+
 </body>
 </html>

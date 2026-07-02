@@ -4,112 +4,173 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VitaTrack — 桌面智能健康管理系统</title>
-<link rel="stylesheet" href="product-base.css">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="apple-base.css">
 </head>
 <body>
-<nav class="sidenav">
-  <a class="sc-logo" href="../index.html" title="ZYRVIS">Z</a>
-  <div class="sc-sep"></div>
-  <a class="sc-back" href="../index.html" title="返回首页">←</a>
+
+<nav class="ap-nav">
+  <a class="ap-logo" href="../index.html">ZYRVIS</a>
+  <div class="ap-nav-links">
+    <a href="../index.html">首页</a>
+    <a href="vitatrack.html" class="on">VitaTrack</a>
+  </div>
 </nav>
 
-<section class="hero">
-  <span class="hero-emoji">🌿</span>
-  <div class="hero-eyebrow">ZYRVIS · 产品 05 / 08</div>
-  <h1 class="hero-h1">Vita<em>Track</em></h1>
-  <p class="hero-sub">8 寸桌面主屏:喝水打卡、热量摄入、久坐提醒、日程提醒 — <em>iCloud 日历双向同步</em>。<br>数据本地 · 隐私优先 · 安静陪伴 · Apple 生态打通。</p>
-  <div class="hero-meta">
-    <span class="hero-tag">ESP32-S3</span>
-    <span class="hero-tag">8" IPS</span>
-    <span class="hero-tag">iCloud CalDAV</span>
-    <span class="hero-tag">本地隐私</span>
-  </div>
-  <div class="hero-btns">
-    <a class="hero-btn-primary" href="../../readme/products/vitatrack.md">📄 查看 Markdown 介绍</a>
-    <a class="hero-btn-secondary" href="../../Projects/VitaTrack/README.md">📂 完整 README</a>
+<section class="ap-hero">
+  <span class="ap-eyebrow">PRODUCT · 05 · 智能硬件</span>
+  <h1 class="ap-title">VitaTrack</h1>
+  <p class="ap-sub">8 寸桌面主屏。喝水打卡、热量摄入、久坐提醒、日程同步。</p>
+  <div class="ap-cta">
+    <a class="ap-btn-primary" href="#">了解硬件</a>
+    <a class="ap-btn-link" href="#features">了解功能 →</a>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">FORM FACTOR</div>
-    <h2 class="section-h2">产品<em>形态</em></h2>
-    <p class="section-desc">v1.2 重大变更:升级为桌面主屏,独立运行的智能硬件。永远摆在桌面上,只做四件事,绝不打广告。</p>
-
-    <div class="code-block">
-      <span class="code-label">VitaTrack Hardware</span>
-        <span class="c-com">┌─────────────────────────┐</span>
-        <span class="c-com">│                         │</span>
-        <span class="c-com">│    8" IPS 1280×800      │</span>
-        <span class="c-com">│                         │  ~16cm 宽</span>
-        <span class="c-com">│    电容触摸屏           │  ~12cm 高</span>
-        <span class="c-com">│                         │</span>
-        <span class="c-com">└─────────────────────────┘</span>
-             <span class="c-key">╱  ╲</span>  <span class="c-com">← 可调角度支架 30-80°</span>
-            <span class="c-key">╱    ╲</span>
-           <span class="c-key">▔▔▔▔▔▔▔▔▔▔▔</span>
-        <span class="c-com">┌─────────────────┐</span>
-        <span class="c-com">│  ESP32-S3 +     │  ← 后壳藏主控、摄像头、喇叭</span>
-        <span class="c-com">│  摄像头(可遮挡) │</span>
-        <span class="c-com">└─────────────────┘</span>
+<!-- 渲染图:硬件 -->
+<section class="ap-render">
+  <div class="ap-render-tag">RENDER · 桌面主屏</div>
+  <div class="ap-mockup">
+    <div class="ap-device">
+      <div class="ap-device-screen">
+        <div class="ap-vt-time">10:24</div>
+        <div class="ap-vt-date">7月2日 周四</div>
+        <div class="ap-vt-row">
+          <div class="ap-vt-card water">
+            <div class="ap-vt-icon">💧</div>
+            <div class="ap-vt-num">1.4<small>/2L</small></div>
+            <div class="ap-vt-label">饮水</div>
+            <div class="ap-vt-ring"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="25" fill="none" stroke="#0a84ff" stroke-width="6" stroke-dasharray="110 157" transform="rotate(-90 30 30)"/></svg></div>
+          </div>
+          <div class="ap-vt-card">
+            <div class="ap-vt-icon">🍱</div>
+            <div class="ap-vt-num">1,240<small>kcal</small></div>
+            <div class="ap-vt-label">已摄入</div>
+          </div>
+        </div>
+        <div class="ap-vt-row">
+          <div class="ap-vt-card wide">
+            <div class="ap-vt-icon">📅</div>
+            <div class="ap-vt-evt">14:00 团队周会</div>
+            <div class="ap-vt-evt light">16:30 与老张面谈</div>
+          </div>
+        </div>
+      </div>
+      <div class="ap-device-stand"></div>
     </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">MVP</div>
-    <h2 class="section-h2">四大<em>核心功能</em></h2>
-
-    <div class="feat-grid">
-      <div class="feat-card">
-        <span class="feat-card-icon">💧</span>
-        <div class="feat-card-title">饮水打卡</div>
-        <div class="feat-card-desc">一键 200ml / 自定义量。圆环进度 + 时段统计 + 7/30 天趋势。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🍱</span>
-        <div class="feat-card-title">每日热量摄入</div>
-        <div class="feat-card-desc">内置 50+ 食物库,拍照 AI 识别,热量 + 三大营养素统计。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🧍</span>
-        <div class="feat-card-title">久坐提醒</div>
-        <div class="feat-card-desc">摄像头检测在岗状态,50 分钟无离开 → 安静提示。<em>仅本地推理,数据不入库</em>。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">📅</span>
-        <div class="feat-card-title">日程提醒</div>
-        <div class="feat-card-desc">iCloud CalDAV 双向同步,桌面卡片式呈现当日事项,关键事项临近亮屏 + 音效。</div>
-      </div>
+<!-- 功能 1:饮水打卡 -->
+<section class="ap-feature" id="features">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">01 · 饮水打卡</span>
+    <h2>圆环进度 + 时段统计,<br>养成喝水习惯。</h2>
+    <p>一键 200ml / 自定义量。7/30 天趋势一目了然,告别"忘记喝水"。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">💧</div>
+      <div class="ap-mockup-label">Hydration</div>
     </div>
-
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num">8<em>"</em></div><div class="stat-label">IPS 屏</div></div>
-      <div class="stat-card"><div class="stat-num">1280<em>×</em>800</div><div class="stat-label">分辨率</div></div>
-      <div class="stat-card"><div class="stat-num">50<em>+</em></div><div class="stat-label">内置食物</div></div>
-      <div class="stat-card"><div class="stat-num">50<em>min</em></div><div class="stat-label">久坐阈值</div></div>
-    </div>
-
-    <a class="back-link" href="../index.html">← 返回 ZYRVIS 首页</a>
   </div>
 </section>
 
-<footer class="footer">
-  <div class="footer-logo">ZYRVIS</div>
-  <div class="footer-links">
-    <a class="footer-link" href="../index.html">首页</a>
-    <a class="footer-link" href="../../readme/products/vitatrack.md">Markdown 版</a>
-    <a class="footer-link" href="../../Projects/VitaTrack/README.md">项目 README</a>
+<!-- 功能 2 -->
+<section class="ap-feature rev">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">02 · 热量摄入</span>
+    <h2>50+ 食物库 + 拍照识别。</h2>
+    <p>内置 50+ 常见食物,热量 + 三大营养素自动统计。吃饭前拍一张,卡路里不糊涂。</p>
   </div>
-  <div class="footer-copy">© 2026 ZYRVIS · 产品介绍页</div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🍱</div>
+      <div class="ap-mockup-label">Calories</div>
+    </div>
+  </div>
+</section>
+
+<!-- 渲染图:iCloud 日历 -->
+<section class="ap-render alt">
+  <div class="ap-render-tag">DEMO · iCloud 日历双向同步</div>
+  <div class="ap-mockup">
+    <div class="ap-vt-cal">
+      <div class="ap-vt-cal-h">7 月</div>
+      <div class="ap-vt-cal-grid">
+        <div class="ap-vt-cal-d"><span>一</span></div>
+        <div class="ap-vt-cal-d"><span>二</span></div>
+        <div class="ap-vt-cal-d"><span>三</span></div>
+        <div class="ap-vt-cal-d"><span>四</span></div>
+        <div class="ap-vt-cal-d"><span>五</span></div>
+        <div class="ap-vt-cal-d"><span>六</span></div>
+        <div class="ap-vt-cal-d"><span>日</span></div>
+        <div class="ap-vt-cal-cell"></div>
+        <div class="ap-vt-cal-cell"></div>
+        <div class="ap-vt-cal-cell has">2<div class="ap-dot blue"></div></div>
+        <div class="ap-vt-cal-cell today">3<div class="ap-dot blue"></div><div class="ap-dot red"></div></div>
+        <div class="ap-vt-cal-cell">4</div>
+        <div class="ap-vt-cal-cell">5</div>
+        <div class="ap-vt-cal-cell">6</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 功能 3 -->
+<section class="ap-feature">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">03 · 久坐提醒</span>
+    <h2>50 分钟无离开,<br>安静提示。</h2>
+    <p>摄像头检测在岗状态。隐私优先 — 仅本地推理,数据不入库。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🧍</div>
+      <div class="ap-mockup-label">Posture Alert</div>
+    </div>
+  </div>
+</section>
+
+<footer class="ap-footer">
+  <div class="ap-foot-logo">ZYRVIS</div>
+  <div class="ap-foot-links">
+    <a href="../index.html">首页</a>
+    <a href="vitatrack.html">VitaTrack</a>
+  </div>
+  <div class="ap-foot-copy">© 2026 ZYRVIS · VitaTrack</div>
 </footer>
 
-<script>
-document.body.classList.add('js-reveal-ready');
-const io=new IntersectionObserver(e=>{e.forEach(r=>{if(r.isIntersecting){r.target.classList.add('visible');io.unobserve(r.target)}})},{threshold:0.12});
-document.querySelectorAll('.feat-card,.section-h2,.section-tag,.section-desc,.t-table,.stat-card,.stats-row,.code-block').forEach(el=>{el.classList.add('reveal');io.observe(el)});
-</script>
+<style>
+.ap-device{width:480px;background:#0a0a0a;border-radius:24px;padding:14px 14px 60px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,0.25)}
+.ap-device-screen{aspect-ratio:16/10;background:linear-gradient(135deg,#0a0a0a 0%,#1a1a1a 100%);border-radius:14px;padding:24px;color:#fff;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden}
+.ap-vt-time{font-size:48px;font-weight:200;letter-spacing:-2px;line-height:1}
+.ap-vt-date{font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:8px}
+.ap-vt-row{display:flex;gap:12px}
+.ap-vt-card{flex:1;background:rgba(255,255,255,0.06);border-radius:18px;padding:18px;position:relative;overflow:hidden;min-height:100px}
+.ap-vt-card.water{background:linear-gradient(135deg,rgba(10,132,255,0.2),rgba(10,132,255,0.05))}
+.ap-vt-card.wide{width:100%}
+.ap-vt-icon{font-size:24px;margin-bottom:10px}
+.ap-vt-num{font-size:28px;font-weight:600;line-height:1;margin-bottom:6px}
+.ap-vt-num small{font-size:14px;font-weight:400;opacity:0.6;margin-left:4px}
+.ap-vt-label{font-size:12px;color:rgba(255,255,255,0.5)}
+.ap-vt-ring{position:absolute;top:14px;right:14px;width:36px;height:36px}
+.ap-vt-evt{font-size:14px;font-weight:500;margin-bottom:6px;padding:8px 12px;background:rgba(255,255,255,0.06);border-radius:10px}
+.ap-vt-evt.light{font-size:13px;color:rgba(255,255,255,0.5);background:transparent;padding:0 12px}
+.ap-device-stand{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:200px;height:40px;background:linear-gradient(180deg,#2a2a2a,#1a1a1a);border-radius:0 0 14px 14px}
+
+.ap-vt-cal{background:#fff;border-radius:18px;padding:24px;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.04)}
+.ap-vt-cal-h{font-size:22px;font-weight:600;color:#1d1d1f;margin-bottom:18px;text-align:center}
+.ap-vt-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.ap-vt-cal-d{text-align:center;font-size:11px;color:#86868b;font-weight:600;padding-bottom:4px}
+.ap-vt-cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:6px;font-size:13px;color:#1d1d1f;border-radius:10px;position:relative}
+.ap-vt-cal-cell.has{color:#1d1d1f}
+.ap-vt-cal-cell.today{background:#0071e3;color:#fff}
+.ap-dot{width:5px;height:5px;border-radius:50%;margin-top:2px}
+.ap-dot.blue{background:#0a84ff}
+.ap-dot.red{background:#ff3b30}
+.ap-vt-cal-cell.today .ap-dot.blue{background:#5ac8fa}
+.ap-vt-cal-cell.today .ap-dot.red{background:#ff9500}
+</style>
+
 </body>
 </html>

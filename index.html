@@ -1,103 +1,456 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ZYRVIS — 产品矩阵</title>
-<meta name="description" content="ZYRVIS 产品矩阵 — 8 款独立产品,从餐厅推荐到 AI 足球预测。">
-<link rel="stylesheet" href="product-base.css">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZYRVIS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at 50% 40%, #fafafa 0%, #ebebeb 100%);
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            opacity: 0.025;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 200px;
+        }
+
+        /* ── 左上角产品入口 ── */
+        .product-launcher {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        .launcher-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px 8px 12px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px) saturate(1.6);
+            -webkit-backdrop-filter: blur(20px) saturate(1.6);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1f2937;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .launcher-toggle:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        .launcher-toggle .grid-icon {
+            display: inline-grid;
+            grid-template-columns: repeat(2, 4px);
+            grid-template-rows: repeat(2, 4px);
+            gap: 2px;
+        }
+        .launcher-toggle .grid-icon span {
+            width: 4px;
+            height: 4px;
+            background: #1f2937;
+            border-radius: 1px;
+        }
+        .launcher-toggle .arrow {
+            font-size: 9px;
+            opacity: 0.5;
+            transition: transform 0.2s;
+        }
+        .launcher-toggle.open .arrow { transform: rotate(180deg); }
+
+        .launcher-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 280px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px) saturate(1.6);
+            -webkit-backdrop-filter: blur(24px) saturate(1.6);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 18px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+            display: none;
+            flex-direction: column;
+            gap: 2px;
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+        .launcher-menu.open { display: flex; }
+
+        .launcher-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #1f2937;
+            transition: background 0.15s;
+        }
+        .launcher-item:hover { background: rgba(0, 0, 0, 0.04); }
+        .launcher-item .emoji { font-size: 22px; line-height: 1; }
+        .launcher-item .info { flex: 1; min-width: 0; }
+        .launcher-item .name {
+            font-size: 13.5px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+        .launcher-item .desc {
+            font-size: 11px;
+            color: #6b7280;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .launcher-item .arrow-right {
+            font-size: 12px;
+            color: #9ca3af;
+            flex-shrink: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stage {
+            position: relative;
+            width: 340px;
+            height: 220px;
+        }
+
+        .stage svg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #svg-hi {
+            width: 210px;
+            opacity: 0;
+        }
+
+        #svg-logo {
+            width: 300px;
+            opacity: 0;
+        }
+
+        .typing-wrap {
+            margin-top: 36px;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+
+        #typed {
+            font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #111;
+            letter-spacing: 3px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2.5px;
+            height: 24px;
+            background: #111;
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            opacity: 0;
+        }
+        .cursor.on { animation: blink .7s step-end infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+        @media (max-width: 600px) {
+            .product-launcher { top: 12px; left: 12px; }
+            .launcher-menu { width: 240px; }
+        }
+    </style>
 </head>
 <body>
 
-<section class="idx-hero">
-  <div class="hero-eyebrow">ZYRVIS · PRODUCT MATRIX · 2026</div>
-  <h1 class="hero-h1" style="margin-top:24px"><em>8 款</em>独立产品</h1>
-  <p class="hero-sub" style="margin-top:24px">从私人美食外脑,到开源 5 部门 AI 公司。<br>每一款都是一个独立思考,一种新的人机协作方式。</p>
-  <div class="hero-btns" style="margin-top:40px">
-    <a class="hero-btn-primary" href="#products">→ 浏览全部产品</a>
-    <a class="hero-btn-secondary" href="https://github.com/zyrvis">⭐ GitHub</a>
-  </div>
-</section>
-
-<h2 class="idx-section-h2" id="products">PRODUCTS <em>/ 08</em></h2>
-
-<div class="idx-grid">
-  <a class="idx-card" href="dongchi.html">
-    <span class="idx-card-num">01 / 08</span>
-    <span class="idx-card-emoji">🍜</span>
-    <div class="idx-card-title">懂<em>吃</em></div>
-    <div class="idx-card-desc">个人私有餐厅打卡 × 算法推荐 × 好友分享。零商业化的私人美食外脑。</div>
-    <div class="idx-card-tags"><span class="idx-card-tag">iOS</span><span class="idx-card-tag">算法推荐</span></div>
-  </a>
-
-  <a class="idx-card" href="coffeechat.html">
-    <span class="idx-card-num">02 / 08</span>
-    <span class="idx-card-emoji">☕</span>
-    <div class="idx-card-title">Coffee<em>Chat</em></div>
-    <div class="idx-card-desc">LBS 即时社交。打开 → 看到附近有人在咖啡馆 → 步行 5 分钟 → 当面聊 30 分钟。</div>
-    <div class="idx-card-tags"><span class="idx-card-tag">LBS</span><span class="idx-card-tag">iOS+小程序</span></div>
-  </a>
-
-  <a class="idx-card" href="fitmap.html">
-    <span class="idx-card-num">03 / 08</span>
-    <span class="idx-card-emoji">💪</span>
-    <div class="idx-card-title">Fit<em>Map</em></div>
-    <div class="idx-card-desc">3D 人体模型 + 肌肉热力图 + 103+ 动作库。一次就做好,做好就上线。</div>
-    <div class="idx-card-tags"><span class="idx-card-tag">SwiftUI</span><span class="idx-card-tag">3D</span></div>
-  </a>
-
-  <a class="idx-card" href="penpot.html">
-    <span class="idx-card-num">04 / 08</span>
-    <span class="idx-card-emoji">🎨</span>
-    <div class="idx-card-title">Pen<em>pot</em></div>
-    <div class="idx-card-desc">SVG 原生 + 33k+ Stars + MPL 2.0。Figma 的真·开源替代。</div>
-    <div class="idx-card-tags"><span class="idx-card-tag">研究</span><span class="idx-card-tag">开源</span></div>
-  </a>
-
-  <a class="idx-card" href="vitatrack.html">
-    <span class="idx-card-num">05 / 08</span>
-    <span class="idx-card-emoji">🌿</span>
-    <div class="idx-card-title">Vita<em>Track</em></div>
-    <div class="idx-card-desc">8 寸桌面主屏:喝水打卡、热量摄入、久坐提醒。iCloud CalDAV 双向同步。</div>
-    <div class="idx-card-tags"><span class="idx-card-tag">ESP32</span><span class="idx-card-tag">硬件</span></div>
-  </a>
-
-  <a class="idx-card" href="wavedio.html">
-    <span class="idx-card-num">06 / 08</span>
-    <span class="idx-card-emoji">📻</span>
-    <div class="idx-card-title">Wave<em>dio</em></div>
-    <div class="idx-card-desc">AI 收音机。5 位 AI 主播陪你听真实歌曲。像调 FM 一样简单。</div>
-    <div class="idx-card-tags"><span class="idx-card-tag">AI 语音</span><span class="idx-card-tag">FM 体验</span></div>
-  </a>
-
-  <a class="idx-card" href="football-skill.html">
-    <span class="idx-card-num">07 / 08</span>
-    <span class="idx-card-emoji">⚽</span>
-    <div class="idx-card-title">Football <em>Skill</em></div>
-    <div class="idx-card-desc">学术 SOTA 足球预测。5 种算法(Dixon-Coles / ZIP / Bivariate / Poisson / NB),实测胜方 100%。</div>
-    <div class="idx-card-tags"><span class="idx-card-tag">Python</span><span class="idx-card-tag">SOTA</span></div>
-  </a>
-
-  <a class="idx-card" href="agentteam.html">
-    <span class="idx-card-num">08 / 08</span>
-    <span class="idx-card-emoji">🏢</span>
-    <div class="idx-card-title">agent<em>team</em></div>
-    <div class="idx-card-desc">开源 5 部门 AI 公司。290 Agents + 24 Skills + 12 IDEs,MIT 协议。</div>
-    <div class="idx-card-tags"><span class="idx-card-tag">Agent</span><span class="idx-card-tag">MIT</span></div>
-  </a>
+<!-- ══ 左上角产品入口 ══ -->
+<div class="product-launcher">
+    <button class="launcher-toggle" id="launcherToggle" type="button">
+        <span class="grid-icon"><span></span><span></span><span></span><span></span></span>
+        <span>产品</span>
+        <span class="arrow">▼</span>
+    </button>
+    <div class="launcher-menu" id="launcherMenu">
+        <a class="launcher-item" href="products/dongchi.html">
+            <span class="emoji">🍜</span>
+            <div class="info">
+                <div class="name">懂吃</div>
+                <div class="desc">私人餐厅打卡 · 算法推荐</div>
+            </div>
+            <span class="arrow-right">→</span>
+        </a>
+        <a class="launcher-item" href="products/coffeechat.html">
+            <span class="emoji">☕</span>
+            <div class="info">
+                <div class="name">CoffeeChat</div>
+                <div class="desc">LBS 即时社交</div>
+            </div>
+            <span class="arrow-right">→</span>
+        </a>
+        <a class="launcher-item" href="products/fitmap.html">
+            <span class="emoji">💪</span>
+            <div class="info">
+                <div class="name">FitMap</div>
+                <div class="desc">AI 健身 · 3D 人体模型</div>
+            </div>
+            <span class="arrow-right">→</span>
+        </a>
+        <a class="launcher-item" href="products/penpot.html">
+            <span class="emoji">🎨</span>
+            <div class="info">
+                <div class="name">Penpot</div>
+                <div class="desc">开源设计协作平台</div>
+            </div>
+            <span class="arrow-right">→</span>
+        </a>
+        <a class="launcher-item" href="products/vitatrack.html">
+            <span class="emoji">🌿</span>
+            <div class="info">
+                <div class="name">VitaTrack</div>
+                <div class="desc">桌面健康主屏</div>
+            </div>
+            <span class="arrow-right">→</span>
+        </a>
+        <a class="launcher-item" href="products/wavedio.html">
+            <span class="emoji">📻</span>
+            <div class="info">
+                <div class="name">Wavedio</div>
+                <div class="desc">AI 收音机 · 真实电台</div>
+            </div>
+            <span class="arrow-right">→</span>
+        </a>
+        <a class="launcher-item" href="products/football-skill.html">
+            <span class="emoji">⚽</span>
+            <div class="info">
+                <div class="name">Football Skill</div>
+                <div class="desc">学术 SOTA 足球预测</div>
+            </div>
+            <span class="arrow-right">→</span>
+        </a>
+        <a class="launcher-item" href="products/agentteam.html">
+            <span class="emoji">🏢</span>
+            <div class="info">
+                <div class="name">agentteam</div>
+                <div class="desc">开源 5 部门 AI 公司</div>
+            </div>
+            <span class="arrow-right">→</span>
+        </a>
+    </div>
 </div>
 
-<p class="idx-footer-note">© 2026 ZYRVIS · 每个产品都是一份独立的思考 · <a href="https://github.com/zyrvis" style="color:inherit;text-decoration:underline">GitHub</a></p>
+<div class="container">
+    <div class="stage">
 
-<style>
-.idx-card-tags{margin-top:8px}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);font-size:12px;font-weight:700;color:rgba(255,255,255,0.65);position:relative;z-index:1}
-@media(max-width:600px){
-  .idx-hero{padding:80px 24px 60px}
-  .idx-section-h2{padding:40px 24px 20px;font-size:32px}
-  .idx-grid{padding:0 20px 60px;grid-template-columns:1fr}
-}
-</style>
+        <!-- ══ Hi 艺术字 ══ -->
+        <svg id="svg-hi" viewBox="0 0 84 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path id="hi-h"
+                d="M50.3311 9.46402C51.7203 8.56105 52.1145 6.7029 51.2115 5.31372C50.3085 3.92454 48.4504 3.53039 47.0612 4.43335L48.6962 6.94868L50.3311 9.46402ZM12.1962 0.948685L9.35013 1.89737C13.6614 14.8313 13.7913 28.9143 11.445 40.3455C10.2728 46.0559 8.50333 51.0017 6.41178 54.7535C4.28078 58.5762 2.0056 60.8255 3.93391e-06 61.6975L1.19618 64.4487L2.39236 67.1999C6.13676 65.5719 9.23658 62.0087 11.6525 57.6751C14.1078 53.2707 16.057 47.7165 17.3224 41.5519C19.851 29.2331 19.7309 14.0661 15.0422 1.37091e-06L12.1962 0.948685ZM48.6962 6.94868L47.0612 4.43335C45.356 5.54173 43.7766 7.29366 42.3706 9.28218C40.937 11.3098 39.5589 13.7628 38.3096 16.4621C35.814 21.8542 33.7409 28.4288 32.79 34.9536C31.8468 41.4262 31.962 48.1658 34.1676 53.6933C36.4531 59.421 40.9607 63.7255 48.2128 64.9095L48.6962 61.9487L49.1796 58.9879C44.1817 58.1719 41.3142 55.4139 39.7404 51.4697C38.0866 47.3253 37.8581 41.7837 38.7273 35.8188C39.589 29.9061 41.4847 23.8869 43.7547 18.9822C44.8882 16.533 46.092 14.4118 47.2698 12.746C48.4752 11.0412 49.5363 9.98064 50.3311 9.46402L48.6962 6.94868ZM53.6962 27.4487L51.9899 24.9811C43.9819 30.5185 37.5798 34.1843 30.7288 36.8182C23.8736 39.4536 16.4335 41.1079 6.2951 42.4756L6.69618 45.4487L7.09727 48.4218C17.4765 47.0215 25.4231 45.286 32.8818 42.4186C40.3446 39.5495 47.1837 35.5993 55.4024 29.9162L53.6962 27.4487Z"
+                fill="none" stroke="#111" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            <path id="hi-i"
+                d="M56.6962 27.4487C58.0295 24.282 62.9962 18.4487 72.1962 20.4487C83.6962 22.9487 57.1962 62.9487 67.6962 61.4487C76.0962 60.2487 79.5295 50.9487 80.1962 48.9487M58.1962 10.9487C59.6962 11.1154 63.4962 12.0487 66.6962 14.4487"
+                fill="none" stroke="#111" stroke-width="6"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+
+        <!-- ══ ZYRVIS Logo (完整精确数据) ══ -->
+        <svg id="svg-logo" viewBox="0 0 137 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- 头部轮廓 -->
+            <path id="l-head" fill-rule="evenodd" clip-rule="evenodd"
+                d="M57.6536 0.0510798C67.382 -0.110527 77.0984 0.11135 86.8032 0.71652C93.1631 1.1424 99.3462 2.34647 105.353 4.32891C108.763 5.63355 111.957 7.28137 114.933 9.27217C120.181 13.5956 125.243 18.1271 130.12 22.8662C132.002 24.9191 133.633 27.1373 135.012 29.5206C137.129 34.9313 136.245 39.8746 132.362 44.3504C129.84 46.8952 127.02 49.0816 123.903 50.9097C119.797 53.3705 115.448 55.3986 110.857 56.9937C109.926 57.3065 108.975 57.4333 108.003 57.374C111.495 54.7632 115.097 52.2915 118.806 49.9591C121.209 48.2255 123.485 46.356 125.635 44.3504C127.448 42.5314 128.943 40.5034 130.12 38.2663C131.725 34.6465 131.249 31.2876 128.693 28.1897C127.887 27.1206 127.003 26.1065 126.043 25.1477C122.13 21.5615 118.291 17.9176 114.526 14.2154C110.368 10.5008 105.476 7.96582 99.8491 6.61041C95.4141 5.60218 90.9296 4.84168 86.3955 4.32891C73.7513 3.41193 61.1131 3.47524 48.4807 4.51903C43.2045 5.04701 38.0405 6.06095 32.9887 7.56104C28.5086 9.14194 24.5677 11.4868 21.1658 14.5957C17.61 18.1026 13.9748 21.5566 10.2602 24.9575C8.2923 26.8563 6.72964 29.0112 5.57182 31.4218C4.83941 33.6818 4.97517 35.9 5.9795 38.0762C7.70014 41.331 10.0443 44.1513 13.0121 46.5368C13.9634 47.2973 14.9145 48.0578 15.8659 48.8183C19.9142 51.6871 23.991 54.5073 28.0964 57.2789C27.6347 57.497 27.1592 57.5287 26.6695 57.374C20.2738 55.3738 14.3623 52.522 8.93522 48.8183C6.2341 46.933 3.95799 44.6833 2.10649 42.0689C-0.480887 37.7188 -0.68473 33.2826 1.49496 28.7601C3.03194 26.2745 4.86652 23.993 6.99871 21.9155C10.9115 18.2026 14.8864 14.5586 18.9235 10.9833C24.8103 6.27408 31.6052 3.29538 39.3078 2.0474C45.407 1.01635 51.5223 0.350908 57.6536 0.0510798Z"
+                fill="none" stroke="#111" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 左眼 -->
+            <path id="l-eyeL" fill-rule="evenodd" clip-rule="evenodd"
+                d="M26.1759 19.3842C27.7323 19.8239 29.227 20.4261 30.6605 21.1904C36.7462 24.3343 42.7255 27.6299 48.5986 31.0769C48.9058 31.236 49.0077 31.4579 48.9044 31.7423C48.6569 32.0369 48.3512 32.2585 47.9871 32.4078C47.2416 32.3873 46.4943 32.3873 45.7448 32.4078C42.6737 35.8656 38.8007 37.0064 34.1258 35.8301C30.4976 34.2992 28.4251 31.669 27.9086 27.9398C27.6762 26.0661 27.8462 24.2284 28.4182 22.4262C27.8933 21.6501 27.2477 20.9529 26.4817 20.3348C26.276 20.0449 26.1741 19.7279 26.1759 19.3842Z"
+                fill="none" stroke="#111" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 右眼 -->
+            <path id="l-eyeR" fill-rule="evenodd" clip-rule="evenodd"
+                d="M109.344 19.3842C109.708 19.33 110.048 19.3933 110.363 19.5743C109.506 20.5316 108.69 21.5138 107.917 22.5212C109.215 26.4781 108.57 30.1223 105.98 33.4535C103.299 36.036 100.072 36.8915 96.2978 36.0202C93.9435 35.2834 91.9729 34.0159 90.3864 32.2177C89.8177 32.262 89.2402 32.357 88.6537 32.5028C88.1435 32.4097 87.7358 32.1562 87.4307 31.7423C87.3049 31.5619 87.3387 31.4035 87.5326 31.267C94.682 27.1092 101.952 23.1481 109.344 19.3842Z"
+                fill="none" stroke="#111" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 左眼瞳孔 -->
+            <path id="l-hlL"
+                d="M38.0847 27.9996C39.1023 27.9986 39.7817 28.4422 40.1232 29.3304C39.7744 30.552 39.1629 31.6294 38.2886 32.5626C37.5941 31.0549 37.5262 29.5339 38.0847 27.9996Z"
+                fill="#F0F0F0" opacity="0"/>
+            <!-- 右眼瞳孔 -->
+            <path id="l-hlR"
+                d="M97.317 27.7497C97.8929 27.67 98.3344 27.8602 98.642 28.3201C98.8002 29.6129 98.6642 30.8805 98.2343 32.1226C98.1499 32.2095 98.048 32.273 97.9286 32.3127C96.8364 31.2532 96.3268 29.9856 96.3997 28.5102C96.6845 28.2117 96.9903 27.9581 97.317 27.7497Z"
+                fill="#EEEEEE" opacity="0"/>
+            <!-- 下颌+舌头 -->
+            <path id="l-jaw" fill-rule="evenodd" clip-rule="evenodd"
+                d="M18.7197 45.301C19.5373 45.3014 20.2848 45.5231 20.9619 45.9664C28.2577 50.6099 35.868 54.7926 43.7923 58.5147C46.9344 59.992 50.2637 60.7208 53.7806 60.7012C56.9076 60.6377 59.9652 60.1624 62.9536 59.2752C65.9305 58.7265 68.9202 58.663 71.9226 59.0851C74.6603 59.8025 77.4462 60.3095 80.2802 60.6061C84.325 60.8962 88.1981 60.2626 91.8992 58.7049C99.9453 55.0497 107.623 50.8669 114.933 46.1566C115.692 45.7071 116.507 45.4219 117.38 45.301C117.41 45.501 117.376 45.6911 117.278 45.8714C114.382 49.3961 111.018 52.4699 107.187 55.0925C103.016 58.0927 98.5317 60.6278 93.7338 62.6975C88.9305 64.7952 83.9023 65.4923 78.6495 64.7889C76.9325 64.3712 75.2339 63.8959 73.5534 63.3629C73.3614 63.3835 73.1916 63.4468 73.0438 63.5531C72.9078 64.6305 72.9078 65.7078 73.0438 66.7852C74.0338 71.9323 75.9704 76.7487 78.8533 81.2347C78.6804 81.5737 78.4087 81.6688 78.0379 81.5199C74.8105 79.7771 72.2624 77.4005 70.3938 74.3902C69.4735 72.796 68.6919 71.1482 68.0496 69.447C66.6244 73.7176 64.1104 77.2982 60.5075 80.1891C59.5953 80.868 58.576 81.3433 57.4498 81.615C57.4172 81.292 57.451 80.975 57.5517 80.6644C61.194 75.3928 63.0624 69.6257 63.1574 63.3629C61.108 63.7789 59.0695 64.2542 57.0421 64.7889C52.3132 65.4496 47.7605 64.8792 43.3847 63.0778C34.6522 59.4009 27.0081 54.2991 20.4523 47.7726C19.6675 47.0678 19.0901 46.244 18.7197 45.301Z"
+                fill="none" stroke="#111" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <div class="typing-wrap">
+        <span id="typed"></span><span class="cursor" id="cursor"></span>
+    </div>
+</div>
+
+<script>
+// ── 蛇 logo 动画(原版照搬) ──
+(function () {
+    var svgHi   = document.getElementById('svg-hi');
+    var svgLogo = document.getElementById('svg-logo');
+    var hiH     = document.getElementById('hi-h');
+    var hiI     = document.getElementById('hi-i');
+    var lHead   = document.getElementById('l-head');
+    var lEyeL   = document.getElementById('l-eyeL');
+    var lEyeR   = document.getElementById('l-eyeR');
+    var lHlL    = document.getElementById('l-hlL');
+    var lHlR    = document.getElementById('l-hlR');
+    var lJaw    = document.getElementById('l-jaw');
+    var typed   = document.getElementById('typed');
+    var cursor  = document.getElementById('cursor');
+    var typingWrap = document.querySelector('.typing-wrap');
+
+    function wait(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+    function initDash(el) {
+        var len = el.getTotalLength();
+        el.style.strokeDasharray  = len;
+        el.style.strokeDashoffset = len;
+    }
+    initDash(hiH); initDash(hiI); initDash(lHead); initDash(lEyeL); initDash(lEyeR); initDash(lJaw);
+
+    function drawPath(el, dur, delay) {
+        return new Promise(function(resolve) {
+            setTimeout(function() {
+                var len = parseFloat(el.style.strokeDasharray);
+                var t0  = null;
+                requestAnimationFrame(function tick(now) {
+                    if (!t0) t0 = now;
+                    var t = Math.min((now - t0) / dur, 1);
+                    var e = 1 - Math.pow(1 - t, 3);
+                    el.style.strokeDashoffset = (len * (1 - e)).toFixed(2);
+                    if (t < 1) requestAnimationFrame(tick);
+                    else { el.style.strokeDashoffset = '0'; resolve(); }
+                });
+            }, delay || 0);
+        });
+    }
+    function fillIn(el, color, dur) {
+        var d = dur || 500, c = color || '#111';
+        el.style.fill = 'rgba(0,0,0,0)';
+        el.getBoundingClientRect();
+        el.style.transition = 'fill ' + d + 'ms ease';
+        el.style.fill = c;
+    }
+    function fadeIn(el, dur) { el.style.transition = 'opacity ' + (dur || 300) + 'ms ease'; el.style.opacity = '1'; }
+
+    async function phaseHi() {
+        svgHi.style.opacity = '1';
+        hiH.style.strokeWidth = '2.5';
+        await Promise.all([drawPath(hiH, 1500, 0), drawPath(hiI, 1500, 0)]);
+        fillIn(hiH, '#111', 500);
+        await wait(1200);
+    }
+    async function phaseLogo() {
+        svgHi.style.transition = 'opacity 0.55s ease';
+        svgHi.style.opacity = '0';
+        await wait(650);
+        svgHi.style.display = 'none';
+        svgLogo.style.opacity = '1';
+        await Promise.all([
+            drawPath(lHead, 2200, 0),
+            drawPath(lJaw,  1800, 600),
+            drawPath(lEyeL, 800,  1600),
+            drawPath(lEyeR, 800,  1800)
+        ]);
+        fillIn(lHead, '#111', 600);
+        fillIn(lEyeL, '#111', 600);
+        fillIn(lEyeR, '#111', 600);
+        fillIn(lJaw,  '#111', 600);
+        await wait(650);
+        [lHead, lEyeL, lEyeR, lJaw].forEach(function(el) {
+            el.style.transition = 'stroke-width 0.35s ease';
+            el.style.strokeWidth = '0';
+        });
+        await wait(400);
+        fadeIn(lHlL, 500);
+        fadeIn(lHlR, 500);
+        await wait(600);
+    }
+    async function phaseType() {
+        var text = '你好，我是ZYRVIS';
+        typingWrap.style.transition = 'opacity 0.4s ease';
+        typingWrap.style.opacity = '1';
+        await wait(350);
+        cursor.classList.add('on');
+        for (var i = 0; i < text.length; i++) {
+            typed.textContent += text[i];
+            var ch = text[i];
+            await wait(ch === '，' ? 280 : /[A-Z]/.test(ch) ? 85 : 130);
+        }
+        cursor.classList.remove('on');
+        cursor.style.opacity = '1';
+    }
+
+    (async function() {
+        await wait(500);
+        await phaseHi();
+        await phaseLogo();
+        await phaseType();
+    })();
+})();
+
+// ── 左上角产品入口 交互 ──
+(function() {
+    var toggle = document.getElementById('launcherToggle');
+    var menu   = document.getElementById('launcherMenu');
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var open = menu.classList.toggle('open');
+        toggle.classList.toggle('open', open);
+    });
+    document.addEventListener('click', function(e) {
+        if (!menu.contains(e.target) && e.target !== toggle) {
+            menu.classList.remove('open');
+            toggle.classList.remove('open');
+        }
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            menu.classList.remove('open');
+            toggle.classList.remove('open');
+        }
+    });
+})();
+</script>
 </body>
 </html>

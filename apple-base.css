@@ -1,0 +1,107 @@
+/* ============================================================
+   Apple-style Product Page
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','PingFang SC','Helvetica Neue','Microsoft YaHei',sans-serif;background:#fbfbfd;color:#1d1d1f;line-height:1.5;overflow-x:hidden}
+
+/* ── NAV ── */
+.ap-nav{position:sticky;top:0;z-index:100;height:48px;background:rgba(251,251,253,0.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.ap-logo{font-size:17px;font-weight:600;color:#1d1d1f;text-decoration:none;letter-spacing:-0.5px}
+.ap-nav-links{display:flex;gap:24px}
+.ap-nav-links a{font-size:13px;color:#1d1d1f;text-decoration:none;opacity:0.7;transition:opacity 0.2s}
+.ap-nav-links a:hover{opacity:1}
+.ap-nav-links a.on{opacity:1;font-weight:600}
+
+/* ── HERO ── */
+.ap-hero{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;background:linear-gradient(180deg,#fff 0%,#fbfbfd 100%)}
+.ap-eyebrow{font-size:13px;font-weight:600;color:#86868b;letter-spacing:0.5px;margin-bottom:16px}
+.ap-title{font-size:clamp(64px,11vw,128px);font-weight:700;letter-spacing:-4px;line-height:1;margin-bottom:24px;color:#1d1d1f}
+.ap-sub{font-size:clamp(20px,2.5vw,28px);color:#6e6e73;max-width:680px;line-height:1.4;font-weight:400;margin-bottom:40px;letter-spacing:-0.3px}
+.ap-cta{display:flex;gap:24px;align-items:center;flex-wrap:wrap;justify-content:center}
+.ap-btn-primary{display:inline-block;padding:14px 28px;background:#0071e3;color:#fff;border-radius:980px;font-size:17px;font-weight:400;text-decoration:none;transition:background 0.2s}
+.ap-btn-primary:hover{background:#0077ed}
+.ap-btn-link{font-size:17px;color:#0071e3;text-decoration:none}
+.ap-btn-link:hover{text-decoration:underline}
+
+/* ── RENDER / MOCKUP ── */
+.ap-render{padding:80px 24px;display:flex;flex-direction:column;align-items:center;background:#fbfbfd}
+.ap-render.alt{background:#f5f5f7}
+.ap-render-tag{font-size:12px;font-weight:600;color:#86868b;letter-spacing:1px;text-transform:uppercase;margin-bottom:40px}
+.ap-mockup{width:100%;max-width:1080px;display:flex;justify-content:center}
+
+/* ── PHONE FRAME (用于渲染图) ── */
+.ap-phone{width:340px;background:#fff;border-radius:42px;padding:14px;box-shadow:0 30px 80px rgba(0,0,0,0.12),0 0 0 1px rgba(0,0,0,0.04);overflow:hidden}
+.ap-phone.wide{width:480px}
+.ap-phone-bar{height:24px;display:flex;align-items:center;justify-content:center;background:transparent;font-size:11px;color:#1d1d1f;margin-bottom:8px;font-weight:600}
+
+/* ── FEATURE SECTIONS ── */
+.ap-feature{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1100px;margin:0 auto;padding:120px 24px;background:#fbfbfd}
+.ap-feature.rev .ap-feature-text{order:2}
+.ap-feature-text{padding:0 24px}
+.ap-feature-tag{font-size:13px;font-weight:600;color:#86868b;letter-spacing:0.5px;margin-bottom:16px;display:block}
+.ap-feature-text h2{font-size:clamp(36px,4.5vw,56px);font-weight:700;letter-spacing:-1.5px;line-height:1.08;margin-bottom:20px;color:#1d1d1f}
+.ap-feature-text p{font-size:19px;color:#6e6e73;line-height:1.5;letter-spacing:-0.2px}
+.ap-feature-visual{display:flex;justify-content:center;align-items:center;padding:40px}
+
+/* ── MOCKUP CARDS (for feature visuals) ── */
+.ap-mockup-card{width:320px;height:380px;background:linear-gradient(135deg,#f5f5f7 0%,#fff 100%);border-radius:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;box-shadow:0 20px 60px rgba(0,0,0,0.08),0 0 0 1px rgba(0,0,0,0.04);padding:40px}
+.ap-mockup-emoji{font-size:96px;line-height:1}
+.ap-mockup-label{font-size:13px;font-weight:600;color:#86868b;letter-spacing:0.5px}
+
+/* ── 餐厅卡片 mockup ── */
+.ap-card-rest{display:flex;gap:14px;padding:14px 16px;align-items:center;border-bottom:0.5px solid rgba(0,0,0,0.06)}
+.ap-card-rest:last-child{border-bottom:none}
+.ap-rest-img{width:64px;height:64px;border-radius:14px;flex-shrink:0}
+.ap-rest-info{flex:1;min-width:0}
+.ap-rest-name{font-size:15px;font-weight:600;color:#1d1d1f;margin-bottom:4px}
+.ap-rest-meta{font-size:12px;color:#86868b;margin-bottom:6px}
+.ap-rest-tags{display:flex;gap:4px}
+.ap-rest-tags span{font-size:10px;padding:2px 8px;border-radius:8px;background:rgba(0,0,0,0.05);color:#1d1d1f;font-weight:500}
+
+/* ── 推荐 mockup ── */
+.ap-recommend{padding:20px 16px}
+.ap-recommend-h{font-size:20px;font-weight:700;letter-spacing:-0.5px;margin-bottom:18px;color:#1d1d1f;padding-left:4px}
+.ap-recommend-card{display:flex;align-items:center;gap:14px;padding:16px 14px;background:rgba(0,0,0,0.03);border-radius:18px;margin-bottom:10px}
+.ap-recommend-emoji{font-size:36px;line-height:1}
+.ap-recommend-name{font-size:15px;font-weight:600;color:#1d1d1f;margin-bottom:2px}
+.ap-recommend-reason{font-size:12px;color:#86868b}
+
+/* ── 朋友分享 mockup ── */
+.ap-share{padding:20px 16px}
+.ap-share-h{font-size:18px;font-weight:600;letter-spacing:-0.3px;margin-bottom:18px;color:#1d1d1f;padding-left:4px}
+.ap-share-card{display:flex;gap:12px;padding:14px;background:rgba(0,0,0,0.03);border-radius:18px;margin-bottom:10px}
+.ap-share-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0071e3,#5ac8fa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0}
+.ap-share-body{flex:1;min-width:0}
+.ap-share-name{font-size:13px;font-weight:600;color:#1d1d1f;margin-bottom:4px}
+.ap-share-text{font-size:13px;color:#1d1d1f;line-height:1.5;margin-bottom:6px}
+.ap-share-rest{font-size:12px;color:#0071e3;font-weight:500}
+
+/* ── FOOTER ── */
+.ap-footer{background:#f5f5f7;padding:40px 24px 28px;display:flex;flex-direction:column;align-items:center;gap:12px;border-top:0.5px solid rgba(0,0,0,0.05)}
+.ap-foot-logo{font-size:15px;font-weight:600;color:#1d1d1f}
+.ap-foot-links{display:flex;gap:24px}
+.ap-foot-links a{font-size:12px;color:#6e6e73;text-decoration:none}
+.ap-foot-links a:hover{color:#1d1d1f}
+.ap-foot-copy{font-size:11px;color:#86868b}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .ap-feature{grid-template-columns:1fr;gap:40px;padding:80px 24px}
+  .ap-feature.rev .ap-feature-text{order:0}
+  .ap-mockup-card{width:260px;height:300px}
+  .ap-mockup-emoji{font-size:72px}
+  .ap-phone{width:300px}
+  .ap-phone.wide{width:340px}
+  .ap-render{padding:60px 16px}
+}
+@media(max-width:600px){
+  .ap-hero{padding:80px 20px 60px}
+  .ap-title{font-size:64px;letter-spacing:-2px}
+  .ap-sub{font-size:18px}
+  .ap-feature{padding:60px 20px}
+  .ap-feature-text h2{font-size:32px}
+  .ap-feature-text p{font-size:16px}
+  .ap-nav-links{gap:16px}
+  .ap-nav-links a{font-size:12px}
+}

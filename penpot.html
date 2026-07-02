@@ -3,116 +3,186 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Penpot — 真正开源的设计协作平台</title>
-<link rel="stylesheet" href="product-base.css">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<title>Penpot — 开源设计协作平台</title>
+<link rel="stylesheet" href="apple-base.css">
 </head>
 <body>
-<nav class="sidenav">
-  <a class="sc-logo" href="../index.html" title="ZYRVIS">Z</a>
-  <div class="sc-sep"></div>
-  <a class="sc-back" href="../index.html" title="返回首页">←</a>
+
+<nav class="ap-nav">
+  <a class="ap-logo" href="../index.html">ZYRVIS</a>
+  <div class="ap-nav-links">
+    <a href="../index.html">首页</a>
+    <a href="penpot.html" class="on">Penpot</a>
+  </div>
 </nav>
 
-<section class="hero">
-  <span class="hero-emoji">🎨</span>
-  <div class="hero-eyebrow">ZYRVIS · 产品 04 / 08</div>
-  <h1 class="hero-h1">Pen<em>pot</em></h1>
-  <p class="hero-sub">The first Open Source design &amp; prototyping platform meant for cross-domain teams.<br>"Design freedom for all" — 自带 SVG 标准、Figma 真·开源替代。</p>
-  <div class="hero-meta">
-    <span class="hero-tag">MPL 2.0</span>
-    <span class="hero-tag">SVG Native</span>
-    <span class="hero-tag">Self-Host</span>
-    <span class="hero-tag">33k+ Stars</span>
-  </div>
-  <div class="hero-btns">
-    <a class="hero-btn-primary" href="../../readme/products/penpot.md">📄 查看 Markdown 介绍</a>
-    <a class="hero-btn-secondary" href="../../Projects/Penpot/00.Overview.md">📂 研究文档</a>
+<section class="ap-hero">
+  <span class="ap-eyebrow">PRODUCT · 04 · 开源</span>
+  <h1 class="ap-title">Penpot</h1>
+  <p class="ap-sub">SVG 原生 + 自托管 + 实时协作。Figma 的真·开源替代。</p>
+  <div class="ap-cta">
+    <a class="ap-btn-primary" href="#">访问官网</a>
+    <a class="ap-btn-link" href="#features">了解功能 →</a>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">WHY</div>
-    <h2 class="section-h2">为什么<em>值得关注</em></h2>
-
-    <div class="feat-grid">
-      <div class="feat-card">
-        <span class="feat-card-icon">📐</span>
-        <div class="feat-card-title">SVG 原生</div>
-        <div class="feat-card-desc">用<em>开放 SVG 标准</em>,不用私有 .fig 文件。Inkscape / Illustrator / 浏览器都能打开。</div>
+<!-- 渲染图:编辑器 -->
+<section class="ap-render">
+  <div class="ap-render-tag">RENDER · 编辑器界面</div>
+  <div class="ap-mockup">
+    <div class="ap-penpot">
+      <div class="ap-penpot-bar">
+        <div class="ap-penpot-dots"><span></span><span></span><span></span></div>
+        <div class="ap-penpot-tabs"><div class="ap-penpot-tab on">登录页 · 桌面</div><div class="ap-penpot-tab">登录页 · 移动</div></div>
+        <div class="ap-penpot-actions">分享</div>
       </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🤝</span>
-        <div class="feat-card-title">跨域协作</div>
-        <div class="feat-card-desc">设计师 + 开发者同一文件工作,选元素看 CSS / Tokens / 标注,零翻译。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🏠</span>
-        <div class="feat-card-title">真正自托管</div>
-        <div class="feat-card-desc">Docker Compose 一行启动,数据完全私有,适合企业 / 政府 / 教育。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🎯</span>
-        <div class="feat-card-title">Design Token 原生</div>
-        <div class="feat-card-desc">设计系统 + 代码的桥梁。Token 可导出 CSS / SCSS / JSON。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🌐</span>
-        <div class="feat-card-title">浏览器跨平台</div>
-        <div class="feat-card-desc">无需下载,任何现代浏览器即开即用,Linux 用户不再被排除在外。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🆓</span>
-        <div class="feat-card-title">开源免费</div>
-        <div class="feat-card-desc">MPL 2.0 协议,核心永远开源。可商用、可二次开发、可内部分发。</div>
+      <div class="ap-penpot-body">
+        <div class="ap-penpot-tools">
+          <div class="ap-tool">▢</div>
+          <div class="ap-tool">◯</div>
+          <div class="ap-tool">⌘</div>
+          <div class="ap-tool">T</div>
+          <div class="ap-tool">/</div>
+        </div>
+        <div class="ap-penpot-canvas">
+          <div class="ap-pp-card">
+            <div class="ap-pp-h">登录</div>
+            <div class="ap-pp-input">邮箱</div>
+            <div class="ap-pp-input">密码</div>
+            <div class="ap-pp-btn">登 录</div>
+          </div>
+          <div class="ap-pp-cursor c1">小雅<span></span></div>
+          <div class="ap-pp-cursor c2">老张<span></span></div>
+        </div>
+        <div class="ap-penpot-right">
+          <div class="ap-pp-prop"><span>填充</span><i style="background:#0071e3"></i></div>
+          <div class="ap-pp-prop"><span>圆角</span><em>12</em></div>
+          <div class="ap-pp-prop"><span>阴影</span><em>sm</em></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">VS FIGMA</div>
-    <h2 class="section-h2">Penpot <em>vs</em> Figma</h2>
-
-    <table class="t-table">
-      <thead><tr><th>维度</th><th>Penpot</th><th>Figma</th></tr></thead>
-      <tbody>
-        <tr><td>开源</td><td><span class="t-pill green">✅ MPL 2.0</span></td><td><span class="t-pill rose">❌ 闭源</span></td></tr>
-        <tr><td>文件格式</td><td><span class="t-pill green">SVG(开放)</span></td><td><span class="t-pill rose">.fig(私有)</span></td></tr>
-        <tr><td>自托管</td><td><span class="t-pill green">✅ Docker</span></td><td><span class="t-pill rose">❌ 仅 SaaS</span></td></tr>
-        <tr><td>实时协作</td><td><span class="t-pill green">✅</span></td><td><span class="t-pill green">✅</span></td></tr>
-        <tr><td>Design Token</td><td><span class="t-pill green">✅ 一等公民</span></td><td><span class="t-pill">⚠️ 插件</span></td></tr>
-        <tr><td>价格</td><td><span class="t-pill green">免费</span></td><td><span class="t-pill rose">团队版付费</span></td></tr>
-      </tbody>
-    </table>
-
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num">33<em>k+</em></div><div class="stat-label">GitHub Stars</div></div>
-      <div class="stat-card"><div class="stat-num">8438<em>+</em></div><div class="stat-label">Commits</div></div>
-      <div class="stat-card"><div class="stat-num">2.2<em>+</em></div><div class="stat-label">当前版本</div></div>
-      <div class="stat-card"><div class="stat-num"><em>MPL</em></div><div class="stat-label">License</div></div>
+<!-- 功能 1:SVG 原生 -->
+<section class="ap-feature" id="features">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">01 · SVG 原生</span>
+    <h2>用开放标准,<br>不用私有格式。</h2>
+    <p>Penpot 用 SVG 而非 .fig。任何矢量工具都能打开 — Inkscape / Illustrator / 浏览器,选元素直接看 CSS 源码。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">📐</div>
+      <div class="ap-mockup-label">SVG Native</div>
     </div>
-
-    <a class="back-link" href="../index.html">← 返回 ZYRVIS 首页</a>
   </div>
 </section>
 
-<footer class="footer">
-  <div class="footer-logo">ZYRVIS</div>
-  <div class="footer-links">
-    <a class="footer-link" href="../index.html">首页</a>
-    <a class="footer-link" href="../../readme/products/penpot.md">Markdown 版</a>
-    <a class="footer-link" href="../../Projects/Penpot/00.Overview.md">研究文档</a>
+<!-- 功能 2:跨域协作 -->
+<section class="ap-feature rev">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">02 · 跨域协作</span>
+    <h2>设计师 + 开发者,<br>同一份文件。</h2>
+    <p>设计师画 UI,开发者看 CSS / Tokens / 标注。信息直接留在文件里,不用交接。</p>
   </div>
-  <div class="footer-copy">© 2026 ZYRVIS · 产品介绍页</div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🤝</div>
+      <div class="ap-mockup-label">Cross-Domain Teams</div>
+    </div>
+  </div>
+</section>
+
+<!-- 渲染图:Design Token -->
+<section class="ap-render alt">
+  <div class="ap-render-tag">DEMO · Design Tokens</div>
+  <div class="ap-mockup">
+    <div class="ap-tokens">
+      <div class="ap-token">
+        <div class="ap-token-swatch" style="background:#0071e3"></div>
+        <div class="ap-token-name">color/primary</div>
+        <div class="ap-token-val">#0071e3</div>
+      </div>
+      <div class="ap-token">
+        <div class="ap-token-swatch" style="background:#5ac8fa"></div>
+        <div class="ap-token-name">color/secondary</div>
+        <div class="ap-token-val">#5ac8fa</div>
+      </div>
+      <div class="ap-token">
+        <div class="ap-token-swatch" style="background:#1d1d1f"></div>
+        <div class="ap-token-name">color/text</div>
+        <div class="ap-token-val">#1d1d1f</div>
+      </div>
+      <div class="ap-token">
+        <div class="ap-token-swatch" style="background:#f5f5f7"></div>
+        <div class="ap-token-name">color/bg-soft</div>
+        <div class="ap-token-val">#f5f5f7</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 功能 3:自托管 -->
+<section class="ap-feature">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">03 · 自托管</span>
+    <h2>Docker 一行启动,<br>数据完全私有。</h2>
+    <p>适合企业 / 政府 / 教育。无需依赖任何云,设计资产永远在自己手里。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🏠</div>
+      <div class="ap-mockup-label">Self-Hosted</div>
+    </div>
+  </div>
+</section>
+
+<footer class="ap-footer">
+  <div class="ap-foot-logo">ZYRVIS</div>
+  <div class="ap-foot-links">
+    <a href="../index.html">首页</a>
+    <a href="penpot.html">Penpot</a>
+  </div>
+  <div class="ap-foot-copy">© 2026 ZYRVIS · Penpot</div>
 </footer>
 
-<script>
-document.body.classList.add('js-reveal-ready');
-const io=new IntersectionObserver(e=>{e.forEach(r=>{if(r.isIntersecting){r.target.classList.add('visible');io.unobserve(r.target)}})},{threshold:0.12});
-document.querySelectorAll('.feat-card,.section-h2,.section-tag,.section-desc,.t-table,.stat-card,.stats-row').forEach(el=>{el.classList.add('reveal');io.observe(el)});
-</script>
+<style>
+.ap-penpot{width:100%;max-width:920px;background:#1e1e1e;border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.2);border:1px solid rgba(0,0,0,0.1)}
+.ap-penpot-bar{background:#2a2a2a;padding:10px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(0,0,0,0.3)}
+.ap-penpot-dots{display:flex;gap:6px}
+.ap-penpot-dots span{width:11px;height:11px;border-radius:50%;background:#555}
+.ap-penpot-dots span:nth-child(1){background:#ff5f57}
+.ap-penpot-dots span:nth-child(2){background:#ffbd2e}
+.ap-penpot-dots span:nth-child(3){background:#28c940}
+.ap-penpot-tabs{display:flex;gap:0;flex:1}
+.ap-penpot-tab{padding:8px 14px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);border-bottom:2px solid transparent}
+.ap-penpot-tab.on{color:#fff;border-bottom-color:#5ac8fa}
+.ap-penpot-actions{padding:6px 12px;background:rgba(90,200,250,0.15);color:#5ac8fa;font-size:11px;font-weight:600;border-radius:6px}
+.ap-penpot-body{display:flex;height:340px}
+.ap-penpot-tools{width:50px;background:#252525;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:8px;border-right:1px solid rgba(0,0,0,0.3)}
+.ap-tool{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);font-size:14px;cursor:pointer}
+.ap-tool:hover{background:rgba(255,255,255,0.08);color:#fff}
+.ap-penpot-canvas{flex:1;background:#fff;position:relative;display:flex;align-items:center;justify-content:center}
+.ap-pp-card{width:240px;background:#fff;padding:32px 28px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.06)}
+.ap-pp-h{font-size:24px;font-weight:600;color:#1d1d1f;margin-bottom:20px}
+.ap-pp-input{height:38px;background:#f5f5f7;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;padding:0 12px;font-size:12px;color:#86868b}
+.ap-pp-btn{margin-top:8px;height:40px;background:#0071e3;color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600}
+.ap-pp-cursor{position:absolute;display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#fff;padding:2px 8px;border-radius:6px;transform:translate(-2px,-2px)}
+.ap-pp-cursor span{width:14px;height:14px;background:currentColor;clip-path:polygon(0 0,100% 50%,0 100%);transform:rotate(-15deg)}
+.ap-pp-cursor.c1{top:30%;left:20%;background:#5ac8fa}
+.ap-pp-cursor.c2{top:65%;right:18%;background:#ff9500}
+.ap-penpot-right{width:200px;background:#252525;padding:12px 0;border-left:1px solid rgba(0,0,0,0.3)}
+.ap-pp-prop{display:flex;align-items:center;gap:10px;padding:10px 14px;font-size:12px;color:rgba(255,255,255,0.6);border-bottom:0.5px solid rgba(255,255,255,0.05)}
+.ap-pp-prop i{width:20px;height:20px;border-radius:4px;display:inline-block}
+.ap-pp-prop em{margin-left:auto;font-style:normal;font-weight:600;color:#fff}
+
+.ap-tokens{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;width:100%;max-width:920px}
+.ap-token{background:#fff;border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.04)}
+.ap-token-swatch{width:100%;height:60px;border-radius:10px;margin-bottom:12px}
+.ap-token-name{font-size:13px;font-weight:600;color:#1d1d1f;margin-bottom:4px;font-family:monospace}
+.ap-token-val{font-size:12px;color:#86868b;font-family:monospace}
+</style>
+
 </body>
 </html>

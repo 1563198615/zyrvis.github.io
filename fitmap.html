@@ -4,112 +4,193 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FitMap — AI 健身助手</title>
-<link rel="stylesheet" href="product-base.css">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="apple-base.css">
 </head>
 <body>
-<nav class="sidenav">
-  <a class="sc-logo" href="../index.html" title="ZYRVIS">Z</a>
-  <div class="sc-sep"></div>
-  <a class="sc-back" href="../index.html" title="返回首页">←</a>
+
+<nav class="ap-nav">
+  <a class="ap-logo" href="../index.html">ZYRVIS</a>
+  <div class="ap-nav-links">
+    <a href="../index.html">首页</a>
+    <a href="fitmap.html" class="on">FitMap</a>
+  </div>
 </nav>
 
-<section class="hero">
-  <span class="hero-emoji">💪</span>
-  <div class="hero-eyebrow">ZYRVIS · 产品 03 / 08</div>
-  <h1 class="hero-h1">Fit<em>Map</em></h1>
-  <p class="hero-sub">通过 3D 人体模型、肌肉热力图让训练更科学。<br>把健身房教练脑里的"肌肉解剖 + 训练记录 + 动作库"装进手机。</p>
-  <div class="hero-meta">
-    <span class="hero-tag">iOS · SwiftUI</span>
-    <span class="hero-tag">3D 人体模型</span>
-    <span class="hero-tag">肌肉热力图</span>
-    <span class="hero-tag">103+ 动作</span>
-  </div>
-  <div class="hero-btns">
-    <a class="hero-btn-primary" href="../../readme/products/fitmap.md">📄 查看 Markdown 介绍</a>
-    <a class="hero-btn-secondary" href="../../Projects/FitMap/README.md">📂 完整 README</a>
+<section class="ap-hero">
+  <span class="ap-eyebrow">PRODUCT · 03</span>
+  <h1 class="ap-title">FitMap</h1>
+  <p class="ap-sub">3D 人体模型 + 肌肉热力图,让每一次训练都看得见。</p>
+  <div class="ap-cta">
+    <a class="ap-btn-primary" href="#">下载 iOS</a>
+    <a class="ap-btn-link" href="#features">了解功能 →</a>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">HIGHLIGHTS</div>
-    <h2 class="section-h2">三大<em>核心亮点</em></h2>
-
-    <div class="feat-grid">
-      <div class="feat-card">
-        <span class="feat-card-icon">🏋️</span>
-        <div class="feat-card-title">3D 人体模型</div>
-        <div class="feat-card-desc">旋转查看肌肉解剖,支持<em>骨骼 / 热图 / 混合</em>三种视图模式。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🔥</span>
-        <div class="feat-card-title">智能热力图</div>
-        <div class="feat-card-desc">红色=今天训练、黄色=恢复中、蓝色=已恢复。一眼看到身体状态。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🤖</span>
-        <div class="feat-card-title">AI 动作推荐</div>
-        <div class="feat-card-desc">智能替换建议,科学安排训练,不会卡在"今天练啥"。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">📊</span>
-        <div class="feat-card-title">完整数据追踪</div>
-        <div class="feat-card-desc">组数 / 重量 / 次数 / RPE / RIR。训练后自动生成总结报告。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">⏱️</span>
-        <div class="feat-card-title">智能计时器</div>
-        <div class="feat-card-desc">自动计时、休息提醒、自定义休息时间,组间不再手忙脚乱。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">👥</span>
-        <div class="feat-card-title">社交健身生态</div>
-        <div class="feat-card-desc">训练打卡、点赞评论私信、热门挑战、关注达人 — 一个人练不久。</div>
+<!-- 渲染图:3D 人体模型 -->
+<section class="ap-render">
+  <div class="ap-render-tag">RENDER · 3D 人体模型</div>
+  <div class="ap-mockup">
+    <div class="ap-phone wide">
+      <div class="ap-phone-bar">3D 人体</div>
+      <div class="ap-3d">
+        <div class="ap-3d-figure">
+          <div class="ap-3d-head"></div>
+          <div class="ap-3d-body">
+            <div class="ap-3d-muscle chest on"></div>
+            <div class="ap-3d-muscle shoulder on"></div>
+            <div class="ap-3d-muscle arm on"></div>
+            <div class="ap-3d-muscle core"></div>
+            <div class="ap-3d-muscle leg recover"></div>
+          </div>
+        </div>
+        <div class="ap-3d-legend">
+          <span><i style="background:#ff3b30"></i>今日训练</span>
+          <span><i style="background:#ffcc00"></i>恢复中</span>
+          <span><i style="background:#5ac8fa"></i>已恢复</span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">MODULES</div>
-    <h2 class="section-h2">三大<em>功能模块</em></h2>
-
-    <table class="t-table">
-      <thead><tr><th>模块</th><th>能力</th><th>状态</th></tr></thead>
-      <tbody>
-        <tr><td><strong>🏋️ 训练</strong></td><td>3D 人体模型 + 肌肉热力图、动作记录、智能休息计时器、训练历史、总结报告</td><td><span class="t-pill">进行中</span></td></tr>
-        <tr><td><strong>📅 计划</strong></td><td>日训练计划、肌肉系统选择、AI 动作替换建议、动作详情页</td><td><span class="t-pill">进行中</span></td></tr>
-        <tr><td><strong>👥 社交</strong></td><td>训练打卡、动态 Feed、私信、热门用户/挑战发现</td><td><span class="t-pill rose">待启动</span></td></tr>
-      </tbody>
-    </table>
-
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num">103<em>+</em></div><div class="stat-label">动作库</div></div>
-      <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">3D 视图模式</div></div>
-      <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">追踪维度</div></div>
-      <div class="stat-card"><div class="stat-num"><em>1次</em></div><div class="stat-label">做好就上线</div></div>
+<!-- 功能 1 -->
+<section class="ap-feature" id="features">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">01 · 3D 人体模型</span>
+    <h2>旋转、放大、<br>看清每一束肌肉。</h2>
+    <p>支持骨骼 / 热图 / 混合三种视图模式。训练后,该练哪里一目了然。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🏋️</div>
+      <div class="ap-mockup-label">3D Body Model</div>
     </div>
-
-    <a class="back-link" href="../index.html">← 返回 ZYRVIS 首页</a>
   </div>
 </section>
 
-<footer class="footer">
-  <div class="footer-logo">ZYRVIS</div>
-  <div class="footer-links">
-    <a class="footer-link" href="../index.html">首页</a>
-    <a class="footer-link" href="../../readme/products/fitmap.md">Markdown 版</a>
-    <a class="footer-link" href="../../Projects/FitMap/README.md">项目 README</a>
+<!-- 功能 2 -->
+<section class="ap-feature rev">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">02 · 智能热力图</span>
+    <h2>红色是今天,<br>蓝色是已恢复。</h2>
+    <p>一眼看到身体状态。该练哪、该歇哪,不用再凭感觉。</p>
   </div>
-  <div class="footer-copy">© 2026 ZYRVIS · 产品介绍页</div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🔥</div>
+      <div class="ap-mockup-label">Heat Map</div>
+    </div>
+  </div>
+</section>
+
+<!-- 渲染图:动作记录 -->
+<section class="ap-render alt">
+  <div class="ap-render-tag">DEMO · 动作记录</div>
+  <div class="ap-mockup">
+    <div class="ap-phone">
+      <div class="ap-phone-bar">卧推 · 60kg</div>
+      <div class="ap-exercise">
+        <div class="ap-exercise-name">杠铃卧推</div>
+        <div class="ap-exercise-sets">
+          <div class="ap-set done"><span>1</span><strong>12 × 60kg</strong><em>轻松</em></div>
+          <div class="ap-set done"><span>2</span><strong>10 × 60kg</strong><em>正常</em></div>
+          <div class="ap-set done"><span>3</span><strong>8 × 60kg</strong><em>吃力</em></div>
+          <div class="ap-set on"><span>4</span><strong>8 × 62.5kg</strong><em>进行中</em></div>
+        </div>
+        <div class="ap-exercise-timer">休息 01:34</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 功能 3 -->
+<section class="ap-feature">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">03 · 103+ 动作库</span>
+    <h2>动作库 + 视频,<br>练什么不再纠结。</h2>
+    <p>103+ 动作演示 + 详细动作指南 + AI 替换建议,科学安排训练。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">📚</div>
+      <div class="ap-mockup-label">Exercise Library</div>
+    </div>
+  </div>
+</section>
+
+<!-- 渲染图:训练总结 -->
+<section class="ap-render">
+  <div class="ap-render-tag">RENDER · 训练总结</div>
+  <div class="ap-mockup">
+    <div class="ap-phone">
+      <div class="ap-phone-bar">训练完成 ✓</div>
+      <div class="ap-summary">
+        <div class="ap-summary-time">57:32</div>
+        <div class="ap-summary-label">本次训练</div>
+        <div class="ap-summary-stats">
+          <div><strong>6</strong>动作</div>
+          <div><strong>24</strong>组数</div>
+          <div><strong>3,420</strong>kg 总量</div>
+        </div>
+        <div class="ap-summary-pr">🏆 新纪录:深蹲 100kg × 5</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ap-footer">
+  <div class="ap-foot-logo">ZYRVIS</div>
+  <div class="ap-foot-links">
+    <a href="../index.html">首页</a>
+    <a href="fitmap.html">FitMap</a>
+  </div>
+  <div class="ap-foot-copy">© 2026 ZYRVIS · FitMap</div>
 </footer>
 
-<script>
-document.body.classList.add('js-reveal-ready');
-const io=new IntersectionObserver(e=>{e.forEach(r=>{if(r.isIntersecting){r.target.classList.add('visible');io.unobserve(r.target)}})},{threshold:0.12});
-document.querySelectorAll('.feat-card,.section-h2,.section-tag,.section-desc,.t-table,.stat-card,.stats-row').forEach(el=>{el.classList.add('reveal');io.observe(el)});
-</script>
+<style>
+.ap-3d{padding:30px;background:linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%);height:480px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px}
+.ap-3d-figure{position:relative;width:200px;height:340px}
+.ap-3d-head{position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#444,#222)}
+.ap-3d-body{position:absolute;top:70px;left:0;right:0;height:260px}
+.ap-3d-muscle{position:absolute;border-radius:12px;opacity:0.4;transition:all 0.3s}
+.ap-3d-muscle.chest{top:0;left:50%;transform:translateX(-50%);width:120px;height:60px}
+.ap-3d-muscle.chest.on{background:#ff3b30;opacity:0.9;box-shadow:0 0 20px #ff3b30}
+.ap-3d-muscle.shoulder{top:5px;width:50px;height:40px}
+.ap-3d-muscle.shoulder.on{background:#ff3b30;opacity:0.9;box-shadow:0 0 20px #ff3b30}
+.ap-3d-muscle.shoulder:nth-child(2){left:0}
+.ap-3d-muscle.shoulder:nth-child(3){right:0}
+.ap-3d-muscle.arm{top:50px;width:30px;height:100px}
+.ap-3d-muscle.arm.on{background:#ff3b30;opacity:0.9;box-shadow:0 0 20px #ff3b30}
+.ap-3d-muscle.arm:nth-child(4){left:5px}
+.ap-3d-muscle.arm:nth-child(5){right:5px}
+.ap-3d-muscle.core{top:70px;left:50%;transform:translateX(-50%);width:100px;height:80px;background:#5ac8fa;opacity:0.5}
+.ap-3d-muscle.leg{top:160px;width:40px;height:90px;background:#5ac8fa;opacity:0.5}
+.ap-3d-muscle.leg.recover{background:#ffcc00;opacity:0.7}
+.ap-3d-muscle.leg:nth-of-type(6){left:25px}
+.ap-3d-muscle.leg:nth-of-type(7){right:25px}
+.ap-3d-legend{display:flex;gap:14px;padding:8px 14px;background:rgba(255,255,255,0.08);border-radius:12px;backdrop-filter:blur(10px)}
+.ap-3d-legend span{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.8);font-weight:500}
+.ap-3d-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+.ap-exercise{padding:24px 20px}
+.ap-exercise-name{font-size:20px;font-weight:600;color:#1d1d1f;margin-bottom:18px}
+.ap-exercise-sets{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.ap-set{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(0,0,0,0.04);border-radius:14px}
+.ap-set.on{background:linear-gradient(135deg,#0071e3,#5ac8fa);color:#fff}
+.ap-set span{width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.ap-set.on span{background:rgba(255,255,255,0.25);color:#fff}
+.ap-set strong{flex:1;font-size:15px;font-weight:600}
+.ap-set em{font-size:12px;opacity:0.7}
+.ap-exercise-timer{text-align:center;font-size:32px;font-weight:600;color:#0071e3;font-variant-numeric:tabular-nums;letter-spacing:2px;padding:18px;background:rgba(0,113,227,0.08);border-radius:14px}
+
+.ap-summary{text-align:center;padding:30px 20px}
+.ap-summary-time{font-size:54px;font-weight:700;color:#1d1d1f;line-height:1;letter-spacing:-2px}
+.ap-summary-label{font-size:14px;color:#86868b;margin-bottom:24px}
+.ap-summary-stats{display:flex;justify-content:space-around;padding:18px 0;margin-bottom:20px;border-top:0.5px solid rgba(0,0,0,0.06);border-bottom:0.5px solid rgba(0,0,0,0.06)}
+.ap-summary-stats>div{text-align:center;font-size:11px;color:#86868b}
+.ap-summary-stats strong{display:block;font-size:20px;font-weight:600;color:#1d1d1f;margin-bottom:2px}
+.ap-summary-pr{background:linear-gradient(135deg,#ffd700,#ff9500);color:#fff;padding:12px 16px;border-radius:14px;font-size:14px;font-weight:600}
+</style>
+
 </body>
 </html>

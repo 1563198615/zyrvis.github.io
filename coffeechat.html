@@ -3,128 +3,178 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CoffeeChat — 以咖啡为媒,遇见有趣的人</title>
-<link rel="stylesheet" href="product-base.css">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<title>CoffeeChat — LBS 即时社交</title>
+<link rel="stylesheet" href="apple-base.css">
 </head>
 <body>
-<nav class="sidenav">
-  <a class="sc-logo" href="../index.html" title="ZYRVIS">Z</a>
-  <div class="sc-sep"></div>
-  <a class="sc-back" href="../index.html" title="返回首页">←</a>
+
+<nav class="ap-nav">
+  <a class="ap-logo" href="../index.html">ZYRVIS</a>
+  <div class="ap-nav-links">
+    <a href="../index.html">首页</a>
+    <a href="coffeechat.html" class="on">CoffeeChat</a>
+  </div>
 </nav>
 
-<section class="hero">
-  <span class="hero-emoji">☕</span>
-  <div class="hero-eyebrow">ZYRVIS · 产品 02 / 08</div>
-  <h1 class="hero-h1">Coffee<em>Chat</em></h1>
-  <p class="hero-sub">LBS 即时社交平台,通过话题锚定帮用户发现附近咖啡馆内的线下社交邀约,实现"半小时内线下履约"。</p>
-  <div class="hero-meta">
-    <span class="hero-tag">iOS · Swift</span>
-    <span class="hero-tag">微信小程序</span>
-    <span class="hero-tag">LBS 实时</span>
-    <span class="hero-tag">话题锚定</span>
-  </div>
-  <div class="hero-btns">
-    <a class="hero-btn-primary" href="../../readme/products/coffeechat.md">📄 查看 Markdown 介绍</a>
-    <a class="hero-btn-secondary" href="../../Projects/CoffeeChat/README.md">📂 完整 README</a>
+<section class="ap-hero">
+  <span class="ap-eyebrow">PRODUCT · 02</span>
+  <h1 class="ap-title">CoffeeChat</h1>
+  <p class="ap-sub">以咖啡为媒,遇见有趣的人。30 分钟内,线下履约。</p>
+  <div class="ap-cta">
+    <a class="ap-btn-primary" href="#">下载 iOS</a>
+    <a class="ap-btn-link" href="#features">了解功能 →</a>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">FEATURES</div>
-    <h2 class="section-h2">五大<em>核心特性</em></h2>
-    <p class="section-desc">线上聊一百次,不如线下喝一杯。打开 → 看到附近有人在咖啡馆发起话题 → 步行 5 分钟 → 当面聊 30 分钟。</p>
-
-    <div class="feat-grid">
-      <div class="feat-card">
-        <span class="feat-card-icon">🗺️</span>
-        <div class="feat-card-title">地图发现</div>
-        <div class="feat-card-desc">基于高德地图,实时展示附近咖啡馆和活跃邀约。看得见的社交。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">💬</span>
-        <div class="feat-card-title">话题锚定</div>
-        <div class="feat-card-desc">职场交流 / 创意头脑风暴 / 联合副业探索 / 语言交换 — 用话题筛人。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">⚡</span>
-        <div class="feat-card-title">即时邀约</div>
-        <div class="feat-card-desc">步行可达的时间内发起,30 分钟履约。见面成本 = 一杯咖啡的时间。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">⭐</span>
-        <div class="feat-card-title">信用体系</div>
-        <div class="feat-card-desc">实名认证 + 履约积分 + 历史评价。失约成本 = 信用分暴跌。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🤝</span>
-        <div class="feat-card-title">O2O 联动</div>
-        <div class="feat-card-desc">商家联运返佣,激活平峰时段客流。咖啡馆老板笑醒。</div>
-      </div>
-      <div class="feat-card">
-        <span class="feat-card-icon">🚫</span>
-        <div class="feat-card-title">不是 Tinder / Soul</div>
-        <div class="feat-card-desc">不做滑动、不做树洞,只做"附近 + 话题 + 立即"。把线下还回线下。</div>
+<!-- 渲染图:地图发现 -->
+<section class="ap-render">
+  <div class="ap-render-tag">RENDER · 地图发现</div>
+  <div class="ap-mockup">
+    <div class="ap-phone wide">
+      <div class="ap-phone-bar">附近</div>
+      <div class="ap-map">
+        <div class="ap-map-bg">
+          <div class="ap-map-road h1"></div>
+          <div class="ap-map-road h2"></div>
+          <div class="ap-map-road v1"></div>
+          <div class="ap-map-road v2"></div>
+          <div class="ap-map-pin p1">☕<span>老张</span></div>
+          <div class="ap-map-pin p2">☕<span>阿杰</span></div>
+          <div class="ap-map-pin p3">☕<span>苏苏</span></div>
+          <div class="ap-map-me">📍</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="section-inner">
-    <div class="section-tag">ARCHITECTURE</div>
-    <h2 class="section-h2">技术<em>架构</em></h2>
-    <p class="section-desc">双端 + Node.js 网关 + Redis/PostgreSQL 经典组合,Socket.io 撑起实时位置与会话。</p>
-
-    <div class="code-block">
-      <span class="code-label">CoffeeChat Stack</span>
-<span class="c-com">┌──────────────────────────────────────────────────────────┐</span>
-<span class="c-com">│                       Clients                            │</span>
-<span class="c-com">├────────────────────┬─────────────────────────────────────┤</span>
-<span class="c-com">│   iOS App (Swift)  │     WeChat Mini Program (JS)       │</span>
-<span class="c-com">│   UIKit + SnapKit  │     原生微信小程序                   │</span>
-<span class="c-com">└─────────┬──────────┴────────────────┬────────────────────┘</span>
-          <span class="c-key">▼</span>                           <span class="c-key">▼</span>
-<span class="c-com">┌──────────────────────────────────────────────────────────┐</span>
-<span class="c-com">│              API Gateway (Node.js)                       │</span>
-<span class="c-com">│        Express + TypeScript + Socket.io                  │</span>
-<span class="c-com">└─────────┬──────────────────────────────────┬──────────────┘</span>
-          <span class="c-key">▼</span>                                  <span class="c-key">▼</span>
-   <span class="c-com">┌─────────────┐</span>                  <span class="c-com">┌──────────────┐</span>
-   <span class="c-com">│Redis Cluster│</span>                  <span class="c-com">│ PostgreSQL   │</span>
-   <span class="c-com">│- 会话管理    │</span>                  <span class="c-com">│- 用户数据     │</span>
-   <span class="c-com">│- 实时位置   │</span>                  <span class="c-com">│- 商家数据     │</span>
-   <span class="c-com">│- 消息队列   │</span>                  <span class="c-com">│- 订单数据     │</span>
-   <span class="c-com">└─────────────┘</span>                  <span class="c-com">└──────────────┘</span>
+<!-- 功能 1:地图发现 -->
+<section class="ap-feature" id="features">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">01 · 地图发现</span>
+    <h2>打开,<br>看见附近的咖啡馆。</h2>
+    <p>基于高德地图,实时展示附近咖啡馆和活跃邀约。看得见的社交。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🗺️</div>
+      <div class="ap-mockup-label">Map Discovery</div>
     </div>
-
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num">30<em>min</em></div><div class="stat-label">履约时限</div></div>
-      <div class="stat-card"><div class="stat-num">2</div><div class="stat-label">客户端形态</div></div>
-      <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">话题大类</div></div>
-      <div class="stat-card"><div class="stat-num"><em>5★</em></div><div class="stat-label">信用体系</div></div>
-    </div>
-
-    <a class="back-link" href="../index.html">← 返回 ZYRVIS 首页</a>
   </div>
 </section>
 
-<footer class="footer">
-  <div class="footer-logo">ZYRVIS</div>
-  <div class="footer-links">
-    <a class="footer-link" href="../index.html">首页</a>
-    <a class="footer-link" href="../../readme/products/coffeechat.md">Markdown 版</a>
-    <a class="footer-link" href="../../Projects/CoffeeChat/README.md">项目 README</a>
+<!-- 功能 2:话题锚定 -->
+<section class="ap-feature rev">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">02 · 话题锚定</span>
+    <h2>用话题筛人,<br>不靠脸。</h2>
+    <p>职场交流 / 创意头脑风暴 / 联合副业探索 / 语言交换。每场见面都有清晰的共同话题。</p>
   </div>
-  <div class="footer-copy">© 2026 ZYRVIS · 产品介绍页</div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">💬</div>
+      <div class="ap-mockup-label">Topic Anchor</div>
+    </div>
+  </div>
+</section>
+
+<!-- 渲染图:话题 -->
+<section class="ap-render alt">
+  <div class="ap-render-tag">DEMO · 话题选择</div>
+  <div class="ap-mockup">
+    <div class="ap-phone">
+      <div class="ap-phone-bar">发起邀约</div>
+      <div class="ap-topics">
+        <div class="ap-topic on"><span>💼</span>职场交流<span class="ap-topic-num">12</span></div>
+        <div class="ap-topic"><span>💡</span>创意头脑风暴<span class="ap-topic-num">8</span></div>
+        <div class="ap-topic"><span>🚀</span>联合副业<span class="ap-topic-num">5</span></div>
+        <div class="ap-topic"><span>🗣️</span>语言交换<span class="ap-topic-num">14</span></div>
+        <div class="ap-topic"><span>📚</span>读书分享<span class="ap-topic-num">6</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 功能 3:30 分钟履约 -->
+<section class="ap-feature">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">03 · 即时履约</span>
+    <h2>见面成本 = <br>一杯咖啡的时间。</h2>
+    <p>步行可达的范围内发起,30 分钟履约。线上聊一百次,不如线下喝一杯。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">⚡</div>
+      <div class="ap-mockup-label">30 min Meetup</div>
+    </div>
+  </div>
+</section>
+
+<!-- 渲染图:信用 -->
+<section class="ap-render">
+  <div class="ap-render-tag">RENDER · 信用体系</div>
+  <div class="ap-mockup">
+    <div class="ap-phone">
+      <div class="ap-phone-bar">个人主页</div>
+      <div class="ap-credit">
+        <div class="ap-credit-avatar">老张</div>
+        <div class="ap-credit-name">老张 · 32</div>
+        <div class="ap-credit-score">
+          <div class="ap-credit-num">4.9</div>
+          <div class="ap-credit-stars">★★★★★</div>
+        </div>
+        <div class="ap-credit-stats">
+          <div><strong>87</strong>次履约</div>
+          <div><strong>3</strong>次取消</div>
+          <div><strong>96%</strong>好评</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ap-footer">
+  <div class="ap-foot-logo">ZYRVIS</div>
+  <div class="ap-foot-links">
+    <a href="../index.html">首页</a>
+    <a href="coffeechat.html">CoffeeChat</a>
+  </div>
+  <div class="ap-foot-copy">© 2026 ZYRVIS · CoffeeChat</div>
 </footer>
 
-<script>
-document.body.classList.add('js-reveal-ready');
-const io=new IntersectionObserver(e=>{e.forEach(r=>{if(r.isIntersecting){r.target.classList.add('visible');io.unobserve(r.target)}})},{threshold:0.12});
-document.querySelectorAll('.feat-card,.section-h2,.section-tag,.section-desc,.t-table,.stat-card,.stats-row,.code-block').forEach(el=>{el.classList.add('reveal');io.observe(el)});
-</script>
+<style>
+/* CoffeeChat 专属渲染 */
+.ap-map{padding:20px;background:#e8eef3;height:480px;position:relative}
+.ap-map-bg{position:relative;width:100%;height:100%;background:linear-gradient(135deg,#e8f0e8 0%,#e8eef3 50%,#f0e8e8 100%);border-radius:18px;overflow:hidden}
+.ap-map-road{position:absolute;background:#fff;opacity:0.6}
+.ap-map-road.h1{top:30%;left:0;right:0;height:8px}
+.ap-map-road.h2{top:65%;left:0;right:0;height:6px}
+.ap-map-road.v1{left:35%;top:0;bottom:0;width:8px}
+.ap-map-road.v2{left:70%;top:0;bottom:0;width:6px}
+.ap-map-pin{position:absolute;background:#fff;padding:6px 10px;border-radius:14px;font-size:13px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.1);display:flex;align-items:center;gap:4px;transform:translate(-50%,-50%)}
+.ap-map-pin.p1{top:25%;left:30%}
+.ap-map-pin.p2{top:55%;left:65%}
+.ap-map-pin.p3{top:75%;left:40%}
+.ap-map-pin span{font-size:12px;color:#1d1d1f}
+.ap-map-me{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:32px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.2))}
+
+.ap-topics{padding:16px}
+.ap-topic{display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(0,0,0,0.03);border-radius:14px;margin-bottom:8px;font-size:15px;font-weight:500;color:#1d1d1f}
+.ap-topic.on{background:linear-gradient(135deg,#0071e3,#5ac8fa);color:#fff}
+.ap-topic span{font-size:22px}
+.ap-topic-num{margin-left:auto;font-size:12px;opacity:0.6;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:8px}
+.ap-topic:not(.on) .ap-topic-num{background:rgba(0,0,0,0.05);color:#86868b}
+
+.ap-credit{text-align:center;padding:30px 20px}
+.ap-credit-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0071e3,#5ac8fa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:20px;margin:0 auto 12px}
+.ap-credit-name{font-size:17px;font-weight:600;color:#1d1d1f;margin-bottom:18px}
+.ap-credit-score{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:24px}
+.ap-credit-num{font-size:48px;font-weight:700;color:#0071e3;line-height:1}
+.ap-credit-stars{color:#ff9500;font-size:16px;letter-spacing:2px}
+.ap-credit-stats{display:flex;justify-content:space-around;padding:20px 0;border-top:0.5px solid rgba(0,0,0,0.06)}
+.ap-credit-stats>div{text-align:center;font-size:12px;color:#86868b}
+.ap-credit-stats strong{display:block;font-size:22px;font-weight:600;color:#1d1d1f;margin-bottom:2px}
+</style>
+
 </body>
 </html>
