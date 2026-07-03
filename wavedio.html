@@ -4,47 +4,476 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Wavedio — AI 收音机</title>
-<link rel="stylesheet" href="apple-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Nunito',-apple-system,'PingFang SC',system-ui,sans-serif;background:#080808;color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::-webkit-scrollbar{display:none}
+em{font-style:italic}
+:root{
+  --cream:#F6F1E7;--paper:#FFFDF8;--sand:#EDE4D2;
+  --ink:#2A2520;--ink2:#6B6158;--ink3:#A89E91;
+  --mocha:#B08A5B;--mochaDk:#8A6740;--mochaLt:#D9C2A4;
+  --sage:#A8B89A;--sageDk:#7D9274;--rose:#D9A9A2;
+  --sky:#B8CFD9;--butter:#F2D58A;--plum:#9E7BA0;
+  --coral:#FF6B6B;--electric:#4ECDC4;--sun:#FFE66D;--mint:#A8E6CF;        /* Wavedio:5 主播主题色 */
+  --line:rgba(255,255,255,0.1);
+  --shadow:0 1px 2px rgba(0,0,0,0.2),0 4px 14px rgba(0,0,0,0.15);
+  --shadowLg:0 8px 40px rgba(0,0,0,0.4);
+}
+
+/* ── CAPSULE NAV ── */
+.sidenav{position:fixed;left:20px;top:50%;transform:translateY(-50%);width:44px;z-index:9999;background:rgba(20,20,20,0.9);backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);border:0.5px solid rgba(255,255,255,0.12);border-radius:28px;padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:5px;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 1px rgba(255,255,255,0.08)}
+.sc-logo{font-family:'Fraunces',Georgia,serif;font-size:13px;font-weight:800;color:#fff;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:10px;transition:background 0.15s;text-decoration:none}
+.sc-logo:hover{background:rgba(255,255,255,0.1)}
+.sc-sep{width:20px;height:0.5px;background:rgba(255,255,255,0.12);margin:4px 0;flex-shrink:0}
+.sc-dot{width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;position:relative;transition:background 0.15s;flex-shrink:0}
+.sc-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all 0.2s}
+.sc-dot.active::before{background:#fff;transform:scale(1.25)}
+.sc-dot:hover::before{background:rgba(255,255,255,0.8);transform:scale(1.1)}
+.sc-dot::after,.sc-logo::after,.sc-cta::after,.sc-back::after{content:attr(data-tip);position:absolute;left:calc(100% + 14px);top:50%;transform:translateY(-50%);background:rgba(20,20,20,0.95);color:#fff;padding:5px 11px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;font-family:'Nunito',sans-serif;opacity:0;pointer-events:none;transition:opacity 0.15s;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:0.5px solid rgba(255,255,255,0.1)}
+.sc-dot:hover::after,.sc-logo:hover::after,.sc-cta:hover::after,.sc-back:hover::after{opacity:1}
+.sc-cta{width:28px;height:28px;border-radius:10px;background:rgba(255,255,255,0.15);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;font-size:11px;font-weight:900;transition:all 0.15s;position:relative;border:none;font-family:'Nunito',sans-serif}
+.sc-cta:hover{background:rgba(255,255,255,0.25)}
+.sc-back{width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;font-size:9px;font-weight:900;color:rgba(255,255,255,0.4);letter-spacing:0.5px;transition:all 0.15s;position:relative}
+.sc-back:hover{color:#fff;background:rgba(255,255,255,0.08)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#080808;padding:80px 60px;text-align:center}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);font-size:12px;font-weight:700;color:rgba(255,255,255,0.65);margin-bottom:32px;position:relative;z-index:1}
+.hero-h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(52px,7vw,90px);font-weight:800;line-height:1.02;color:#fff;letter-spacing:-2.5px;margin-bottom:24px;position:relative;z-index:1}
+.hero-h1 em{background:linear-gradient(135deg,#FF6B6B,#4ECDC4,#FFE66D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.62);max-width:600px;margin:0 auto 40px;line-height:1.65;position:relative;z-index:1}
+.hero-stats{display:flex;gap:14px;margin-bottom:40px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1}
+.hero-stat{padding:18px 24px;border-radius:20px;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);min-width:130px;transition:background 0.2s}
+.hero-stat:hover{background:rgba(255,255,255,0.1)}
+.hero-stat-num{font-family:'Fraunces',Georgia,serif;font-size:30px;font-weight:800;line-height:1;margin-bottom:6px}
+.hero-stat-num.jazz{color:#FF6B6B}
+.hero-stat-num.hiphop{color:#4ECDC4}
+.hero-stat-num.lofi{color:#9B59B6}
+.hero-stat-num.pop{color:#FFE66D}
+.hero-stat-num.rock{color:#A8E6CF}
+.hero-stat-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.3px}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.hero-btn-primary{background:#fff;color:#080808;border:none;padding:14px 36px;border-radius:999px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 6px 24px rgba(255,255,255,0.15);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;display:inline-block}
+.hero-btn-primary:hover{transform:scale(1.04);box-shadow:0 10px 32px rgba(255,255,255,0.22)}
+.hero-btn-secondary{background:transparent;color:rgba(255,255,255,0.75);border:0.5px solid rgba(255,255,255,0.25);padding:14px 28px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-decoration:none;display:inline-block}
+.hero-btn-secondary:hover{color:#fff;border-color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.06)}
+
+/* ── FEATURE SECTIONS ── */
+.feature-section{min-height:100vh;padding:100px 64px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#080808}
+.feature-inner{max-width:1200px;width:100%;display:flex;align-items:center;gap:64px;flex-wrap:wrap;position:relative;z-index:1}
+.feature-inner.rev{flex-direction:row-reverse}
+.feature-text{flex:1;min-width:340px;position:relative;z-index:2}
+.feature-visual{flex:0 0 auto;display:flex;justify-content:center;position:relative;z-index:2}
+.feat-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;border:0.5px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.1);font-size:12px;font-weight:700;color:rgba(255,255,255,0.82);margin-bottom:22px}
+.feat-h2{font-family:'Fraunces',Georgia,serif;font-size:clamp(36px,4.5vw,56px);font-weight:800;line-height:1.07;color:#fff;letter-spacing:-1.2px;margin-bottom:20px}
+.feat-h2 em{background:linear-gradient(135deg,#FF6B6B,#4ECDC4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic}
+.feat-desc{font-size:15.5px;line-height:1.68;color:rgba(255,255,255,0.76);max-width:440px;margin-bottom:24px}
+.feat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.16);font-size:12px;font-weight:700;color:rgba(255,255,255,0.9)}
+.feat-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:440px}
+.feat-card{background:rgba(255,255,255,0.07);border-radius:18px;padding:16px 14px;border:0.5px solid rgba(255,255,255,0.11)}
+.feat-card-icon{font-size:22px;margin-bottom:8px}
+.feat-card-title{font-size:13px;font-weight:800;color:#fff;margin-bottom:4px}
+.feat-card-desc{font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5}
+
+/* ── BROWSER FRAME ── */
+.browser{width:560px;border-radius:14px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.08);flex-shrink:0}
+.browser.wide{width:620px}
+.bbar{background:#1A1A1A;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:0.5px solid rgba(255,255,255,0.06)}
+.bdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.bdot.r{background:#FF5F57}.bdot.y{background:#FFBD2E}.bdot.g{background:#28C940}
+.burl{flex:1;background:rgba(255,255,255,0.07);border-radius:5px;height:20px;margin:0 16px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.28);font-weight:600;letter-spacing:0.3px}
+.bcontent{background:#111;height:400px;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── DARK SURFACES ── */
+.phone.dark{background:linear-gradient(180deg,#0a0a0a 0%,#1a1a1a 100%)}
+.phone.dark .phone-bar{color:rgba(255,255,255,0.4)}
+.dk-surface{background:linear-gradient(180deg,#0a0a0a 0%,#1a1a1a 100%);color:#fff}
+
+/* ── Wavedio RADIO(深色 FM 收音机) ── */
+.wd-radio{padding:20px;background:linear-gradient(135deg,#2a1a0a 0%,#1a0a00 100%);height:520px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.wd-radio::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(255,255,255,0.02) 2px,rgba(255,255,255,0.02) 4px);pointer-events:none}
+.wd-dial{text-align:center;width:100%;padding:24px 18px;background:rgba(255,255,255,0.04);border-radius:16px;backdrop-filter:blur(8px);border:0.5px solid rgba(255,255,255,0.06)}
+.wd-freq{font-size:48px;font-weight:200;letter-spacing:4px;font-variant-numeric:tabular-nums;text-shadow:0 0 20px currentColor;transition:color 0.3s}
+.wd-freq.jazz{color:#FF6B6B}
+.wd-freq.hiphop{color:#4ECDC4}
+.wd-freq.lofi{color:#9B59B6}
+.wd-freq.pop{color:#FFE66D}
+.wd-freq.rock{color:#A8E6CF}
+.wd-stations{display:flex;justify-content:space-between;margin-top:14px;padding:0 6px}
+.wd-stations span{font-size:9px;color:rgba(255,255,255,0.3);font-weight:600;transition:color 0.2s}
+.wd-stations span.on{color:currentColor;font-size:11px}
+.wd-knob{width:68px;height:68px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#4a4a4a,#1a1a1a);box-shadow:0 4px 16px rgba(0,0,0,0.5),inset 0 1px 2px rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:30px;line-height:1;transition:transform 0.3s}
+.wd-knob.jazz{transform:rotate(-45deg);color:#FF6B6B}
+.wd-knob.hiphop{transform:rotate(-15deg);color:#4ECDC4}
+.wd-knob.lofi{transform:rotate(15deg);color:#9B59B6}
+.wd-knob.pop{transform:rotate(45deg);color:#FFE66D}
+.wd-knob.rock{transform:rotate(75deg);color:#A8E6CF}
+.wd-waveform{display:flex;align-items:center;gap:3px;height:28px}
+.wd-waveform span{display:inline-block;width:3px;height:8px;border-radius:2px;animation:wave 0.8s ease-in-out infinite;transition:background 0.3s}
+.wd-waveform.jazz span{background:#FF6B6B}
+.wd-waveform.hiphop span{background:#4ECDC4}
+.wd-waveform.lofi span{background:#9B59B6}
+.wd-waveform.pop span{background:#FFE66D}
+.wd-waveform.rock span{background:#A8E6CF}
+.wd-waveform span:nth-child(1){animation-delay:0s}
+.wd-waveform span:nth-child(2){animation-delay:0.1s}
+.wd-waveform span:nth-child(3){animation-delay:0.2s}
+.wd-waveform span:nth-child(4){animation-delay:0.3s}
+.wd-waveform span:nth-child(5){animation-delay:0.4s}
+.wd-waveform span:nth-child(6){animation-delay:0.3s}
+.wd-waveform span:nth-child(7){animation-delay:0.2s}
+.wd-waveform span:nth-child(8){animation-delay:0.1s}
+.wd-waveform span:nth-child(9){animation-delay:0.15s}
+.wd-waveform span:nth-child(10){animation-delay:0.05s}
+@keyframes wave{0%,100%{height:8px}50%{height:24px}}
+.wd-now{display:flex;gap:12px;padding:12px 14px;background:rgba(0,0,0,0.4);border-radius:14px;width:100%;align-items:center;border:0.5px solid rgba(255,255,255,0.08)}
+.wd-cover{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;animation:spin 4s linear infinite;transition:background 0.3s}
+.wd-cover.jazz{background:linear-gradient(135deg,#FF6B6B,#EE5A6F)}
+.wd-cover.hiphop{background:linear-gradient(135deg,#4ECDC4,#44A3AA)}
+.wd-cover.lofi{background:linear-gradient(135deg,#9B59B6,#7D3C98)}
+.wd-cover.pop{background:linear-gradient(135deg,#FFE66D,#FFD93D)}
+.wd-cover.rock{background:linear-gradient(135deg,#A8E6CF,#88C9A1)}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.wd-info{flex:1;min-width:0;text-align:left}
+.wd-song{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wd-host{font-size:11px;color:rgba(255,255,255,0.5)}
+
+/* ── Wavedio 5 卡片堆叠(JS 点击切换) ── */
+.wd-stack{position:relative;width:100%;height:480px;padding:20px}
+.wd-card{position:absolute;width:calc(100% - 40px);border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;align-items:center;gap:6px;color:#fff;cursor:pointer;transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1);left:20px;border:1px solid rgba(255,255,255,0.15);box-shadow:0 10px 30px rgba(0,0,0,0.3)}
+.wd-card.jazz{background:linear-gradient(135deg,#FF6B6B,#EE5A6F)}
+.wd-card.hiphop{background:linear-gradient(135deg,#4ECDC4,#44A3AA)}
+.wd-card.lofi{background:linear-gradient(135deg,#9B59B6,#7D3C98)}
+.wd-card.pop{background:linear-gradient(135deg,#FFE66D,#FFD93D);color:#1d1d1f}
+.wd-card.rock{background:linear-gradient(135deg,#A8E6CF,#88C9A1)}
+.wd-card.on{transform:scale(1.05) translateY(-8px);z-index:10;box-shadow:0 20px 50px rgba(0,0,0,0.4)}
+.wd-card-num{font-size:36px;font-weight:200;letter-spacing:2px;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:6px}
+.wd-card-h{font-size:18px;font-weight:700;letter-spacing:-0.3px}
+.wd-card-host{font-size:12px;opacity:0.85}
+
+/* ── Wavedio 5 主播人设 ── */
+.wd-host-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%}
+.wd-host-card{background:rgba(255,255,255,0.05);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;transition:all 0.2s;border:0.5px solid transparent}
+.wd-host-card:hover{background:rgba(255,255,255,0.1);transform:translateY(-2px)}
+.wd-host-card.on{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.08)}
+.wd-host-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 8px;transition:transform 0.3s}
+.wd-host-card:hover .wd-host-avatar{transform:scale(1.1)}
+.wd-host-avatar.jazz{background:linear-gradient(135deg,#FF6B6B,#EE5A6F)}
+.wd-host-avatar.hiphop{background:linear-gradient(135deg,#4ECDC4,#44A3AA)}
+.wd-host-avatar.lofi{background:linear-gradient(135deg,#9B59B6,#7D3C98)}
+.wd-host-avatar.pop{background:linear-gradient(135deg,#FFE66D,#FFD93D)}
+.wd-host-avatar.rock{background:linear-gradient(135deg,#A8E6CF,#88C9A1)}
+.wd-host-name{font-size:12px;font-weight:700;color:#fff;margin-bottom:2px}
+.wd-host-station{font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:4px}
+.wd-host-style{font-size:10px;color:rgba(255,255,255,0.7);line-height:1.4;font-style:italic}
+
+/* ── Wavedio 5 套配色预览 ── */
+.wd-palette{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;width:100%;max-width:600px}
+.wd-pal{padding:20px 12px;border-radius:16px;color:#fff;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,0.2);transition:transform 0.2s;cursor:default}
+.wd-pal:hover{transform:scale(1.05)}
+.wd-pal.jazz{background:linear-gradient(135deg,#FF6B6B,#EE5A6F)}
+.wd-pal.hiphop{background:linear-gradient(135deg,#4ECDC4,#44A3AA)}
+.wd-pal.lofi{background:linear-gradient(135deg,#9B59B6,#7D3C98)}
+.wd-pal.pop{background:linear-gradient(135deg,#FFE66D,#FFD93D);color:#1d1d1f}
+.wd-pal.rock{background:linear-gradient(135deg,#A8E6CF,#88C9A1)}
+.wd-pal-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.wd-pal-val{font-size:10px;opacity:0.85;font-family:monospace}
+
+/* ── Wavedio 质量评估 ── */
+.wd-quality{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.wd-quality-row{display:flex;align-items:center;gap:10px}
+.wd-quality-label{font-size:12px;color:#fff;width:90px;flex-shrink:0;font-weight:500}
+.wd-quality-bar{flex:1;height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden}
+.wd-quality-fill{height:100%;border-radius:4px;transition:width 0.6s ease}
+.wd-quality-val{font-size:12px;color:rgba(255,255,255,0.7);width:38px;text-align:right;font-weight:600;font-family:monospace}
+.wd-quality-total{text-align:center;padding-top:14px;border-top:0.5px solid rgba(255,255,255,0.1);font-size:12px;color:rgba(255,255,255,0.7)}
+.wd-quality-total strong{color:#fff;font-size:15px;margin:0 4px}
+.wd-quality-verdict{display:inline-block;padding:3px 10px;background:rgba(52,199,89,0.15);color:#34C759;border-radius:8px;font-weight:600;font-size:11px;margin-left:8px}
+
+/* ── PHONE ── */
+.phone{width:300px;background:#000;border-radius:36px;padding:10px;box-shadow:0 30px 80px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.05);flex-shrink:0;overflow:hidden}
+.phone.wide{width:380px}
+.phone-bar{height:20px;background:transparent;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,0.4);font-weight:600}
+
+/* ── SHAPES ── */
+.shape{position:absolute;pointer-events:none;z-index:0}
+@keyframes sFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+@keyframes sDrift{0%,100%{transform:translateX(0)}50%{transform:translateX(20px)}}
+@keyframes sPulse{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.28;transform:scale(1.07)}}
+@keyframes sBob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-16px) scale(1.04)}}
+
+/* ── REVEAL ── */
+body.js-reveal-ready .reveal{opacity:0;transform:translateY(28px);transition:opacity 0.75s ease,transform 0.75s ease}
+body.js-reveal-ready .reveal.visible{opacity:1;transform:translateY(0)}
+body.js-reveal-ready .reveal.delay-1{transition-delay:0.1s}
+body.js-reveal-ready .reveal.delay-2{transition-delay:0.22s}
+body.js-reveal-ready .reveal.delay-3{transition-delay:0.34s}
+
+/* ── CTA ── */
+.cta-section{min-height:70vh;padding:120px 60px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;position:relative;overflow:hidden;background:#080808}
+.cta-inner{position:relative;z-index:1;max-width:700px}
+.cta-h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(44px,6vw,76px);font-weight:800;line-height:1.05;color:#fff;letter-spacing:-2px;margin-bottom:20px}
+.cta-h1 em{background:linear-gradient(135deg,#FF6B6B,#4ECDC4,#FFE66D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic}
+.cta-sub{font-size:17px;color:rgba(255,255,255,0.58);max-width:520px;margin:0 auto 40px;line-height:1.65}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ── */
+.footer{background:#080808;padding:48px 32px 32px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;border-top:0.5px solid rgba(255,255,255,0.08)}
+.footer-logo{font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.footer-link{font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);text-decoration:none;cursor:pointer;transition:color 0.2s}
+.footer-link:hover{color:#fff}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.4)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  .sidenav{display:none}
+  .shape{display:none}
+  .feature-section,.ai-section{padding:72px 24px}
+  .feature-inner,.ai-inner{flex-direction:column!important;gap:44px}
+  .feature-text{min-width:unset}
+  .feature-inner.rev{flex-direction:column!important}
+  .hero{padding:80px 24px}
+  .hero-stats{gap:10px}
+  .hero-stat{padding:14px 18px;min-width:100px}
+  .cta-section{padding:72px 24px}
+  .browser,.phone{width:100%;max-width:100%}
+  .bcontent{height:300px}
+  .feat-cards{grid-template-columns:1fr}
+  .wd-host-grid{grid-template-columns:repeat(2,1fr)}
+  .wd-palette{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .hero-h1{font-size:clamp(38px,10vw,52px)}
+  .cta-h1{font-size:clamp(34px,9vw,48px)}
+  .feature-section{padding:56px 20px}
+  .feat-h2{font-size:clamp(30px,8vw,42px)}
+  .wd-host-grid{grid-template-columns:1fr 1fr}
+  .wd-palette{grid-template-columns:1fr 1fr}
+}
+</style>
 </head>
 <body>
 
-<nav class="ap-nav">
-  <a class="ap-logo" href="index.html">ZYRVIS</a>
-  <div class="ap-nav-links">
-    <a href="index.html">首页</a>
-    <a href="wavedio.html" class="on">Wavedio</a>
-  </div>
+<nav class="sidenav">
+  <a class="sc-logo" data-tip="Wavedio" href="#hero">📻</a>
+  <div class="sc-sep"></div>
+  <a class="sc-dot active" data-idx="0" data-tip="概览" href="#hero"></a>
+  <a class="sc-dot" data-idx="1" data-tip="5 卡片" href="#sec1"></a>
+  <a class="sc-dot" data-idx="2" data-tip="5 主播" href="#sec2"></a>
+  <a class="sc-dot" data-idx="3" data-tip="FM 收音机" href="#sec3"></a>
+  <a class="sc-dot" data-idx="4" data-tip="质量评估" href="#sec4"></a>
+  <a class="sc-dot" data-idx="5" data-tip="5 套配色" href="#sec5"></a>
+  <a class="sc-dot" data-idx="6" data-tip="真实歌曲" href="#sec6"></a>
+  <a class="sc-dot" data-idx="7" data-tip="下载" href="#cta"></a>
+  <div class="sc-sep"></div>
+  <a class="sc-cta" data-tip="下载" href="#cta">↓</a>
+  <a class="sc-back" data-tip="ZYRVIS" href="index.html">Z</a>
 </nav>
 
-<section class="ap-hero">
-  <span class="ap-eyebrow">PRODUCT · 06</span>
-  <h1 class="ap-title">Wavedio</h1>
-  <p class="ap-sub">真实的电台体验,AI 主播陪你听。像调 FM 一样简单。</p>
-  <div class="ap-cta">
-    <a class="ap-btn-primary" href="#">下载 iOS</a>
-    <a class="ap-btn-link" href="#features">了解功能 →</a>
+<!-- ── § 0  HERO ── -->
+<section class="hero" id="hero" data-idx="0">
+  <div class="shape" style="width:500px;height:500px;border-radius:50%;background:rgba(255,107,107,0.08);top:-140px;right:-140px;animation:sPulse 8s ease-in-out infinite"></div>
+  <div class="shape" style="width:360px;height:360px;border-radius:50%;background:rgba(78,205,196,0.06);bottom:-80px;left:-80px;animation:sPulse 10s ease-in-out infinite 2s"></div>
+  <div class="shape" style="width:280px;height:70px;border-radius:999px;background:rgba(255,230,109,0.1);top:30%;right:-40px;animation:sDrift 7s ease-in-out infinite 1s"></div>
+  <div class="shape" style="width:200px;height:200px;border-radius:40px;background:rgba(168,230,207,0.08);bottom:20%;left:40px;animation:sFloat 9s ease-in-out infinite 3s"></div>
+
+  <div class="hero-inner">
+    <div class="hero-eyebrow reveal">📻 Wavedio · PRODUCT 06</div>
+    <h1 class="hero-h1 reveal delay-1">AI 收音机，<br/>5 位<em>主播陪你听</em>。</h1>
+    <p class="hero-sub reveal delay-2">模拟真实 FM 电台体验,5 个有不同人设的 AI 主播 + 真实版权歌曲 + 复古 LCD 界面。点开 App,像调 FM 一样简单。</p>
+    <div class="hero-stats reveal delay-2">
+      <div class="hero-stat"><div class="hero-stat-num jazz">5</div><div class="hero-stat-label">AI 主播</div></div>
+      <div class="hero-stat"><div class="hero-stat-num hiphop">2-3<em>h</em></div><div class="hero-stat-label">自动轮换</div></div>
+      <div class="hero-stat"><div class="hero-stat-num lofi">100%</div><div class="hero-stat-label">真实歌曲</div></div>
+      <div class="hero-stat"><div class="hero-stat-num pop">5<em>★</em></div><div class="hero-stat-label">串词质量</div></div>
+    </div>
+    <div class="hero-btns reveal delay-3">
+      <button class="hero-btn-primary" onclick="alert('Wavedio iOS 内测即将发布')">下载 iOS →</button>
+      <button class="hero-btn-secondary" onclick="document.getElementById('sec1').scrollIntoView({behavior:'smooth'})">5 卡片选择</button>
+    </div>
   </div>
 </section>
 
-<!-- 渲染图:收音机界面 -->
-<section class="ap-render">
-  <div class="ap-render-tag">RENDER · 收音机界面</div>
-  <div class="ap-mockup">
-    <div class="ap-phone">
-      <div class="ap-phone-bar">Jazz FM</div>
-      <div class="ap-radio">
-        <div class="ap-radio-dial">
-          <div class="ap-radio-freq">102.4</div>
-          <div class="ap-radio-stations">
-            <span>88</span><span>92</span><span>96</span><span class="on">100</span><span>104</span><span>108</span>
+<!-- ── § 1  5 卡片堆叠(JS 切换) ── -->
+<section class="feature-section" id="sec1" data-idx="1">
+  <div class="shape" style="width:380px;height:380px;border-radius:50%;background:rgba(255,107,107,0.1);top:-80px;right:-80px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:220px;height:60px;border-radius:999px;background:rgba(78,205,196,0.12);bottom:100px;left:-20px;animation:sDrift 8s ease-in-out infinite 1s"></div>
+  <div class="feature-inner rev">
+    <div class="feature-text reveal">
+      <span class="feat-tag">🎙️ 5 个 AI 主播电台</span>
+      <h2 class="feat-h2">每位主播有<br/><em>自己的人设和声音</em>。</h2>
+      <p class="feat-desc">老爵士(优雅绅士) · 阿杰(街头说唱) · 苏苏(慢生活) · 小北(都市女孩) · 阿 Rock(摇滚老炮)。每人有专属电台 + 主题色 + 音乐风格。</p>
+      <div class="feat-chips">
+        <span class="chip">🎷 Jazz</span>
+        <span class="chip">🎤 Hip-Hop</span>
+        <span class="chip">🎧 Lo-Fi</span>
+        <span class="chip">🌆 Pop</span>
+        <span class="chip">🎸 Rock</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🎙️</div><div class="feat-card-title">5 主播人设</div><div class="feat-card-desc">声音 / 性格 / 音乐 / 表达全不同</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🎨</div><div class="feat-card-title">5 套主题色</div><div class="feat-card-desc">珊瑚橙 / 电光蓝 / 葡萄紫 / 阳光黄 / 薄荷绿</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📀</div><div class="feat-card-title">真实版权</div><div class="feat-card-desc">不是 AI 生成,全部正版曲库</div></div>
+        <div class="feat-card"><div class="feat-card-icon">💬</div><div class="feat-card-title">5 维串词</div><div class="feat-card-desc">情感/相关/承上/新鲜/时长</div></div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="phone dark">
+        <div class="phone-bar">5 个电台</div>
+        <div class="wd-stack" id="wdStack">
+          <div class="wd-card jazz on" onclick="wdSelect(0)" data-idx="0">
+            <div class="wd-card-num">88.0</div>
+            <div class="wd-card-h">Jazz FM</div>
+            <div class="wd-card-host">老爵士 · 优雅老派绅士</div>
+          </div>
+          <div class="wd-card hiphop" onclick="wdSelect(1)" data-idx="1">
+            <div class="wd-card-num">90.5</div>
+            <div class="wd-card-h">Hip-Hop FM</div>
+            <div class="wd-card-host">阿杰 · 街头达人</div>
+          </div>
+          <div class="wd-card lofi" onclick="wdSelect(2)" data-idx="2">
+            <div class="wd-card-num">93.2</div>
+            <div class="wd-card-h">Lo-Fi FM</div>
+            <div class="wd-card-host">苏苏 · 慢生活</div>
+          </div>
+          <div class="wd-card pop" onclick="wdSelect(3)" data-idx="3">
+            <div class="wd-card-num">98.7</div>
+            <div class="wd-card-h">Pop FM</div>
+            <div class="wd-card-host">小北 · 都市女孩</div>
+          </div>
+          <div class="wd-card rock" onclick="wdSelect(4)" data-idx="4">
+            <div class="wd-card-num">102.4</div>
+            <div class="wd-card-h">Rock FM</div>
+            <div class="wd-card-host">阿 Rock · 摇滚老炮</div>
           </div>
         </div>
-        <div class="ap-radio-knob">●</div>
-        <div class="ap-radio-now">
-          <div class="ap-radio-cover">🎷</div>
-          <div class="ap-radio-info">
-            <div class="ap-radio-song">Take Five</div>
-            <div class="ap-radio-host">老爵士 · 主持中</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 2  5 主播人设详情(JS 联动) ── -->
+<section class="feature-section" id="sec2" data-idx="2">
+  <div class="shape" style="width:300px;height:420px;border-radius:40px;background:rgba(78,205,196,0.08);top:-30px;left:-60px;animation:sFloat 9s ease-in-out infinite"></div>
+  <div class="shape" style="width:320px;height:160px;border-radius:0 0 160px 160px;background:rgba(255,230,109,0.1);bottom:0;right:-40px;animation:sDrift 8s ease-in-out infinite 2s"></div>
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="browser huge">
+        <div class="bbar">
+          <div class="bdot r"></div><div class="bdot y"></div><div class="bdot g"></div>
+          <div class="burl">wavedio.app / hosts</div>
+        </div>
+        <div class="bcontent" style="padding:18px;height:auto">
+          <div class="wd-host-grid" id="wdHostGrid">
+            <div class="wd-host-card on" onclick="wdHost(0)">
+              <div class="wd-host-avatar jazz">🎷</div>
+              <div class="wd-host-name">老爵士</div>
+              <div class="wd-host-station">Jazz FM</div>
+              <div class="wd-host-style">"今晚给大家来首 Coltrane 的名曲..."</div>
+            </div>
+            <div class="wd-host-card" onclick="wdHost(1)">
+              <div class="wd-host-avatar hiphop">🎤</div>
+              <div class="wd-host-name">阿杰</div>
+              <div class="wd-host-station">Hip-Hop FM</div>
+              <div class="wd-host-style">"Yo 这首是 2002 年经典..."</div>
+            </div>
+            <div class="wd-host-card" onclick="wdHost(2)">
+              <div class="wd-host-avatar lofi">🎧</div>
+              <div class="wd-host-name">苏苏</div>
+              <div class="wd-host-station">Lo-Fi FM</div>
+              <div class="wd-host-style">"嗯...这首曲子适合泡杯茶..."</div>
+            </div>
+            <div class="wd-host-card" onclick="wdHost(3)">
+              <div class="wd-host-avatar pop">🌆</div>
+              <div class="wd-host-name">小北</div>
+              <div class="wd-host-station">Pop FM</div>
+              <div class="wd-host-style">"嗨各位!准备好迎接新歌了吗?"</div>
+            </div>
+            <div class="wd-host-card" onclick="wdHost(4)">
+              <div class="wd-host-avatar rock">🎸</div>
+              <div class="wd-host-name">阿 Rock</div>
+              <div class="wd-host-station">Rock FM</div>
+              <div class="wd-host-style">"1971 年的录音,Jimmy Page..."</div>
+            </div>
+          </div>
+          <div style="padding:14px;background:rgba(0,0,0,0.3);border-radius:12px;margin-top:14px;display:flex;gap:12px;align-items:center">
+            <div style="width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0" id="wdDetailAvatar" class="jazz" style="background:linear-gradient(135deg,#FF6B6B,#EE5A6F)">🎷</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:14px;font-weight:700;color:#fff" id="wdDetailName">老爵士</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px" id="wdDetailStation">Jazz FM · 优雅老派绅士</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.7);font-style:italic" id="wdDetailQuote">"今晚给大家来一首 Coltrane 的名曲,时间是 1957 年的夏天..."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">👥 5 主播人设</span>
+      <h2 class="feat-h2">点击任一主播，<br/><em>看他的风格</em>。</h2>
+      <p class="feat-desc">每位主播有独特声音 + 性格 + 音乐偏好。深夜苏苏会换更治愈的曲目,阿 Rock 的吉他 solo 能让你立刻嗨起来。</p>
+      <div class="feat-chips">
+        <span class="chip">🎙️ 声音定制</span>
+        <span class="chip">👤 性格人设</span>
+        <span class="chip">🎵 音乐偏好</span>
+        <span class="chip">💬 串场风格</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🎙️</div><div class="feat-card-title">声音定制</div><div class="feat-card-desc">ElevenLabs TTS,5 套专属声线</div></div>
+        <div class="feat-card"><div class="feat-card-icon">👤</div><div class="feat-card-title">性格人设</div><div class="feat-card-desc">每个主播有完整 backstory</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🎵</div><div class="feat-card-title">音乐偏好</div><div class="feat-card-desc">每位主播有专属曲库风格</div></div>
+        <div class="feat-card"><div class="feat-card-icon">💬</div><div class="feat-card-title">串场风格</div><div class="feat-card-desc">老爵士讲历史,阿 Rock 评吉他</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 3  FM 收音机(JS 切换) ── -->
+<section class="feature-section" id="sec3" data-idx="3">
+  <div class="shape" style="width:370px;height:290px;border-radius:44px;background:rgba(168,230,207,0.08);top:-40px;right:-60px;animation:sFloat 8s ease-in-out infinite 0.5s"></div>
+  <div class="shape" style="width:250px;height:65px;border-radius:999px;background:rgba(255,230,109,0.1);bottom:100px;left:-30px;animation:sDrift 7s ease-in-out infinite 2s"></div>
+  <div class="feature-inner rev">
+    <div class="feature-text reveal">
+      <span class="feat-tag">📻 复古 FM 体验</span>
+      <h2 class="feat-h2">像调 FM 一样，<br/>但<em>有专属主播</em>。</h2>
+      <p class="feat-desc">旋钮调频 + 实时波形 + 复古 LCD 字体 + 锁屏后台播放。模拟真实电台的所有细节,但每一位主播都是你专属的。</p>
+      <div class="feat-chips">
+        <span class="chip">🎚️ 旋钮调频</span>
+        <span class="chip">📊 实时波形</span>
+        <span class="chip">🌙 锁屏后台</span>
+        <span class="chip">🔁 自动续播</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🎚️</div><div class="feat-card-title">旋钮调频</div><div class="feat-card-desc">手指滑动切换频道,有阻尼感</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📊</div><div class="feat-card-title">实时波形</div><div class="feat-card-desc">10 段波形跳动,跟着节拍</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🌙</div><div class="feat-card-title">锁屏后台</div><div class="feat-card-desc">锁屏也能控制,像真电台</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🔁</div><div class="feat-card-title">自动续播</div><div class="feat-card-desc">同主播,听完自动续同类</div></div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="phone dark">
+        <div class="phone-bar jazz" id="wdRadioBar" style="color:#FF6B6B">Jazz FM</div>
+        <div class="wd-radio" id="wdRadio">
+          <div class="wd-dial">
+            <div class="wd-freq jazz" id="wdFreq">88.0</div>
+            <div class="wd-stations" id="wdStations">
+              <span>88</span><span>92</span><span>96</span><span class="on">100</span><span>104</span><span>108</span>
+            </div>
+          </div>
+          <div class="wd-knob jazz" id="wdKnob">●</div>
+          <div class="wd-waveform jazz" id="wdWave">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="wd-now">
+            <div class="wd-cover jazz" id="wdCover">🎷</div>
+            <div class="wd-info">
+              <div class="wd-song" id="wdSong">Take Five</div>
+              <div class="wd-host" id="wdHostLabel">老爵士 · 主持中</div>
+            </div>
           </div>
         </div>
       </div>
@@ -52,112 +481,308 @@
   </div>
 </section>
 
-<!-- 功能 1 -->
-<section class="ap-feature" id="features">
-  <div class="ap-feature-text">
-    <span class="ap-feature-tag">01 · 5 位 AI 主播</span>
-    <h2>每位主播有<br>自己的人设和声音。</h2>
-    <p>老爵士(优雅绅士)/ 阿杰(街头达人)/ 苏苏(慢生活)/ 小北(都市女孩)/ 阿 Rock(摇滚老炮)。</p>
-  </div>
-  <div class="ap-feature-visual">
-    <div class="ap-mockup-card">
-      <div class="ap-mockup-emoji">🎙️</div>
-      <div class="ap-mockup-label">5 AI Hosts</div>
-    </div>
-  </div>
-</section>
-
-<!-- 功能 2 -->
-<section class="ap-feature rev">
-  <div class="ap-feature-text">
-    <span class="ap-feature-tag">02 · 2-3 小时轮换</span>
-    <h2>听久了不腻,<br>主播会换。</h2>
-    <p>每隔 2-3 小时,自动换主播 — 声音变化、情感变化、无缝衔接。</p>
-  </div>
-  <div class="ap-feature-visual">
-    <div class="ap-mockup-card">
-      <div class="ap-mockup-emoji">🔄</div>
-      <div class="ap-mockup-label">Auto Switch</div>
-    </div>
-  </div>
-</section>
-
-<!-- 渲染图:主播库 -->
-<section class="ap-render alt">
-  <div class="ap-render-tag">DEMO · 主播库</div>
-  <div class="ap-mockup">
-    <div class="ap-hosts">
-      <div class="ap-host">
-        <div class="ap-host-avatar jazz">🎷</div>
-        <div class="ap-host-name">老爵士</div>
-        <div class="ap-host-station">Jazz FM</div>
-        <div class="ap-host-style">"今晚给大家来一首 Coltrane 的名曲..."</div>
-      </div>
-      <div class="ap-host">
-        <div class="ap-host-avatar lofi">🎧</div>
-        <div class="ap-host-name">苏苏</div>
-        <div class="ap-host-station">Lo-Fi FM</div>
-        <div class="ap-host-style">"嗯…这首曲子,适合泡杯热茶..."</div>
-      </div>
-      <div class="ap-host">
-        <div class="ap-host-avatar pop">🌆</div>
-        <div class="ap-host-name">小北</div>
-        <div class="ap-host-station">Pop FM</div>
-        <div class="ap-host-style">"嗨各位!准备好迎接今天的新歌了吗?"</div>
+<!-- ── § 4  串词质量评估(JS 动画) ── -->
+<section class="feature-section" id="sec4" data-idx="4">
+  <div class="shape" style="width:350px;height:350px;border-radius:50%;background:rgba(255,107,107,0.08);top:-60px;left:-60px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:280px;height:70px;border-radius:999px;background:rgba(168,230,207,0.1);bottom:100px;right:-30px;animation:sDrift 9s ease-in-out infinite 2s"></div>
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="phone dark">
+        <div class="phone-bar">串词质量评估</div>
+        <div class="dk-surface" style="padding:16px 14px;min-height:380px">
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:0.5px;margin-bottom:14px;text-align:center">🎯 5 维度评分 · 当前曲目</div>
+          <div class="wd-quality">
+            <div class="wd-quality-row">
+              <span class="wd-quality-label">🎯 情感共鸣</span>
+              <div class="wd-quality-bar"><div class="wd-quality-fill" id="qBar1" style="width:0%;background:#34C759"></div></div>
+              <span class="wd-quality-val" id="qVal1">0.85</span>
+            </div>
+            <div class="wd-quality-row">
+              <span class="wd-quality-label">🔗 相关性</span>
+              <div class="wd-quality-bar"><div class="wd-quality-fill" id="qBar2" style="width:0%;background:#34C759"></div></div>
+              <span class="wd-quality-val" id="qVal2">0.78</span>
+            </div>
+            <div class="wd-quality-row">
+              <span class="wd-quality-label">🧵 承上启下</span>
+              <div class="wd-quality-bar"><div class="wd-quality-fill" id="qBar3" style="width:0%;background:#FF9500"></div></div>
+              <span class="wd-quality-val" id="qVal3">0.62</span>
+            </div>
+            <div class="wd-quality-row">
+              <span class="wd-quality-label">✨ 新鲜度</span>
+              <div class="wd-quality-bar"><div class="wd-quality-fill" id="qBar4" style="width:0%;background:#FF9500"></div></div>
+              <span class="wd-quality-val" id="qVal4">0.45</span>
+            </div>
+            <div class="wd-quality-row">
+              <span class="wd-quality-label">⏱️ 时长合适</span>
+              <div class="wd-quality-bar"><div class="wd-quality-fill" id="qBar5" style="width:0%;background:#34C759"></div></div>
+              <span class="wd-quality-val" id="qVal5">0.92</span>
+            </div>
+          </div>
+          <div class="wd-quality-total">总分: <strong>3.62 / 5.00</strong><span class="wd-quality-verdict">✓ 播完整故事</span></div>
+          <div style="text-align:center;margin-top:14px">
+            <button onclick="wdResetQuality()" style="padding:8px 16px;background:rgba(255,255,255,0.08);color:#fff;font-size:12px;font-weight:600;border-radius:10px;border:0.5px solid rgba(255,255,255,0.15);cursor:pointer">🔄 重新评估</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- 功能 3 -->
-<section class="ap-feature">
-  <div class="ap-feature-text">
-    <span class="ap-feature-tag">03 · 真实歌曲 + 串场</span>
-    <h2>不只是 TTS,<br>是有人味儿的陪伴。</h2>
-    <p>AI 主播串联真实歌曲,在间隙讲歌曲故事、分享心情、时光絮语。</p>
-  </div>
-  <div class="ap-feature-visual">
-    <div class="ap-mockup-card">
-      <div class="ap-mockup-emoji">📀</div>
-      <div class="ap-mockup-label">Real Songs</div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">📊 5 维串词质量</span>
+      <h2 class="feat-h2">不是每首歌<br/><em>都讲故事</em>。</h2>
+      <p class="feat-desc">5 维度评分(情感/相关/承上/新鲜/时长)≥ 阈值才讲完整故事;否则简短衔接或纯歌曲。质量可视化,看得见 AI 在做什么。</p>
+      <div class="feat-chips">
+        <span class="chip">🎯 情感</span>
+        <span class="chip">🔗 相关</span>
+        <span class="chip">🧵 承上</span>
+        <span class="chip">✨ 新鲜</span>
+        <span class="chip">⏱️ 时长</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🎯</div><div class="feat-card-title">情感共鸣</div><div class="feat-card-desc">听众听了会感动吗</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🔗</div><div class="feat-card-title">相关性</div><div class="feat-card-desc">和前一首/下一首有关吗</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🧵</div><div class="feat-card-title">承上启下</div><div class="feat-card-desc">过渡自然吗</div></div>
+        <div class="feat-card"><div class="feat-card-icon">⏱️</div><div class="feat-card-title">时长</div><div class="feat-card-desc">10s-30s,不抢歌时间</div></div>
+      </div>
     </div>
   </div>
 </section>
 
-<footer class="ap-footer">
-  <div class="ap-foot-logo">ZYRVIS</div>
-  <div class="ap-foot-links">
-    <a href="index.html">首页</a>
-    <a href="wavedio.html">Wavedio</a>
+<!-- ── § 5  5 套配色 ── -->
+<section class="feature-section" id="sec5" data-idx="5">
+  <div class="shape" style="width:340px;height:340px;border-radius:50%;background:rgba(255,107,107,0.1);top:-60px;right:-60px;animation:sPulse 8s ease-in-out infinite"></div>
+  <div class="shape" style="width:200px;height:200px;border-radius:40px;background:rgba(78,205,196,0.08);bottom:-40px;left:60px;animation:sFloat 7s ease-in-out infinite 3s"></div>
+  <div class="feature-inner rev">
+    <div class="feature-text reveal">
+      <span class="feat-tag">🎨 5 套多巴胺主题色</span>
+      <h2 class="feat-h2">每个电台<br/><em>有自己的颜色</em>。</h2>
+      <p class="feat-desc">Jazz 珊瑚橙 / Hip-Hop 电光蓝 / Lo-Fi 葡萄紫 / Pop 阳光黄 / Rock 薄荷绿。点击卡片主色 + 整页配色瞬切,沉浸感满满。</p>
+      <div class="feat-chips">
+        <span class="chip">🟠 珊瑚橙</span>
+        <span class="chip">🟢 电光蓝</span>
+        <span class="chip">🟣 葡萄紫</span>
+        <span class="chip">🟡 阳光黄</span>
+        <span class="chip">🟢 薄荷绿</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🟠</div><div class="feat-card-title">珊瑚橙</div><div class="feat-card-desc">Jazz / 优雅 / 复古</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🟢</div><div class="feat-card-title">电光蓝</div><div class="feat-card-desc">Hip-Hop / 街头 / 律动</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🟣</div><div class="feat-card-title">葡萄紫</div><div class="feat-card-desc">Lo-Fi / 治愈 / 慢节奏</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🟡</div><div class="feat-card-title">阳光黄</div><div class="feat-card-desc">Pop / 都市 / 活力</div></div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="wd-palette">
+        <div class="wd-pal jazz"><div class="wd-pal-name">Jazz FM</div><div class="wd-pal-val">#FF6B6B</div></div>
+        <div class="wd-pal hiphop"><div class="wd-pal-name">Hip-Hop FM</div><div class="wd-pal-val">#4ECDC4</div></div>
+        <div class="wd-pal lofi"><div class="wd-pal-name">Lo-Fi FM</div><div class="wd-pal-val">#9B59B6</div></div>
+        <div class="wd-pal pop"><div class="wd-pal-name">Pop FM</div><div class="wd-pal-val">#FFE66D</div></div>
+        <div class="wd-pal rock"><div class="wd-pal-name">Rock FM</div><div class="wd-pal-val">#A8E6CF</div></div>
+      </div>
+    </div>
   </div>
-  <div class="ap-foot-copy">© 2026 ZYRVIS · Wavedio</div>
+</section>
+
+<!-- ── § 6  真实歌曲 + 串场 ── -->
+<section class="feature-section" id="sec6" data-idx="6">
+  <div class="shape" style="width:380px;height:380px;border-radius:50%;background:rgba(255,230,109,0.08);top:-80px;left:-80px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:220px;height:60px;border-radius:999px;background:rgba(255,107,107,0.1);bottom:100px;right:-20px;animation:sDrift 8s ease-in-out infinite 1s"></div>
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="dk-surface" style="background:linear-gradient(180deg,#0a0a0a 0%,#1a1a1a 100%);border-radius:18px;padding:24px;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08)">
+        <div style="text-align:center;font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.5px;margin-bottom:18px">🎵 现在播放的曲目 · 老爵士主持</div>
+        <div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(255,255,255,0.04);border-radius:12px;margin-bottom:8px">
+          <div style="width:50px;height:50px;border-radius:10px;background:linear-gradient(135deg,#FF6B6B,#EE5A6F);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🎷</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:600;color:#fff">Take Five</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.5)">Dave Brubeck · 1959</div>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4)">02:14 / 05:24</div>
+        </div>
+        <div style="padding:14px;background:rgba(255,107,107,0.06);border-radius:12px;margin-bottom:10px;border:0.5px solid rgba(255,107,107,0.15)">
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:0.5px;margin-bottom:6px">🎙️ 老爵士 串场</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.5">"这首 Take Five 是 1959 年 Dave Brubeck  Quartet 的经典之作,五拍子的节奏在爵士史上罕见,Brubeck 用了 5/4 拍打破常规,听听 2:30 处的钢琴独奏..."</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:14px">
+          <div style="text-align:center;padding:8px;background:rgba(255,255,255,0.04);border-radius:8px">
+            <div style="font-size:16px;font-weight:700;color:#FF6B6B;line-height:1">8</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.5)">本时段曲目</div>
+          </div>
+          <div style="text-align:center;padding:8px;background:rgba(255,255,255,0.04);border-radius:8px">
+            <div style="font-size:16px;font-weight:700;color:#FF6B6B;line-height:1">12min</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.5)">总时长</div>
+          </div>
+          <div style="text-align:center;padding:8px;background:rgba(255,255,255,0.04);border-radius:8px">
+            <div style="font-size:16px;font-weight:700;color:#FF6B6B;line-height:1">3</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.5)">老爵士串场</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">📀 真实歌曲 + 串场</span>
+      <h2 class="feat-h2">不只是 TTS，<br/>是<em>有人味儿的陪伴</em>。</h2>
+      <p class="feat-desc">AI 主播串联真实版权歌曲,在间隙讲歌曲故事、分享心情、时光絮语。深夜模式自动切到 Lo-Fi FM 的苏苏。</p>
+      <div class="feat-chips">
+        <span class="chip">🎵 真实版权</span>
+        <span class="chip">🎙️ 故事串场</span>
+        <span class="chip">🌙 深夜模式</span>
+        <span class="chip">⏱️ 2-3h 轮换</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🎵</div><div class="feat-card-title">真实版权</div><div class="feat-card-desc">所有歌曲来自正版曲库</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🎙️</div><div class="feat-card-title">故事串场</div><div class="feat-card-desc">讲歌曲背景,分享 DJ 心境</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🌙</div><div class="feat-card-title">深夜模式</div><div class="feat-card-desc">23:00 自动切到 Lo-Fi 苏苏</div></div>
+        <div class="feat-card"><div class="feat-card-icon">⏱️</div><div class="feat-card-title">2-3h 轮换</div><div class="feat-card-desc">每个主播时段,自动无缝衔接</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section" id="cta" data-idx="7">
+  <div class="shape" style="width:420px;height:420px;border-radius:50%;background:rgba(255,107,107,0.08);top:-120px;right:-120px;animation:sPulse 9s ease-in-out infinite"></div>
+  <div class="shape" style="width:280px;height:75px;border-radius:999px;background:rgba(78,205,196,0.1);bottom:80px;left:-40px;animation:sDrift 7s ease-in-out infinite 1.5s"></div>
+  <div class="shape" style="width:110px;height:110px;border-radius:50%;background:rgba(255,230,109,0.15);top:38%;left:80px;animation:sBob 5s ease-in-out infinite 0.8s"></div>
+  <div class="cta-inner reveal">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:28px">📻 Wavedio · iOS 内测中</div>
+    <h1 class="cta-h1">打开 App，<br/>像调<em>FM 一样</em>简单。</h1>
+    <p class="cta-sub">Wavedio 不是 Spotify 的替代品,不是播客,只是让你在 FM 收音机里遇见 AI 主播的轻量工具。</p>
+    <div class="cta-btns">
+      <button class="hero-btn-primary" onclick="alert('感谢关注!内测链接将通过邮件发送')">申请内测 →</button>
+      <button class="hero-btn-secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">回到顶部</button>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-logo">Wavedio</div>
+  <div class="footer-links">
+    <a class="footer-link" href="index.html">ZYRVIS 首页</a>
+    <a class="footer-link" href="#hero">回到顶部</a>
+    <a class="footer-link" href="#cta">下载</a>
+  </div>
+  <div class="footer-copy">© 2026 ZYRVIS · Wavedio · AI 收音机</div>
 </footer>
 
-<style>
-.ap-radio{padding:20px;background:linear-gradient(135deg,#2a1a0a 0%,#1a0a00 100%);height:480px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
-.ap-radio::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(255,255,255,0.02) 2px,rgba(255,255,255,0.02) 4px);pointer-events:none}
-.ap-radio-dial{text-align:center;width:100%;padding:30px 20px;background:rgba(255,255,255,0.04);border-radius:16px;backdrop-filter:blur(8px)}
-.ap-radio-freq{font-size:54px;font-weight:200;color:#ff9500;letter-spacing:4px;font-variant-numeric:tabular-nums;text-shadow:0 0 20px rgba(255,149,0,0.4)}
-.ap-radio-stations{display:flex;justify-content:space-between;margin-top:16px;padding:0 8px}
-.ap-radio-stations span{font-size:10px;color:rgba(255,255,255,0.3);font-weight:600}
-.ap-radio-stations span.on{color:#ff9500;font-size:13px}
-.ap-radio-knob{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#4a4a4a,#1a1a1a);box-shadow:0 4px 16px rgba(0,0,0,0.5),inset 0 1px 2px rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:#ff9500;font-size:32px;line-height:1}
-.ap-radio-now{display:flex;gap:14px;padding:14px 16px;background:rgba(0,0,0,0.4);border-radius:14px;width:100%;align-items:center}
-.ap-radio-cover{width:50px;height:50px;border-radius:10px;background:linear-gradient(135deg,#ff9500,#ff3b30);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
-.ap-radio-info{flex:1;min-width:0;text-align:left}
-.ap-radio-song{font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ap-radio-host{font-size:11px;color:rgba(255,255,255,0.5)}
+<script>
+/* ── NAV ── */
+const sections = document.querySelectorAll('[data-idx]');
+const dots = document.querySelectorAll('.sc-dot');
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.intersectionRatio > 0.3) {
+      const idx = e.target.dataset.idx;
+      dots.forEach(d => d.classList.remove('active'));
+      const a = document.querySelector(`.sc-dot[data-idx="${idx}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => navObs.observe(s));
 
-.ap-hosts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;width:100%;max-width:920px}
-.ap-host{background:#fff;border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.04);text-align:center}
-.ap-host-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px}
-.ap-host-avatar.jazz{background:linear-gradient(135deg,#8b4513,#d2691e)}
-.ap-host-avatar.lofi{background:linear-gradient(135deg,#e6a8d7,#a890c2)}
-.ap-host-avatar.pop{background:linear-gradient(135deg,#ff6b6b,#ffa500)}
-.ap-host-name{font-size:16px;font-weight:600;color:#1d1d1f;margin-bottom:2px}
-.ap-host-station{font-size:11px;color:#86868b;font-weight:600;letter-spacing:0.5px;margin-bottom:12px}
-.ap-host-style{font-size:12px;color:#1d1d1f;line-height:1.5;font-style:italic;background:rgba(0,0,0,0.04);padding:10px 12px;border-radius:10px}
-</style>
+/* ── SMOOTH SCROLL ── */
+document.querySelectorAll('[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
 
+/* ── REVEAL ── */
+document.body.classList.add('js-reveal-ready');
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(r => revObs.observe(r));
+
+/* ── Wavedio 5 电台数据 ── */
+const wdStations = [
+  {idx:0, name:'老爵士', station:'Jazz FM', style:'优雅老派绅士', avatar:'🎷', freq:88.0, song:'Take Five', host:'老爵士 · 主持中', quote:'"今晚给大家来一首 Coltrane 的名曲,时间是 1957 年的夏天..."', cover:'🎷', class:'jazz'},
+  {idx:1, name:'阿杰', station:'Hip-Hop FM', style:'街头文化达人', avatar:'🎤', freq:90.5, song:"Lose Yourself", host:'阿杰 · 主持中', quote:'"Yo 这首是 2002 年 Eminem 的经典,beats 起来就对了!"', cover:'🎤', class:'hiphop'},
+  {idx:2, name:'苏苏', station:'Lo-Fi FM', style:'文艺慢生活博主', avatar:'🎧', freq:93.2, song:'Snowfall', host:'苏苏 · 主持中', quote:'"嗯...这首曲子,适合泡杯热茶,看窗外的雨..."', cover:'🎧', class:'lofi'},
+  {idx:3, name:'小北', station:'Pop FM', style:'阳光都市女孩', avatar:'🌆', freq:98.7, song:'Levitating', host:'小北 · 主持中', quote:'"嗨各位!准备好迎接今天的新歌了吗?Let\'s go!"', cover:'🌆', class:'pop'},
+  {idx:4, name:'阿 Rock', station:'Rock FM', style:'粗犷摇滚老炮', avatar:'🎸', freq:102.4, song:'Stairway to Heaven', host:'阿 Rock · 主持中', quote:'"1971 年的录音,Jimmy Page 的吉他,永远的传奇。"', cover:'🎸', class:'rock'}
+];
+
+/* ── Wavedio 5 卡片选择 ── */
+window.wdSelect = function(idx){
+  document.querySelectorAll('.wd-card').forEach(c => c.classList.remove('on'));
+  document.querySelector(`.wd-card[data-idx="${idx}"]`).classList.add('on');
+  const s = wdStations[idx];
+  document.getElementById('wdRadioBar').textContent = s.station;
+  document.getElementById('wdRadioBar').style.color = `var(--coral)`;
+  document.getElementById('wdRadioBar').className = `phone-bar ${s.class}`;
+  const radio = document.getElementById('wdRadio');
+  radio.querySelector('.wd-freq').textContent = s.freq.toFixed(1);
+  radio.querySelector('.wd-freq').className = `wd-freq ${s.class}`;
+  radio.querySelector('.wd-knob').className = `wd-knob ${s.class}`;
+  radio.querySelector('.wd-waveform').className = `wd-waveform ${s.class}`;
+  radio.querySelector('.wd-cover').className = `wd-cover ${s.class}`;
+  document.getElementById('wdCover').textContent = s.cover;
+  document.getElementById('wdSong').textContent = s.song;
+  document.getElementById('wdHostLabel').textContent = s.host;
+};
+
+/* ── Wavedio 5 主播选择 ── */
+window.wdHost = function(idx){
+  document.querySelectorAll('.wd-host-card').forEach(c => c.classList.remove('on'));
+  document.querySelectorAll('.wd-host-card')[idx].classList.add('on');
+  const s = wdStations[idx];
+  const av = document.getElementById('wdDetailAvatar');
+  av.textContent = s.avatar;
+  av.style.background = '';
+  // 清除内联,使用 class 控制
+  av.removeAttribute('style');
+  av.className = 'jazz';
+  if(s.class === 'hiphop') av.className = 'wd-host-avatar hiphop';
+  else if(s.class === 'lofi') av.className = 'wd-host-avatar lofi';
+  else if(s.class === 'pop') av.className = 'wd-host-avatar pop';
+  else if(s.class === 'rock') av.className = 'wd-host-avatar rock';
+  document.getElementById('wdDetailName').textContent = s.name;
+  document.getElementById('wdDetailStation').textContent = s.station + ' · ' + s.style;
+  document.getElementById('wdDetailQuote').textContent = s.quote;
+};
+
+/* ── Wavedio 5 维串词质量评估(JS 进度条动画) ── */
+const wdQuality = [
+  {label:'情感共鸣', val:0.85, color:'#34C759'},
+  {label:'相关性', val:0.78, color:'#34C759'},
+  {label:'承上启下', val:0.62, color:'#FF9500'},
+  {label:'新鲜度', val:0.45, color:'#FF9500'},
+  {label:'时长合适', val:0.92, color:'#34C759'}
+];
+function wdAnimateQuality(){
+  wdQuality.forEach((q, i) => {
+    const bar = document.getElementById('qBar' + (i+1));
+    const val = document.getElementById('qVal' + (i+1));
+    if(!bar || !val) return;
+    const target = q.val;
+    let cur = 0;
+    const start = Date.now();
+    const dur = 1000;
+    function tick(){
+      const t = Math.min((Date.now()-start)/dur, 1);
+      const e = 1 - Math.pow(1-t, 3);
+      cur = target * e;
+      bar.style.width = (cur*100) + '%';
+      val.textContent = cur.toFixed(2);
+      if(t<1) requestAnimationFrame(tick);
+      else { bar.style.width = (target*100)+'%'; val.textContent = target.toFixed(2); }
+    }
+    setTimeout(() => tick(), 300 + i*150);
+  });
+}
+window.wdResetQuality = function(){
+  wdAnimateQuality();
+};
+// 滚动到质量评估时自动播放
+(function(){
+  const el = document.getElementById('sec4');
+  if(!el) return;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ wdAnimateQuality(); obs.disconnect(); }});
+  }, {threshold:0.3});
+  obs.observe(el);
+})();
+</script>
 </body>
 </html>

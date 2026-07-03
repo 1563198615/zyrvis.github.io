@@ -4,193 +4,727 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FitMap — AI 健身助手</title>
-<link rel="stylesheet" href="apple-base.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Nunito',-apple-system,'PingFang SC',system-ui,sans-serif;background:#080808;color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::-webkit-scrollbar{display:none}
+em{font-style:italic}
+:root{
+  --cream:#F6F1E7;--paper:#FFFDF8;--sand:#EDE4D2;
+  --ink:#2A2520;--ink2:#6B6158;--ink3:#A89E91;
+  --mocha:#B08A5B;--mochaDk:#8A6740;--mochaLt:#D9C2A4;
+  --sage:#A8B89A;--sageDk:#7D9274;--rose:#D9A9A2;
+  --sky:#B8CFD9;--butter:#F2D58A;--plum:#9E7BA0;
+  --coral:#AF52DE;--electric:#0A84FF;--sun:#FF9500;--mint:#34C759;        /* FitMap:紫 + 蓝(AI 健身感) */
+  --line:rgba(255,255,255,0.1);
+  --shadow:0 1px 2px rgba(0,0,0,0.2),0 4px 14px rgba(0,0,0,0.15);
+  --shadowLg:0 8px 40px rgba(0,0,0,0.4);
+}
+
+/* ── CAPSULE NAV ── */
+.sidenav{position:fixed;left:20px;top:50%;transform:translateY(-50%);width:44px;z-index:9999;background:rgba(20,20,20,0.9);backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);border:0.5px solid rgba(255,255,255,0.12);border-radius:28px;padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:5px;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 1px rgba(255,255,255,0.08)}
+.sc-logo{font-family:'Fraunces',Georgia,serif;font-size:13px;font-weight:800;color:#fff;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:10px;transition:background 0.15s;text-decoration:none}
+.sc-logo:hover{background:rgba(255,255,255,0.1)}
+.sc-sep{width:20px;height:0.5px;background:rgba(255,255,255,0.12);margin:4px 0;flex-shrink:0}
+.sc-dot{width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;position:relative;transition:background 0.15s;flex-shrink:0}
+.sc-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all 0.2s}
+.sc-dot.active::before{background:#fff;transform:scale(1.25)}
+.sc-dot:hover::before{background:rgba(255,255,255,0.8);transform:scale(1.1)}
+.sc-dot::after,.sc-logo::after,.sc-cta::after,.sc-back::after{content:attr(data-tip);position:absolute;left:calc(100% + 14px);top:50%;transform:translateY(-50%);background:rgba(20,20,20,0.95);color:#fff;padding:5px 11px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;font-family:'Nunito',sans-serif;opacity:0;pointer-events:none;transition:opacity 0.15s;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:0.5px solid rgba(255,255,255,0.1)}
+.sc-dot:hover::after,.sc-logo:hover::after,.sc-cta:hover::after,.sc-back:hover::after{opacity:1}
+.sc-cta{width:28px;height:28px;border-radius:10px;background:rgba(255,255,255,0.15);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;font-size:11px;font-weight:900;transition:all 0.15s;position:relative;border:none;font-family:'Nunito',sans-serif}
+.sc-cta:hover{background:rgba(255,255,255,0.25)}
+.sc-back{width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;font-size:9px;font-weight:900;color:rgba(255,255,255,0.4);letter-spacing:0.5px;transition:all 0.15s;position:relative}
+.sc-back:hover{color:#fff;background:rgba(255,255,255,0.08)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#080808;padding:80px 60px;text-align:center}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);font-size:12px;font-weight:700;color:rgba(255,255,255,0.65);margin-bottom:32px;position:relative;z-index:1}
+.hero-h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(52px,7vw,90px);font-weight:800;line-height:1.02;color:#fff;letter-spacing:-2.5px;margin-bottom:24px;position:relative;z-index:1}
+.hero-h1 em{background:linear-gradient(135deg,#AF52DE,#0A84FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.62);max-width:600px;margin:0 auto 40px;line-height:1.65;position:relative;z-index:1}
+.hero-stats{display:flex;gap:14px;margin-bottom:40px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1}
+.hero-stat{padding:18px 24px;border-radius:20px;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);min-width:130px;transition:background 0.2s}
+.hero-stat:hover{background:rgba(255,255,255,0.1)}
+.hero-stat-num{font-family:'Fraunces',Georgia,serif;font-size:30px;font-weight:800;line-height:1;margin-bottom:6px}
+.hero-stat-num em{color:#AF52DE;font-style:normal}
+.hero-stat-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.3px}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.hero-btn-primary{background:#fff;color:#080808;border:none;padding:14px 36px;border-radius:999px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 6px 24px rgba(255,255,255,0.15);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;display:inline-block}
+.hero-btn-primary:hover{transform:scale(1.04);box-shadow:0 10px 32px rgba(255,255,255,0.22)}
+.hero-btn-secondary{background:transparent;color:rgba(255,255,255,0.75);border:0.5px solid rgba(255,255,255,0.25);padding:14px 28px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-decoration:none;display:inline-block}
+.hero-btn-secondary:hover{color:#fff;border-color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.06)}
+
+/* ── FEATURE SECTIONS ── */
+.feature-section{min-height:100vh;padding:100px 64px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#080808}
+.feature-inner{max-width:1200px;width:100%;display:flex;align-items:center;gap:64px;flex-wrap:wrap;position:relative;z-index:1}
+.feature-inner.rev{flex-direction:row-reverse}
+.feature-text{flex:1;min-width:340px;position:relative;z-index:2}
+.feature-visual{flex:0 0 auto;display:flex;justify-content:center;position:relative;z-index:2}
+.feat-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;border:0.5px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.1);font-size:12px;font-weight:700;color:rgba(255,255,255,0.82);margin-bottom:22px}
+.feat-h2{font-family:'Fraunces',Georgia,serif;font-size:clamp(36px,4.5vw,56px);font-weight:800;line-height:1.07;color:#fff;letter-spacing:-1.2px;margin-bottom:20px}
+.feat-h2 em{background:linear-gradient(135deg,#AF52DE,#0A84FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic}
+.feat-desc{font-size:15.5px;line-height:1.68;color:rgba(255,255,255,0.76);max-width:440px;margin-bottom:24px}
+.feat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.16);font-size:12px;font-weight:700;color:rgba(255,255,255,0.9)}
+.feat-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:440px}
+.feat-card{background:rgba(255,255,255,0.07);border-radius:18px;padding:16px 14px;border:0.5px solid rgba(255,255,255,0.11)}
+.feat-card-icon{font-size:22px;margin-bottom:8px}
+.feat-card-title{font-size:13px;font-weight:800;color:#fff;margin-bottom:4px}
+.feat-card-desc{font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5}
+
+/* ── BROWSER FRAME ── */
+.browser{width:560px;border-radius:14px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.08);flex-shrink:0}
+.browser.wide{width:620px}
+.bbar{background:#1A1A1A;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:0.5px solid rgba(255,255,255,0.06)}
+.bdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.bdot.r{background:#FF5F57}.bdot.y{background:#FFBD2E}.bdot.g{background:#28C940}
+.burl{flex:1;background:rgba(255,255,255,0.07);border-radius:5px;height:20px;margin:0 16px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.28);font-weight:600;letter-spacing:0.3px}
+.bcontent{background:#111;height:400px;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── DARK SURFACES ── */
+.phone.dark{background:linear-gradient(180deg,#0a0a0a 0%,#1a1a1a 100%)}
+.phone.dark .phone-bar{color:rgba(255,255,255,0.4)}
+.dk-surface{background:linear-gradient(180deg,#0a0a0a 0%,#1a1a1a 100%);color:#fff}
+
+/* ── FitMap 3D 人体模型(深色) ── */
+.fm-3d{padding:30px;background:linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%);height:540px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;overflow:hidden}
+.fm-3d::before{content:'';position:absolute;top:20%;left:10%;width:60%;height:60%;background:radial-gradient(ellipse,rgba(175,82,222,0.15) 0%,transparent 70%);pointer-events:none}
+.fm-3d-figure{position:relative;width:200px;height:340px}
+.fm-3d-head{position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#444,#222)}
+.fm-3d-body{position:absolute;top:70px;left:0;right:0;height:260px}
+.fm-muscle{position:absolute;border-radius:12px;opacity:0.3;transition:all 0.3s;cursor:pointer}
+.fm-muscle:hover{transform:scale(1.05);opacity:0.7}
+.fm-muscle.chest{top:0;left:50%;transform:translateX(-50%);width:120px;height:60px}
+.fm-muscle.shoulder{top:5px;width:50px;height:40px}
+.fm-muscle.arm{top:50px;width:30px;height:100px}
+.fm-muscle.core{top:70px;left:50%;transform:translateX(-50%);width:100px;height:80px}
+.fm-muscle.leg{top:160px;width:40px;height:90px}
+.fm-muscle.active{box-shadow:0 0 20px currentColor,0 0 40px currentColor}
+.fm-muscle.chest.active{background:#FF3B30;opacity:0.95;color:#FF3B30}
+.fm-muscle.shoulder.active{background:#FF3B30;opacity:0.95;color:#FF3B30}
+.fm-muscle.arm.active{background:#FF3B30;opacity:0.95;color:#FF3B30}
+.fm-muscle.core.active{background:#5AC8FA;opacity:0.95;color:#5AC8FA}
+.fm-muscle.leg.active{background:#FFCC00;opacity:0.95;color:#FFCC00}
+.fm-muscle.shoulder:nth-child(2){left:0}
+.fm-muscle.shoulder:nth-child(3){right:0}
+.fm-muscle.arm:nth-child(4){left:5px}
+.fm-muscle.arm:nth-child(5){right:5px}
+.fm-muscle.leg:nth-of-type(6){left:25px}
+.fm-muscle.leg:nth-of-type(7){right:25px}
+.fm-3d-info{padding:6px 14px;background:rgba(255,255,255,0.08);color:#fff;font-size:12px;border-radius:10px;backdrop-filter:blur(10px);min-width:280px;text-align:center;border:0.5px solid rgba(255,255,255,0.1)}
+.fm-3d-legend{display:flex;gap:14px;padding:8px 14px;background:rgba(255,255,255,0.08);border-radius:12px;backdrop-filter:blur(10px);border:0.5px solid rgba(255,255,255,0.1)}
+.fm-3d-legend span{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.8);font-weight:500}
+.fm-3d-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.fm-3d-controls{display:flex;gap:8px}
+.fm-3d-controls span{padding:6px 12px;background:rgba(255,255,255,0.1);color:#fff;font-size:11px;border-radius:8px;backdrop-filter:blur(10px);cursor:pointer}
+
+/* ── FitMap 动作库 ── */
+.fm-lib{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px}
+.fm-lib-item{background:rgba(255,255,255,0.05);border-radius:12px;padding:12px 6px;text-align:center;cursor:pointer;transition:all 0.2s;border:0.5px solid transparent}
+.fm-lib-item:hover{background:rgba(175,82,222,0.1);transform:translateY(-2px);border-color:rgba(175,82,222,0.3)}
+.fm-lib-item.added{background:rgba(52,199,89,0.12);border-color:rgba(52,199,89,0.3)}
+.fm-lib-emoji{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 6px;background:rgba(255,255,255,0.06)}
+.fm-lib-name{font-size:11px;font-weight:600;color:#fff;margin-bottom:2px}
+.fm-lib-muscle{font-size:9px;color:rgba(255,255,255,0.5);background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;display:inline-block}
+
+/* ── FitMap 动作记录(JS) ── */
+.fm-exercise{padding:20px 16px}
+.fm-ex-name{font-size:18px;font-weight:600;color:#fff;margin-bottom:4px}
+.fm-ex-muscle{font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:14px}
+.fm-ex-sets{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.fm-set{display:flex;align-items:center;gap:12px;padding:11px 13px;background:rgba(255,255,255,0.05);border-radius:12px;transition:all 0.3s}
+.fm-set.done{background:rgba(52,199,89,0.1);border-left:3px solid #34C759}
+.fm-set.on{background:linear-gradient(135deg,rgba(175,82,222,0.2),rgba(10,132,255,0.1));border:0.5px solid rgba(175,82,222,0.3)}
+.fm-set span{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0}
+.fm-set.on span{background:rgba(255,255,255,0.25)}
+.fm-set strong{flex:1;font-size:14px;font-weight:600;color:#fff}
+.fm-set em{font-size:11px;opacity:0.7;font-style:normal;color:rgba(255,255,255,0.7)}
+.fm-ex-timer{text-align:center;font-size:30px;font-weight:600;color:#AF52DE;font-variant-numeric:tabular-nums;letter-spacing:2px;padding:14px;background:rgba(175,82,222,0.08);border-radius:12px;margin-bottom:10px}
+.fm-ex-actions{display:flex;gap:8px}
+.fm-ex-btn{flex:1;padding:11px;background:rgba(255,255,255,0.06);border-radius:10px;text-align:center;font-size:13px;font-weight:600;color:#fff;cursor:pointer;transition:all 0.2s}
+.fm-ex-btn.primary{background:linear-gradient(135deg,#AF52DE,#0A84FF);color:#fff}
+
+/* ── FitMap 训练日历(JS 翻页) ── */
+.fm-cal{background:rgba(255,255,255,0.04);border-radius:14px;padding:18px;width:100%;max-width:480px;border:0.5px solid rgba(255,255,255,0.08)}
+.fm-cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.fm-cal-month{font-size:18px;font-weight:700;color:#fff;font-family:'Fraunces',Georgia,serif}
+.fm-cal-nav{display:flex;gap:4px}
+.fm-cal-nav span{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:14px;color:rgba(255,255,255,0.7);cursor:pointer}
+.fm-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
+.fm-cal-d{text-align:center;font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;padding-bottom:4px}
+.fm-cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;border-radius:8px;font-weight:600;cursor:pointer;transition:transform 0.15s;position:relative}
+.fm-cal-cell:hover{transform:scale(1.1)}
+.fm-cal-cell.done{background:rgba(52,199,89,0.18);color:#34C759}
+.fm-cal-cell.rest{background:rgba(255,149,0,0.15);color:#FF9500}
+.fm-cal-cell.plan{background:rgba(10,132,255,0.15);color:#0A84FF;border:1px dashed #0A84FF}
+.fm-cal-cell.today{background:linear-gradient(135deg,#AF52DE,#0A84FF);color:#fff;box-shadow:0 0 0 3px rgba(175,82,222,0.2)}
+.fm-cal-cell.empty{visibility:hidden}
+.fm-cal-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:rgba(255,255,255,0.6);justify-content:center;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.08)}
+.fm-cal-legend span{display:flex;align-items:center;gap:4px}
+.fm-cal-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+/* ── FitMap 训练完成 ── */
+.fm-summary{text-align:center;padding:20px 16px}
+.fm-summary-emoji{font-size:48px;margin-bottom:8px}
+.fm-summary-time{font-size:48px;font-weight:700;color:#fff;line-height:1;letter-spacing:-2px}
+.fm-summary-label{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px}
+.fm-summary-stats{display:flex;justify-content:space-around;padding:16px 0;margin-bottom:14px;border-top:0.5px solid rgba(255,255,255,0.1);border-bottom:0.5px solid rgba(255,255,255,0.1)}
+.fm-summary-stats>div{text-align:center;font-size:10px;color:rgba(255,255,255,0.5)}
+.fm-summary-stats strong{display:block;font-size:18px;font-weight:700;background:linear-gradient(135deg,#AF52DE,#0A84FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px}
+.fm-summary-pr{background:linear-gradient(135deg,#FFD700,#FF9500);color:#fff;padding:11px 14px;border-radius:12px;font-size:13px;font-weight:600;margin-bottom:8px}
+.fm-summary-muscle{font-size:11px;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.05);padding:9px;border-radius:8px}
+
+/* ── PHONE ── */
+.phone{width:300px;background:#000;border-radius:36px;padding:10px;box-shadow:0 30px 80px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.05);flex-shrink:0;overflow:hidden}
+.phone.wide{width:380px}
+.phone-bar{height:20px;background:transparent;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,0.4);font-weight:600}
+
+/* ── SHAPES ── */
+.shape{position:absolute;pointer-events:none;z-index:0}
+@keyframes sFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+@keyframes sDrift{0%,100%{transform:translateX(0)}50%{transform:translateX(20px)}}
+@keyframes sPulse{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.28;transform:scale(1.07)}}
+@keyframes sBob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-16px) scale(1.04)}}
+
+/* ── REVEAL ── */
+body.js-reveal-ready .reveal{opacity:0;transform:translateY(28px);transition:opacity 0.75s ease,transform 0.75s ease}
+body.js-reveal-ready .reveal.visible{opacity:1;transform:translateY(0)}
+body.js-reveal-ready .reveal.delay-1{transition-delay:0.1s}
+body.js-reveal-ready .reveal.delay-2{transition-delay:0.22s}
+body.js-reveal-ready .reveal.delay-3{transition-delay:0.34s}
+
+/* ── CTA ── */
+.cta-section{min-height:70vh;padding:120px 60px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;position:relative;overflow:hidden;background:#080808}
+.cta-inner{position:relative;z-index:1;max-width:700px}
+.cta-h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(44px,6vw,76px);font-weight:800;line-height:1.05;color:#fff;letter-spacing:-2px;margin-bottom:20px}
+.cta-h1 em{background:linear-gradient(135deg,#AF52DE,#0A84FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic}
+.cta-sub{font-size:17px;color:rgba(255,255,255,0.58);max-width:520px;margin:0 auto 40px;line-height:1.65}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ── */
+.footer{background:#080808;padding:48px 32px 32px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;border-top:0.5px solid rgba(255,255,255,0.08)}
+.footer-logo{font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.footer-link{font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);text-decoration:none;cursor:pointer;transition:color 0.2s}
+.footer-link:hover{color:#fff}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.4)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  .sidenav{display:none}
+  .shape{display:none}
+  .feature-section,.ai-section{padding:72px 24px}
+  .feature-inner,.ai-inner{flex-direction:column!important;gap:44px}
+  .feature-text{min-width:unset}
+  .feature-inner.rev{flex-direction:column!important}
+  .hero{padding:80px 24px}
+  .hero-stats{gap:10px}
+  .hero-stat{padding:14px 18px;min-width:100px}
+  .cta-section{padding:72px 24px}
+  .browser,.phone{width:100%;max-width:100%}
+  .bcontent{height:300px}
+  .feat-cards{grid-template-columns:1fr}
+  .fm-lib{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .hero-h1{font-size:clamp(38px,10vw,52px)}
+  .cta-h1{font-size:clamp(34px,9vw,48px)}
+  .feature-section{padding:56px 20px}
+  .feat-h2{font-size:clamp(30px,8vw,42px)}
+  .fm-lib{grid-template-columns:repeat(2,1fr)}
+}
+</style>
 </head>
 <body>
 
-<nav class="ap-nav">
-  <a class="ap-logo" href="index.html">ZYRVIS</a>
-  <div class="ap-nav-links">
-    <a href="index.html">首页</a>
-    <a href="fitmap.html" class="on">FitMap</a>
-  </div>
+<nav class="sidenav">
+  <a class="sc-logo" data-tip="FitMap" href="#hero">💪</a>
+  <div class="sc-sep"></div>
+  <a class="sc-dot active" data-idx="0" data-tip="概览" href="#hero"></a>
+  <a class="sc-dot" data-idx="1" data-tip="3D 人体" href="#sec1"></a>
+  <a class="sc-dot" data-idx="2" data-tip="103 动作" href="#sec2"></a>
+  <a class="sc-dot" data-idx="3" data-tip="动作记录" href="#sec3"></a>
+  <a class="sc-dot" data-idx="4" data-tip="训练日历" href="#sec4"></a>
+  <a class="sc-dot" data-idx="5" data-tip="智能总结" href="#sec5"></a>
+  <a class="sc-dot" data-idx="6" data-tip="AI 推荐" href="#sec6"></a>
+  <a class="sc-dot" data-idx="7" data-tip="下载" href="#cta"></a>
+  <div class="sc-sep"></div>
+  <a class="sc-cta" data-tip="下载" href="#cta">↓</a>
+  <a class="sc-back" data-tip="ZYRVIS" href="index.html">Z</a>
 </nav>
 
-<section class="ap-hero">
-  <span class="ap-eyebrow">PRODUCT · 03</span>
-  <h1 class="ap-title">FitMap</h1>
-  <p class="ap-sub">3D 人体模型 + 肌肉热力图,让每一次训练都看得见。</p>
-  <div class="ap-cta">
-    <a class="ap-btn-primary" href="#">下载 iOS</a>
-    <a class="ap-btn-link" href="#features">了解功能 →</a>
+<!-- ── § 0  HERO ── -->
+<section class="hero" id="hero" data-idx="0">
+  <div class="shape" style="width:500px;height:500px;border-radius:50%;background:rgba(175,82,222,0.08);top:-140px;right:-140px;animation:sPulse 8s ease-in-out infinite"></div>
+  <div class="shape" style="width:360px;height:360px;border-radius:50%;background:rgba(10,132,255,0.06);bottom:-80px;left:-80px;animation:sPulse 10s ease-in-out infinite 2s"></div>
+  <div class="shape" style="width:280px;height:70px;border-radius:999px;background:rgba(255,149,0,0.1);top:30%;right:-40px;animation:sDrift 7s ease-in-out infinite 1s"></div>
+  <div class="shape" style="width:200px;height:200px;border-radius:40px;background:rgba(52,199,89,0.08);bottom:20%;left:40px;animation:sFloat 9s ease-in-out infinite 3s"></div>
+
+  <div class="hero-inner">
+    <div class="hero-eyebrow reveal">💪 FitMap · PRODUCT 03</div>
+    <h1 class="hero-h1 reveal delay-1">3D 人体模型，<br/>让训练<em>看得见</em>。</h1>
+    <p class="hero-sub reveal delay-2">通过 3D 人体 + 肌肉热力图,让每一次训练都看得见。103+ 动作库,智能记录组/重/次/RPE,科学安排训练节奏。</p>
+    <div class="hero-stats reveal delay-2">
+      <div class="hero-stat"><div class="hero-stat-num">103<em>+</em></div><div class="hero-stat-label">动作库</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label">3D 视图</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">5<em>维</em></div><div class="hero-stat-label">数据追踪</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">1<em>次</em></div><div class="hero-stat-label">做好就上线</div></div>
+    </div>
+    <div class="hero-btns reveal delay-3">
+      <button class="hero-btn-primary" onclick="alert('FitMap iOS 测试版即将发布')">下载 iOS →</button>
+      <button class="hero-btn-secondary" onclick="document.getElementById('sec1').scrollIntoView({behavior:'smooth'})">看 3D 人体</button>
+    </div>
   </div>
 </section>
 
-<!-- 渲染图:3D 人体模型 -->
-<section class="ap-render">
-  <div class="ap-render-tag">RENDER · 3D 人体模型</div>
-  <div class="ap-mockup">
-    <div class="ap-phone wide">
-      <div class="ap-phone-bar">3D 人体</div>
-      <div class="ap-3d">
-        <div class="ap-3d-figure">
-          <div class="ap-3d-head"></div>
-          <div class="ap-3d-body">
-            <div class="ap-3d-muscle chest on"></div>
-            <div class="ap-3d-muscle shoulder on"></div>
-            <div class="ap-3d-muscle arm on"></div>
-            <div class="ap-3d-muscle core"></div>
-            <div class="ap-3d-muscle leg recover"></div>
+<!-- ── § 1  3D 人体模型(JS 部位点击) ── -->
+<section class="feature-section" id="sec1" data-idx="1">
+  <div class="shape" style="width:380px;height:380px;border-radius:50%;background:rgba(175,82,222,0.1);top:-80px;right:-80px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:220px;height:60px;border-radius:999px;background:rgba(10,132,255,0.12);bottom:100px;left:-20px;animation:sDrift 8s ease-in-out infinite 1s"></div>
+  <div class="feature-inner rev">
+    <div class="feature-text reveal">
+      <span class="feat-tag">🏋️ 3D 人体模型</span>
+      <h2 class="feat-h2">旋转、放大、<br/>看清<em>每一束肌肉</em>。</h2>
+      <p class="feat-desc">支持骨骼 / 热图 / 混合三种视图模式。训练后该练哪里一目了然,点击 3D 人体任意部位即可激活。</p>
+      <div class="feat-chips">
+        <span class="chip">🦴 骨骼视图</span>
+        <span class="chip">🔥 热图视图</span>
+        <span class="chip">🎨 混合模式</span>
+        <span class="chip">↻ 360° 旋转</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🦴</div><div class="feat-card-title">骨骼视图</div><div class="feat-card-desc">解剖级精度,看清每一束肌肉</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🔥</div><div class="feat-card-title">热图视图</div><div class="feat-card-desc">红/黄/蓝,练过/恢复中/已恢复</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🎨</div><div class="feat-card-title">混合模式</div><div class="feat-card-desc">骨骼 + 热图同时显示</div></div>
+        <div class="feat-card"><div class="feat-card-icon">↻</div><div class="feat-card-title">360° 旋转</div><div class="feat-card-desc">手指拖动,从任何角度看</div></div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="phone wide">
+        <div class="phone-bar">3D 人体 · 热图</div>
+        <div class="fm-3d">
+          <div class="fm-3d-figure">
+            <div class="fm-3d-head"></div>
+            <div class="fm-3d-body">
+              <div class="fm-muscle chest active" onclick="fmToggle(this,'chest','胸 · 已激活')"></div>
+              <div class="fm-muscle shoulder active" onclick="fmToggle(this,'shoulder','肩 · 已激活')"></div>
+              <div class="fm-muscle shoulder active" onclick="fmToggle(this,'shoulder','肩 · 已激活')"></div>
+              <div class="fm-muscle arm active" onclick="fmToggle(this,'arm','臂 · 已激活')"></div>
+              <div class="fm-muscle arm active" onclick="fmToggle(this,'arm','臂 · 已激活')"></div>
+              <div class="fm-muscle core" onclick="fmToggle(this,'core','核心 · 已恢复')"></div>
+              <div class="fm-muscle leg" onclick="fmToggle(this,'leg','腿 · 恢复中')"></div>
+              <div class="fm-muscle leg" onclick="fmToggle(this,'leg','腿 · 恢复中')"></div>
+            </div>
+          </div>
+          <div class="fm-3d-info" id="fm3dInfo">已激活: 胸 · 肩 · 臂(5 个部位)</div>
+          <div class="fm-3d-legend">
+            <span><i style="background:#FF3B30"></i>已激活</span>
+            <span><i style="background:#FFCC00"></i>恢复中</span>
+            <span><i style="background:#5AC8FA"></i>已恢复</span>
+          </div>
+          <div class="fm-3d-controls">
+            <span onclick="alert('旋转:手指拖动 3D 人体')">↻ 旋转</span>
+            <span onclick="alert('放大:双指捏合')">👆 放大</span>
+            <span onclick="alert('切换:点击循环 骨骼/热图/混合')">🎨 切换</span>
           </div>
         </div>
-        <div class="ap-3d-legend">
-          <span><i style="background:#ff3b30"></i>今日训练</span>
-          <span><i style="background:#ffcc00"></i>恢复中</span>
-          <span><i style="background:#5ac8fa"></i>已恢复</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 2  103+ 动作库(JS 选加入) ── -->
+<section class="feature-section" id="sec2" data-idx="2">
+  <div class="shape" style="width:300px;height:420px;border-radius:40px;background:rgba(10,132,255,0.08);top:-30px;left:-60px;animation:sFloat 9s ease-in-out infinite"></div>
+  <div class="shape" style="width:320px;height:160px;border-radius:0 0 160px 160px;background:rgba(175,82,222,0.1);bottom:0;right:-40px;animation:sDrift 8s ease-in-out infinite 2s"></div>
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="phone wide">
+        <div class="phone-bar">动作库 · 103+</div>
+        <div class="dk-surface" style="padding:0">
+          <div class="fm-lib">
+            <div class="fm-lib-item" onclick="fmAddEx('杠铃卧推','胸')">
+              <div class="fm-lib-emoji">🏋️</div>
+              <div class="fm-lib-name">杠铃卧推</div>
+              <div class="fm-lib-muscle">胸</div>
+            </div>
+            <div class="fm-lib-item" onclick="fmAddEx('深蹲','腿')">
+              <div class="fm-lib-emoji">🦵</div>
+              <div class="fm-lib-name">深蹲</div>
+              <div class="fm-lib-muscle">腿</div>
+            </div>
+            <div class="fm-lib-item" onclick="fmAddEx('弯举','臂')">
+              <div class="fm-lib-emoji">💪</div>
+              <div class="fm-lib-name">弯举</div>
+              <div class="fm-lib-muscle">臂</div>
+            </div>
+            <div class="fm-lib-item" onclick="fmAddEx('硬拉','背')">
+              <div class="fm-lib-emoji">🏃</div>
+              <div class="fm-lib-name">硬拉</div>
+              <div class="fm-lib-muscle">背</div>
+            </div>
+            <div class="fm-lib-item" onclick="fmAddEx('推举','肩')">
+              <div class="fm-lib-emoji">🧘</div>
+              <div class="fm-lib-name">推举</div>
+              <div class="fm-lib-muscle">肩</div>
+            </div>
+            <div class="fm-lib-item" onclick="fmAddEx('划船','背')">
+              <div class="fm-lib-emoji">🤸</div>
+              <div class="fm-lib-name">划船</div>
+              <div class="fm-lib-muscle">背</div>
+            </div>
+            <div class="fm-lib-item" onclick="fmAddEx('臂屈伸','臂')">
+              <div class="fm-lib-emoji">🦾</div>
+              <div class="fm-lib-name">臂屈伸</div>
+              <div class="fm-lib-muscle">臂</div>
+            </div>
+            <div class="fm-lib-item" style="background:rgba(255,255,255,0.05);border:0.5px dashed rgba(255,255,255,0.15)">
+              <div class="fm-lib-emoji" style="font-size:18px;color:rgba(255,255,255,0.5)">+96</div>
+              <div class="fm-lib-name" style="color:rgba(255,255,255,0.5)">更多</div>
+              <div class="fm-lib-muscle">全</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">📚 103+ 动作库</span>
+      <h2 class="feat-h2">动作库 + 视频，<br/>练什么<em>不再纠结</em>。</h2>
+      <p class="feat-desc">103+ 动作演示 + 详细动作指南 + AI 替换建议,科学安排训练。点击动作加入训练,自动生成训练计划。</p>
+      <div class="feat-chips">
+        <span class="chip">🏋️ 杠铃/哑铃</span>
+        <span class="chip">🦵 深蹲/硬拉</span>
+        <span class="chip">💪 弯举/臂屈伸</span>
+        <span class="chip">📹 视频演示</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">📚</div><div class="feat-card-title">103+ 动作</div><div class="feat-card-desc">杠铃/哑铃/器械/徒手,全场景覆盖</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📹</div><div class="feat-card-title">视频演示</div><div class="feat-card-desc">每个动作都有标准动作视频</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🤖</div><div class="feat-card-title">AI 替换</div><div class="feat-card-desc">根据器械自动替换相似动作</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🎯</div><div class="feat-card-title">部位标记</div><div class="feat-card-desc">每动作标记主练/协同肌群</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 3  动作记录(JS 完成/加组) ── -->
+<section class="feature-section" id="sec3" data-idx="3">
+  <div class="shape" style="width:370px;height:290px;border-radius:44px;background:rgba(175,82,222,0.08);top:-40px;right:-60px;animation:sFloat 8s ease-in-out infinite 0.5s"></div>
+  <div class="shape" style="width:250px;height:65px;border-radius:999px;background:rgba(255,149,0,0.1);bottom:100px;left:-30px;animation:sDrift 7s ease-in-out infinite 2s"></div>
+  <div class="feature-inner rev">
+    <div class="feature-text reveal">
+      <span class="feat-tag">📊 智能记录</span>
+      <h2 class="feat-h2">组/重/次/RPE，<br/><em>自动追踪</em>。</h2>
+      <p class="feat-desc">组数、重量、次数、RPE/RIR 一应俱全。智能计时器自动开始,组间不再手忙脚乱。点 "完成" 即时切换下一组。</p>
+      <div class="feat-chips">
+        <span class="chip">📊 组/重/次</span>
+        <span class="chip">⏱ RPE 评分</span>
+        <span class="chip">🔔 智能计时</span>
+        <span class="chip">➕ 加组</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">📊</div><div class="feat-card-title">5 维数据</div><div class="feat-card-desc">组/重/次/RPE/RIR 全记录</div></div>
+        <div class="feat-card"><div class="feat-card-icon">⏱</div><div class="feat-card-title">智能计时</div><div class="feat-card-desc">组间休息自动倒计时,响铃提醒</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🎯</div><div class="feat-card-title">RPE 评分</div><div class="feat-card-desc">1-10 难度评分,精准掌握强度</div></div>
+        <div class="feat-card"><div class="feat-card-icon">➕</div><div class="feat-card-title">加组/换动作</div><div class="feat-card-desc">一键加组,自动继承上组参数</div></div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="phone dark">
+        <div class="phone-bar">卧推 · 60kg</div>
+        <div class="dk-surface">
+          <div class="fm-exercise">
+            <div class="fm-ex-name" id="fmExName">杠铃卧推</div>
+            <div class="fm-ex-muscle" id="fmExMuscle">胸 · 三头 · 三角肌前束</div>
+            <div class="fm-ex-sets">
+              <div class="fm-set done"><span>1</span><strong>12 × 60kg</strong><em>轻松 RPE 6</em></div>
+              <div class="fm-set done"><span>2</span><strong>10 × 60kg</strong><em>正常 RPE 7</em></div>
+              <div class="fm-set done"><span>3</span><strong>8 × 60kg</strong><em>吃力 RPE 9</em></div>
+              <div class="fm-set on" id="fmSet4"><span>4</span><strong>8 × 62.5kg</strong><em>进行中</em></div>
+            </div>
+            <div class="fm-ex-timer" id="fmRestTimer">休息 01:34</div>
+            <div class="fm-ex-actions">
+              <div class="fm-ex-btn primary" onclick="fmComplete()">✓ 完成</div>
+              <div class="fm-ex-btn" onclick="fmAddSet()">⊕ 加一组</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 功能 1 -->
-<section class="ap-feature" id="features">
-  <div class="ap-feature-text">
-    <span class="ap-feature-tag">01 · 3D 人体模型</span>
-    <h2>旋转、放大、<br>看清每一束肌肉。</h2>
-    <p>支持骨骼 / 热图 / 混合三种视图模式。训练后,该练哪里一目了然。</p>
-  </div>
-  <div class="ap-feature-visual">
-    <div class="ap-mockup-card">
-      <div class="ap-mockup-emoji">🏋️</div>
-      <div class="ap-mockup-label">3D Body Model</div>
-    </div>
-  </div>
-</section>
-
-<!-- 功能 2 -->
-<section class="ap-feature rev">
-  <div class="ap-feature-text">
-    <span class="ap-feature-tag">02 · 智能热力图</span>
-    <h2>红色是今天,<br>蓝色是已恢复。</h2>
-    <p>一眼看到身体状态。该练哪、该歇哪,不用再凭感觉。</p>
-  </div>
-  <div class="ap-feature-visual">
-    <div class="ap-mockup-card">
-      <div class="ap-mockup-emoji">🔥</div>
-      <div class="ap-mockup-label">Heat Map</div>
-    </div>
-  </div>
-</section>
-
-<!-- 渲染图:动作记录 -->
-<section class="ap-render alt">
-  <div class="ap-render-tag">DEMO · 动作记录</div>
-  <div class="ap-mockup">
-    <div class="ap-phone">
-      <div class="ap-phone-bar">卧推 · 60kg</div>
-      <div class="ap-exercise">
-        <div class="ap-exercise-name">杠铃卧推</div>
-        <div class="ap-exercise-sets">
-          <div class="ap-set done"><span>1</span><strong>12 × 60kg</strong><em>轻松</em></div>
-          <div class="ap-set done"><span>2</span><strong>10 × 60kg</strong><em>正常</em></div>
-          <div class="ap-set done"><span>3</span><strong>8 × 60kg</strong><em>吃力</em></div>
-          <div class="ap-set on"><span>4</span><strong>8 × 62.5kg</strong><em>进行中</em></div>
+<!-- ── § 4  训练日历(JS 翻月) ── -->
+<section class="feature-section" id="sec4" data-idx="4">
+  <div class="shape" style="width:350px;height:350px;border-radius:50%;background:rgba(255,149,0,0.08);top:-60px;left:-60px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:280px;height:70px;border-radius:999px;background:rgba(52,199,89,0.1);bottom:100px;right:-30px;animation:sDrift 9s ease-in-out infinite 2s"></div>
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="phone dark">
+        <div class="phone-bar">训练日历</div>
+        <div class="dk-surface" style="padding:14px;display:flex;align-items:center;justify-content:center">
+          <div class="fm-cal" style="margin:0">
+            <div class="fm-cal-h">
+              <span onclick="fmCal(-1)" style="cursor:pointer;margin-right:10px;opacity:0.7;font-size:18px">‹</span>
+              <span class="fm-cal-month" id="fmCalMonth">2026 · 7 月</span>
+              <span onclick="fmCal(1)" style="cursor:pointer;margin-left:10px;opacity:0.7;font-size:18px">›</span>
+            </div>
+            <div class="fm-cal-grid" id="fmCalGrid"></div>
+            <div class="fm-cal-legend">
+              <span><i style="background:#34C759"></i>已训练</span>
+              <span><i style="background:#FF9500"></i>休息日</span>
+              <span><i style="background:#0A84FF"></i>计划</span>
+              <span><i style="background:linear-gradient(135deg,#AF52DE,#0A84FF)"></i>今天</span>
+            </div>
+          </div>
         </div>
-        <div class="ap-exercise-timer">休息 01:34</div>
+      </div>
+    </div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">📅 训练日历</span>
+      <h2 class="feat-h2">训练节奏，<br/>一目了然。</h2>
+      <p class="feat-desc">已训练 / 休息日 / 计划,三色日历。什么时候该练、什么时候该歇,系统已经算好。点击 ‹/› 翻月查看历史。</p>
+      <div class="feat-chips">
+        <span class="chip">🟢 已训练</span>
+        <span class="chip">🟠 休息日</span>
+        <span class="chip">🔵 计划</span>
+        <span class="chip">🟣 今天</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">📅</div><div class="feat-card-title">月历视图</div><div class="feat-card-desc">整月训练状态,一眼掌握节奏</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🟢</div><div class="feat-card-title">已训练</div><div class="feat-card-desc">完成的训练日,绿点标记</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🟠</div><div class="feat-card-title">休息日</div><div class="feat-card-desc">系统推荐的恢复日,橙点标记</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🔵</div><div class="feat-card-title">计划</div><div class="feat-card-desc">AI 计划的训练日,虚线框标记</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 功能 3 -->
-<section class="ap-feature">
-  <div class="ap-feature-text">
-    <span class="ap-feature-tag">03 · 103+ 动作库</span>
-    <h2>动作库 + 视频,<br>练什么不再纠结。</h2>
-    <p>103+ 动作演示 + 详细动作指南 + AI 替换建议,科学安排训练。</p>
-  </div>
-  <div class="ap-feature-visual">
-    <div class="ap-mockup-card">
-      <div class="ap-mockup-emoji">📚</div>
-      <div class="ap-mockup-label">Exercise Library</div>
+<!-- ── § 5  训练完成 ── -->
+<section class="feature-section" id="sec5" data-idx="5">
+  <div class="shape" style="width:340px;height:340px;border-radius:50%;background:rgba(175,82,222,0.1);top:-60px;right:-60px;animation:sPulse 8s ease-in-out infinite"></div>
+  <div class="shape" style="width:200px;height:200px;border-radius:40px;background:rgba(10,132,255,0.08);bottom:-40px;left:60px;animation:sFloat 7s ease-in-out infinite 3s"></div>
+  <div class="feature-inner rev">
+    <div class="feature-text reveal">
+      <span class="feat-tag">🏆 智能总结</span>
+      <h2 class="feat-h2">训练后<br/>自动生成<em>报告</em>。</h2>
+      <p class="feat-desc">训练时长、组数、容量、PR 突破、激活肌群 —— 全部自动统计,一键分享给肌友。</p>
+      <div class="feat-chips">
+        <span class="chip">⏱️ 时长</span>
+        <span class="chip">📊 组数</span>
+        <span class="chip">💪 容量</span>
+        <span class="chip">🏆 PR 突破</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">⏱️</div><div class="feat-card-title">时长</div><div class="feat-card-desc">总训练时长,自动统计</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📊</div><div class="feat-card-title">组数</div><div class="feat-card-desc">总组数 + 平均每组次数</div></div>
+        <div class="feat-card"><div class="feat-card-icon">💪</div><div class="feat-card-title">容量</div><div class="feat-card-desc">总容量 kg,衡量训练量</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🏆</div><div class="feat-card-title">PR 突破</div><div class="feat-card-desc">新纪录自动庆祝 🎉</div></div>
+      </div>
     </div>
-  </div>
-</section>
-
-<!-- 渲染图:训练总结 -->
-<section class="ap-render">
-  <div class="ap-render-tag">RENDER · 训练总结</div>
-  <div class="ap-mockup">
-    <div class="ap-phone">
-      <div class="ap-phone-bar">训练完成 ✓</div>
-      <div class="ap-summary">
-        <div class="ap-summary-time">57:32</div>
-        <div class="ap-summary-label">本次训练</div>
-        <div class="ap-summary-stats">
-          <div><strong>6</strong>动作</div>
-          <div><strong>24</strong>组数</div>
-          <div><strong>3,420</strong>kg 总量</div>
+    <div class="feature-visual reveal delay-2">
+      <div class="phone dark">
+        <div class="phone-bar">训练完成 ✓</div>
+        <div class="dk-surface">
+          <div class="fm-summary">
+            <div class="fm-summary-emoji">🎉</div>
+            <div class="fm-summary-time" id="fmSumTime">57:32</div>
+            <div class="fm-summary-label">本次训练</div>
+            <div class="fm-summary-stats">
+              <div><strong>6</strong>动作</div>
+              <div><strong>24</strong>组数</div>
+              <div><strong>3,420</strong>kg 总量</div>
+            </div>
+            <div class="fm-summary-pr">🏆 新纪录:深蹲 100kg × 5</div>
+            <div class="fm-summary-muscle">激活肌群:胸 · 腿 · 背 · 臂</div>
+          </div>
         </div>
-        <div class="ap-summary-pr">🏆 新纪录:深蹲 100kg × 5</div>
       </div>
     </div>
   </div>
 </section>
 
-<footer class="ap-footer">
-  <div class="ap-foot-logo">ZYRVIS</div>
-  <div class="ap-foot-links">
-    <a href="index.html">首页</a>
-    <a href="fitmap.html">FitMap</a>
+<!-- ── § 6  AI 推荐(JS 模拟) ── -->
+<section class="feature-section" id="sec6" data-idx="6">
+  <div class="shape" style="width:380px;height:380px;border-radius:50%;background:rgba(52,199,89,0.08);top:-80px;left:-80px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:220px;height:60px;border-radius:999px;background:rgba(255,149,0,0.12);bottom:100px;right:-20px;animation:sDrift 8s ease-in-out infinite 1s"></div>
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="dk-surface" style="background:linear-gradient(180deg,#0a0a0a 0%,#1a1a1a 100%);border-radius:18px;padding:24px;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08)">
+        <div style="text-align:center;font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.5px;margin-bottom:18px">🤖 AI 智能推荐</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+          <div style="padding:14px;background:rgba(175,82,222,0.08);border-radius:12px;border:0.5px solid rgba(175,82,222,0.2)">
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px">📅 今日建议</div>
+            <div style="font-size:13px;color:#fff;font-weight:600">胸 + 三头训练</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px">上次训练 2 天前</div>
+          </div>
+          <div style="padding:14px;background:rgba(10,132,255,0.08);border-radius:12px;border:0.5px solid rgba(10,132,255,0.2)">
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px">🎯 容量目标</div>
+            <div style="font-size:13px;color:#fff;font-weight:600">2,800 - 3,200 kg</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:4px">本周已 1,820 kg</div>
+          </div>
+        </div>
+        <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:14px;margin-bottom:12px">
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:0.5px;margin-bottom:10px">💪 今日推荐 4 个动作</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div style="padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px;display:flex;gap:8px;align-items:center">
+              <span style="font-size:18px">🏋️</span>
+              <div><div style="font-size:11px;color:#fff;font-weight:600">杠铃卧推</div><div style="font-size:9px;color:rgba(255,255,255,0.5)">4 组 × 8 次</div></div>
+            </div>
+            <div style="padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px;display:flex;gap:8px;align-items:center">
+              <span style="font-size:18px">🤸</span>
+              <div><div style="font-size:11px;color:#fff;font-weight:600">上斜哑铃</div><div style="font-size:9px;color:rgba(255,255,255,0.5)">3 组 × 10 次</div></div>
+            </div>
+            <div style="padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px;display:flex;gap:8px;align-items:center">
+              <span style="font-size:18px">💪</span>
+              <div><div style="font-size:11px;color:#fff;font-weight:600">绳索下压</div><div style="font-size:9px;color:rgba(255,255,255,0.5)">3 组 × 12 次</div></div>
+            </div>
+            <div style="padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:8px;display:flex;gap:8px;align-items:center">
+              <span style="font-size:18px">🦾</span>
+              <div><div style="font-size:11px;color:#fff;font-weight:600">臂屈伸</div><div style="font-size:9px;color:rgba(255,255,255,0.5)">3 组 × 12 次</div></div>
+            </div>
+          </div>
+        </div>
+        <button style="width:100%;padding:11px;background:linear-gradient(135deg,#AF52DE,#0A84FF);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">开始训练 →</button>
+      </div>
+    </div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">🤖 AI 智能推荐</span>
+      <h2 class="feat-h2">今天练什么，<br/>AI<em>已经想好</em>。</h2>
+      <p class="feat-desc">基于上次训练、容量目标、恢复状态,AI 推荐今日最佳训练组合。一键开始,不用想。</p>
+      <div class="feat-chips">
+        <span class="chip">🤖 AI 选动作</span>
+        <span class="chip">📅 自动排期</span>
+        <span class="chip">📊 容量追踪</span>
+        <span class="chip">🔄 恢复分析</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🤖</div><div class="feat-card-title">AI 选动作</div><div class="feat-card-desc">根据目标 + 恢复选最优组合</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📅</div><div class="feat-card-title">自动排期</div><div class="feat-card-desc">周一推胸,周二推背,自动轮换</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📊</div><div class="feat-card-title">容量追踪</div><div class="feat-card-desc">周/月容量目标,完成度可视化</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🔄</div><div class="feat-card-title">恢复分析</div><div class="feat-card-desc">肌肉恢复度追踪,避免过度训练</div></div>
+      </div>
+    </div>
   </div>
-  <div class="ap-foot-copy">© 2026 ZYRVIS · FitMap</div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section" id="cta" data-idx="7">
+  <div class="shape" style="width:420px;height:420px;border-radius:50%;background:rgba(175,82,222,0.08);top:-120px;right:-120px;animation:sPulse 9s ease-in-out infinite"></div>
+  <div class="shape" style="width:280px;height:75px;border-radius:999px;background:rgba(10,132,255,0.1);bottom:80px;left:-40px;animation:sDrift 7s ease-in-out infinite 1.5s"></div>
+  <div class="shape" style="width:110px;height:110px;border-radius:50%;background:rgba(52,199,89,0.15);top:38%;left:80px;animation:sBob 5s ease-in-out infinite 0.8s"></div>
+  <div class="cta-inner reveal">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:28px">💪 FitMap · iOS 测试版即将发布</div>
+    <h1 class="cta-h1">一次就做好，<br/>做好就<em>上线</em>。</h1>
+    <p class="cta-sub">FitMap 不是 Keep 的替代品,不是薄荷健康,只是让你在手机上看到自己肌肉变化的轻量工具。</p>
+    <div class="cta-btns">
+      <button class="hero-btn-primary" onclick="alert('感谢关注!测试版链接将通过邮件发送')">下载测试版 →</button>
+      <button class="hero-btn-secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">回到顶部</button>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-logo">FitMap</div>
+  <div class="footer-links">
+    <a class="footer-link" href="index.html">ZYRVIS 首页</a>
+    <a class="footer-link" href="#hero">回到顶部</a>
+    <a class="footer-link" href="#cta">下载</a>
+  </div>
+  <div class="footer-copy">© 2026 ZYRVIS · FitMap · 3D 健身</div>
 </footer>
 
-<style>
-.ap-3d{padding:30px;background:linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%);height:480px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px}
-.ap-3d-figure{position:relative;width:200px;height:340px}
-.ap-3d-head{position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#444,#222)}
-.ap-3d-body{position:absolute;top:70px;left:0;right:0;height:260px}
-.ap-3d-muscle{position:absolute;border-radius:12px;opacity:0.4;transition:all 0.3s}
-.ap-3d-muscle.chest{top:0;left:50%;transform:translateX(-50%);width:120px;height:60px}
-.ap-3d-muscle.chest.on{background:#ff3b30;opacity:0.9;box-shadow:0 0 20px #ff3b30}
-.ap-3d-muscle.shoulder{top:5px;width:50px;height:40px}
-.ap-3d-muscle.shoulder.on{background:#ff3b30;opacity:0.9;box-shadow:0 0 20px #ff3b30}
-.ap-3d-muscle.shoulder:nth-child(2){left:0}
-.ap-3d-muscle.shoulder:nth-child(3){right:0}
-.ap-3d-muscle.arm{top:50px;width:30px;height:100px}
-.ap-3d-muscle.arm.on{background:#ff3b30;opacity:0.9;box-shadow:0 0 20px #ff3b30}
-.ap-3d-muscle.arm:nth-child(4){left:5px}
-.ap-3d-muscle.arm:nth-child(5){right:5px}
-.ap-3d-muscle.core{top:70px;left:50%;transform:translateX(-50%);width:100px;height:80px;background:#5ac8fa;opacity:0.5}
-.ap-3d-muscle.leg{top:160px;width:40px;height:90px;background:#5ac8fa;opacity:0.5}
-.ap-3d-muscle.leg.recover{background:#ffcc00;opacity:0.7}
-.ap-3d-muscle.leg:nth-of-type(6){left:25px}
-.ap-3d-muscle.leg:nth-of-type(7){right:25px}
-.ap-3d-legend{display:flex;gap:14px;padding:8px 14px;background:rgba(255,255,255,0.08);border-radius:12px;backdrop-filter:blur(10px)}
-.ap-3d-legend span{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.8);font-weight:500}
-.ap-3d-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+<script>
+/* ── NAV ── */
+const sections = document.querySelectorAll('[data-idx]');
+const dots = document.querySelectorAll('.sc-dot');
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.intersectionRatio > 0.3) {
+      const idx = e.target.dataset.idx;
+      dots.forEach(d => d.classList.remove('active'));
+      const a = document.querySelector(`.sc-dot[data-idx="${idx}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => navObs.observe(s));
 
-.ap-exercise{padding:24px 20px}
-.ap-exercise-name{font-size:20px;font-weight:600;color:#1d1d1f;margin-bottom:18px}
-.ap-exercise-sets{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
-.ap-set{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(0,0,0,0.04);border-radius:14px}
-.ap-set.on{background:linear-gradient(135deg,#0071e3,#5ac8fa);color:#fff}
-.ap-set span{width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
-.ap-set.on span{background:rgba(255,255,255,0.25);color:#fff}
-.ap-set strong{flex:1;font-size:15px;font-weight:600}
-.ap-set em{font-size:12px;opacity:0.7}
-.ap-exercise-timer{text-align:center;font-size:32px;font-weight:600;color:#0071e3;font-variant-numeric:tabular-nums;letter-spacing:2px;padding:18px;background:rgba(0,113,227,0.08);border-radius:14px}
+/* ── SMOOTH SCROLL ── */
+document.querySelectorAll('[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
 
-.ap-summary{text-align:center;padding:30px 20px}
-.ap-summary-time{font-size:54px;font-weight:700;color:#1d1d1f;line-height:1;letter-spacing:-2px}
-.ap-summary-label{font-size:14px;color:#86868b;margin-bottom:24px}
-.ap-summary-stats{display:flex;justify-content:space-around;padding:18px 0;margin-bottom:20px;border-top:0.5px solid rgba(0,0,0,0.06);border-bottom:0.5px solid rgba(0,0,0,0.06)}
-.ap-summary-stats>div{text-align:center;font-size:11px;color:#86868b}
-.ap-summary-stats strong{display:block;font-size:20px;font-weight:600;color:#1d1d1f;margin-bottom:2px}
-.ap-summary-pr{background:linear-gradient(135deg,#ffd700,#ff9500);color:#fff;padding:12px 16px;border-radius:14px;font-size:14px;font-weight:600}
-</style>
+/* ── REVEAL ── */
+document.body.classList.add('js-reveal-ready');
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(r => revObs.observe(r));
 
+/* ── FitMap 3D 部位点击 ── */
+window.fmToggle = function(el, part, name){
+  el.classList.toggle('active');
+  const on = document.querySelectorAll('.fm-muscle.active').length;
+  document.getElementById('fm3dInfo').textContent = `已激活: ${on} 个部位`;
+};
+
+/* ── FitMap 动作库加入训练 ── */
+window.fmAddEx = function(name, muscle){
+  event.currentTarget.classList.add('added');
+  document.getElementById('fmExName').textContent = name;
+  document.getElementById('fmExMuscle').textContent = muscle + ' · 三角肌 · 协同肌群';
+};
+
+/* ── FitMap 完成动作/加组 ── */
+window.fmComplete = function(){
+  const onSet = document.getElementById('fmSet4');
+  if(onSet){
+    onSet.classList.remove('on');
+    onSet.classList.add('done');
+    const em = onSet.querySelector('em');
+    if(em) em.textContent = '✓ 完成';
+  }
+};
+window.fmAddSet = function(){
+  alert('✓ 已加入第 5 组 · 8 × 65kg · RPE 8');
+};
+
+/* ── FitMap 训练日历翻月 ── */
+let fmCalOffset = 0;
+const fmMonths = ['1 月','2 月','3 月','4 月','5 月','6 月','7 月','8 月','9 月','10 月','11 月','12 月'];
+function fmRenderCal(m, y){
+  const grid = document.getElementById('fmCalGrid');
+  const header = '<div class="fm-cal-d">一</div><div class="fm-cal-d">二</div><div class="fm-cal-d">三</div><div class="fm-cal-d">四</div><div class="fm-cal-d">五</div><div class="fm-cal-d">六</div><div class="fm-cal-d">日</div>';
+  let html = header;
+  // 简化为 28 天
+  for(let i=1; i<=28; i++){
+    const dow = (i-1) % 7;
+    let cls = 'fm-cal-cell';
+    if(dow === 2 || dow === 5) cls += ' rest';
+    else if(dow === 6) cls += ' done';
+    else if(dow === 0 && i > 7) cls += ' plan';
+    if(i === 3) cls += ' today';
+    html += `<div class="${cls}">${i}</div>`;
+  }
+  grid.innerHTML = html;
+}
+window.fmCal = function(dir){
+  fmCalOffset += dir;
+  let m = 6 + fmCalOffset; // 7月 = 6
+  let y = 2026;
+  while(m<0){m+=12;y--;}
+  while(m>11){m-=12;y++;}
+  document.getElementById('fmCalMonth').textContent = `${y} · ${fmMonths[m]}`;
+  fmRenderCal(m, y);
+};
+fmRenderCal(6, 2026);
+</script>
 </body>
 </html>
