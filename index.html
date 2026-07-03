@@ -14,7 +14,201 @@
             min-height: 100vh;
             background: radial-gradient(ellipse at 50% 40%, #fafafa 0%, #ebebeb 100%);
             overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+            position: relative;
+        }
+
+        /* 菜单按钮 */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 28px;
+            height: 18px;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-btn span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            border-radius: 1.5px;
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(12px) saturate(1.3);
+            -webkit-backdrop-filter: blur(12px) saturate(1.3);
+            border: 0.5px solid rgba(255,255,255,0.7);
+            box-shadow:
+                0 1px 6px rgba(0,0,0,0.08),
+                inset 0 0.5px 0.5px rgba(255,255,255,0.9);
+            transform: scaleX(0);
+            transform-origin: left;
+            will-change: transform;
+        }
+
+        /* 菜单遮罩 */
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 998;
+            pointer-events: none;
+            opacity: 0;
+            background: rgba(0,0,0,0.08);
+            transition: opacity 0.35s ease;
+        }
+
+        .menu-overlay.active {
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+        /* 菜单 — 液态玻璃浮动卡片 */
+        .menu {
+            position: fixed;
+            top: 62px;
+            left: 16px;
+            width: 240px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(24px) saturate(1.3);
+            -webkit-backdrop-filter: blur(24px) saturate(1.3);
+            border: 1px solid rgba(255,255,255,0.65);
+            box-shadow:
+                0 8px 32px rgba(0,0,0,0.08),
+                0 2px 8px rgba(0,0,0,0.04),
+                inset 0 1px 1px rgba(255,255,255,0.8);
+            z-index: 999;
+            padding: 8px 0;
+            transform: scale(0.4);
+            transform-origin: 12px -14px;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        opacity 0.25s ease;
+        }
+
+        .menu.active {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .menu-section-label {
+            padding: 10px 16px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(0,0,0,0.4);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu li {
+            padding: 0 6px;
+        }
+
+        .menu li + li {
+            border-top: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #222;
+            font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 14px;
+            border-radius: 10px;
+            transition: background 0.2s ease;
+        }
+
+        .menu a:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .menu a:active {
+            background: rgba(0,0,0,0.08);
+        }
+
+        .menu a .mi-emoji {
+            font-size: 16px;
+            line-height: 1;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .menu a .mi-name {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 对话框 */
+        .chat-container {
+            margin-top: 30px;
+            width: 300px;
+            max-width: 90%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 48px;
+        }
+
+        .chat-bubble {
+            width: 100%;
+            height: 48px;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow:
+                0 2px 16px rgba(0,0,0,0.06),
+                inset 0 1px 2px rgba(255,255,255,0.9),
+                inset 0 -1px 2px rgba(0,0,0,0.04);
+            clip-path: inset(17px calc(50% - 7px) 17px calc(50% - 7px) round 24px);
+            opacity: 0;
+            will-change: clip-path, opacity;
+            position: relative;
+        }
+
+        .chat-bubble .chat-input {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            padding: 0 18px;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+            background: transparent;
+            color: #111;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(6px);
+            will-change: opacity, transform;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(0,0,0,0.3);
+        }
+
+        .chat-input:focus {
+            outline: none;
         }
 
         body::after {
@@ -25,108 +219,6 @@
             pointer-events: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
             background-size: 200px;
-        }
-
-        /* ── 左上角产品入口 ── */
-        .product-launcher {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-        }
-        .launcher-toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 14px 8px 12px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px) saturate(1.6);
-            -webkit-backdrop-filter: blur(20px) saturate(1.6);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #1f2937;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-            transition: all 0.2s ease;
-            user-select: none;
-        }
-        .launcher-toggle:hover {
-            background: rgba(255, 255, 255, 0.95);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        }
-        .launcher-toggle .grid-icon {
-            display: inline-grid;
-            grid-template-columns: repeat(2, 4px);
-            grid-template-rows: repeat(2, 4px);
-            gap: 2px;
-        }
-        .launcher-toggle .grid-icon span {
-            width: 4px;
-            height: 4px;
-            background: #1f2937;
-            border-radius: 1px;
-        }
-        .launcher-toggle .arrow {
-            font-size: 9px;
-            opacity: 0.5;
-            transition: transform 0.2s;
-        }
-        .launcher-toggle.open .arrow { transform: rotate(180deg); }
-
-        .launcher-menu {
-            position: absolute;
-            top: calc(100% + 8px);
-            left: 0;
-            width: 280px;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(24px) saturate(1.6);
-            -webkit-backdrop-filter: blur(24px) saturate(1.6);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 18px;
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
-            display: none;
-            flex-direction: column;
-            gap: 2px;
-            max-height: calc(100vh - 80px);
-            overflow-y: auto;
-        }
-        .launcher-menu.open { display: flex; }
-
-        .launcher-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #1f2937;
-            transition: background 0.15s;
-        }
-        .launcher-item:hover { background: rgba(0, 0, 0, 0.04); }
-        .launcher-item .emoji { font-size: 22px; line-height: 1; }
-        .launcher-item .info { flex: 1; min-width: 0; }
-        .launcher-item .name {
-            font-size: 13.5px;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 2px;
-        }
-        .launcher-item .desc {
-            font-size: 11px;
-            color: #6b7280;
-            line-height: 1.3;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .launcher-item .arrow-right {
-            font-size: 12px;
-            color: #9ca3af;
-            flex-shrink: 0;
         }
 
         .container {
@@ -146,11 +238,6 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-        }
-
-        #svg-hi {
-            width: 210px;
-            opacity: 0;
         }
 
         #svg-logo {
@@ -186,106 +273,38 @@
         }
         .cursor.on { animation: blink .7s step-end infinite; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-        @media (max-width: 600px) {
-            .product-launcher { top: 12px; left: 12px; }
-            .launcher-menu { width: 240px; }
-        }
     </style>
 </head>
 <body>
+<!-- 菜单按钮 -->
+<div class="menu-btn" id="menuBtn">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
 
-<!-- ══ 左上角产品入口 ══ -->
-<div class="product-launcher">
-    <button class="launcher-toggle" id="launcherToggle" type="button">
-        <span class="grid-icon"><span></span><span></span><span></span><span></span></span>
-        <span>产品</span>
-        <span class="arrow">▼</span>
-    </button>
-    <div class="launcher-menu" id="launcherMenu">
-        <a class="launcher-item" href="products/dongchi.html">
-            <span class="emoji">🍜</span>
-            <div class="info">
-                <div class="name">懂吃</div>
-                <div class="desc">私人餐厅打卡 · 算法推荐</div>
-            </div>
-            <span class="arrow-right">→</span>
-        </a>
-        <a class="launcher-item" href="products/coffeechat.html">
-            <span class="emoji">☕</span>
-            <div class="info">
-                <div class="name">CoffeeChat</div>
-                <div class="desc">LBS 即时社交</div>
-            </div>
-            <span class="arrow-right">→</span>
-        </a>
-        <a class="launcher-item" href="products/fitmap.html">
-            <span class="emoji">💪</span>
-            <div class="info">
-                <div class="name">FitMap</div>
-                <div class="desc">AI 健身 · 3D 人体模型</div>
-            </div>
-            <span class="arrow-right">→</span>
-        </a>
-        <a class="launcher-item" href="products/penpot.html">
-            <span class="emoji">🎨</span>
-            <div class="info">
-                <div class="name">Penpot</div>
-                <div class="desc">开源设计协作平台</div>
-            </div>
-            <span class="arrow-right">→</span>
-        </a>
-        <a class="launcher-item" href="products/vitatrack.html">
-            <span class="emoji">🌿</span>
-            <div class="info">
-                <div class="name">VitaTrack</div>
-                <div class="desc">桌面健康主屏</div>
-            </div>
-            <span class="arrow-right">→</span>
-        </a>
-        <a class="launcher-item" href="products/wavedio.html">
-            <span class="emoji">📻</span>
-            <div class="info">
-                <div class="name">Wavedio</div>
-                <div class="desc">AI 收音机 · 真实电台</div>
-            </div>
-            <span class="arrow-right">→</span>
-        </a>
-        <a class="launcher-item" href="products/football-skill.html">
-            <span class="emoji">⚽</span>
-            <div class="info">
-                <div class="name">Football Skill</div>
-                <div class="desc">学术 SOTA 足球预测</div>
-            </div>
-            <span class="arrow-right">→</span>
-        </a>
-        <a class="launcher-item" href="products/agentteam.html">
-            <span class="emoji">🏢</span>
-            <div class="info">
-                <div class="name">agentteam</div>
-                <div class="desc">开源 5 部门 AI 公司</div>
-            </div>
-            <span class="arrow-right">→</span>
-        </a>
-    </div>
+<!-- 菜单遮罩 -->
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<!-- 菜单 ── 8 个产品入口 -->
+<div class="menu" id="menu">
+    <div class="menu-section-label">产品 · 8</div>
+    <ul>
+        <li><a href="products/dongchi.html"><span class="mi-emoji">🍜</span><span class="mi-name">懂吃</span></a></li>
+        <li><a href="products/coffeechat.html"><span class="mi-emoji">☕</span><span class="mi-name">CoffeeChat</span></a></li>
+        <li><a href="products/fitmap.html"><span class="mi-emoji">💪</span><span class="mi-name">FitMap</span></a></li>
+        <li><a href="products/penpot.html"><span class="mi-emoji">🎨</span><span class="mi-name">Penpot</span></a></li>
+        <li><a href="products/vitatrack.html"><span class="mi-emoji">🌿</span><span class="mi-name">VitaTrack</span></a></li>
+        <li><a href="products/wavedio.html"><span class="mi-emoji">📻</span><span class="mi-name">Wavedio</span></a></li>
+        <li><a href="products/football-skill.html"><span class="mi-emoji">⚽</span><span class="mi-name">Football Skill</span></a></li>
+        <li><a href="products/agentteam.html"><span class="mi-emoji">🏢</span><span class="mi-name">agentteam</span></a></li>
+    </ul>
 </div>
 
 <div class="container">
     <div class="stage">
 
-        <!-- ══ Hi 艺术字 ══ -->
-        <svg id="svg-hi" viewBox="0 0 84 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path id="hi-h"
-                d="M50.3311 9.46402C51.7203 8.56105 52.1145 6.7029 51.2115 5.31372C50.3085 3.92454 48.4504 3.53039 47.0612 4.43335L48.6962 6.94868L50.3311 9.46402ZM12.1962 0.948685L9.35013 1.89737C13.6614 14.8313 13.7913 28.9143 11.445 40.3455C10.2728 46.0559 8.50333 51.0017 6.41178 54.7535C4.28078 58.5762 2.0056 60.8255 3.93391e-06 61.6975L1.19618 64.4487L2.39236 67.1999C6.13676 65.5719 9.23658 62.0087 11.6525 57.6751C14.1078 53.2707 16.057 47.7165 17.3224 41.5519C19.851 29.2331 19.7309 14.0661 15.0422 1.37091e-06L12.1962 0.948685ZM48.6962 6.94868L47.0612 4.43335C45.356 5.54173 43.7766 7.29366 42.3706 9.28218C40.937 11.3098 39.5589 13.7628 38.3096 16.4621C35.814 21.8542 33.7409 28.4288 32.79 34.9536C31.8468 41.4262 31.962 48.1658 34.1676 53.6933C36.4531 59.421 40.9607 63.7255 48.2128 64.9095L48.6962 61.9487L49.1796 58.9879C44.1817 58.1719 41.3142 55.4139 39.7404 51.4697C38.0866 47.3253 37.8581 41.7837 38.7273 35.8188C39.589 29.9061 41.4847 23.8869 43.7547 18.9822C44.8882 16.533 46.092 14.4118 47.2698 12.746C48.4752 11.0412 49.5363 9.98064 50.3311 9.46402L48.6962 6.94868ZM53.6962 27.4487L51.9899 24.9811C43.9819 30.5185 37.5798 34.1843 30.7288 36.8182C23.8736 39.4536 16.4335 41.1079 6.2951 42.4756L6.69618 45.4487L7.09727 48.4218C17.4765 47.0215 25.4231 45.286 32.8818 42.4186C40.3446 39.5495 47.1837 35.5993 55.4024 29.9162L53.6962 27.4487Z"
-                fill="none" stroke="#111" stroke-width="1.5"
-                stroke-linecap="round" stroke-linejoin="round"/>
-            <path id="hi-i"
-                d="M56.6962 27.4487C58.0295 24.282 62.9962 18.4487 72.1962 20.4487C83.6962 22.9487 57.1962 62.9487 67.6962 61.4487C76.0962 60.2487 79.5295 50.9487 80.1962 48.9487M58.1962 10.9487C59.6962 11.1154 63.4962 12.0487 66.6962 14.4487"
-                fill="none" stroke="#111" stroke-width="6"
-                stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-
-        <!-- ══ ZYRVIS Logo (完整精确数据) ══ -->
+        <!-- ══ ZYRVIS Logo ══ -->
         <svg id="svg-logo" viewBox="0 0 137 82" fill="none" xmlns="http://www.w3.org/2000/svg">
             <!-- 头部轮廓 -->
             <path id="l-head" fill-rule="evenodd" clip-rule="evenodd"
@@ -321,15 +340,38 @@
     <div class="typing-wrap">
         <span id="typed"></span><span class="cursor" id="cursor"></span>
     </div>
+
+    <!-- 对话框 -->
+    <div class="chat-container">
+        <div class="chat-bubble" id="chatBubble">
+            <input type="text" class="chat-input" placeholder="ZYRVIS IS READY" id="chatInput">
+        </div>
+    </div>
 </div>
 
 <script>
-// ── 蛇 logo 动画(原版照搬) ──
 (function () {
-    var svgHi   = document.getElementById('svg-hi');
+    // 菜单功能
+    var menuBtn = document.getElementById('menuBtn');
+    var menu = document.getElementById('menu');
+    var menuOverlay = document.getElementById('menuOverlay');
+
+    function toggleMenu() {
+        menu.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    menuOverlay.addEventListener('click', toggleMenu);
+
+    // ESC 关闭菜单
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && menu.classList.contains('active')) {
+            toggleMenu();
+        }
+    });
+
     var svgLogo = document.getElementById('svg-logo');
-    var hiH     = document.getElementById('hi-h');
-    var hiI     = document.getElementById('hi-i');
     var lHead   = document.getElementById('l-head');
     var lEyeL   = document.getElementById('l-eyeL');
     var lEyeR   = document.getElementById('l-eyeR');
@@ -339,15 +381,23 @@
     var typed   = document.getElementById('typed');
     var cursor  = document.getElementById('cursor');
     var typingWrap = document.querySelector('.typing-wrap');
+    var chatBubble = document.getElementById('chatBubble');
 
     function wait(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+    /* ── 同步初始化 dasharray ── */
     function initDash(el) {
         var len = el.getTotalLength();
         el.style.strokeDasharray  = len;
         el.style.strokeDashoffset = len;
     }
-    initDash(hiH); initDash(hiI); initDash(lHead); initDash(lEyeL); initDash(lEyeR); initDash(lJaw);
 
+    initDash(lHead);
+    initDash(lEyeL);
+    initDash(lEyeR);
+    initDash(lJaw);
+
+    /* ── 描线动画 ── */
     function drawPath(el, dur, delay) {
         return new Promise(function(resolve) {
             setTimeout(function() {
@@ -358,33 +408,65 @@
                     var t = Math.min((now - t0) / dur, 1);
                     var e = 1 - Math.pow(1 - t, 3);
                     el.style.strokeDashoffset = (len * (1 - e)).toFixed(2);
-                    if (t < 1) requestAnimationFrame(tick);
-                    else { el.style.strokeDashoffset = '0'; resolve(); }
+                    if (t < 1) {
+                        requestAnimationFrame(tick);
+                    } else {
+                        el.style.strokeDashoffset = '0';
+                        resolve();
+                    }
                 });
             }, delay || 0);
         });
     }
+
+    /* ── 填充过渡 ── */
     function fillIn(el, color, dur) {
-        var d = dur || 500, c = color || '#111';
+        var d = dur || 500;
+        var c = color || '#111';
         el.style.fill = 'rgba(0,0,0,0)';
         el.getBoundingClientRect();
         el.style.transition = 'fill ' + d + 'ms ease';
         el.style.fill = c;
     }
-    function fadeIn(el, dur) { el.style.transition = 'opacity ' + (dur || 300) + 'ms ease'; el.style.opacity = '1'; }
 
-    async function phaseHi() {
-        svgHi.style.opacity = '1';
-        hiH.style.strokeWidth = '2.5';
-        await Promise.all([drawPath(hiH, 1500, 0), drawPath(hiI, 1500, 0)]);
-        fillIn(hiH, '#111', 500);
-        await wait(1200);
+    /* ── 淡入 ── */
+    function fadeIn(el, dur) {
+        el.style.transition = 'opacity ' + (dur || 300) + 'ms ease';
+        el.style.opacity = '1';
     }
+
+    /* ── 通用 rAF 插值 ── */
+    function animate(dur, onFrame) {
+        return new Promise(function(resolve) {
+            var t0 = null;
+            requestAnimationFrame(function tick(now) {
+                if (!t0) t0 = now;
+                var t = Math.min((now - t0) / dur, 1);
+                var e = 1 - Math.pow(1 - t, 3);
+                onFrame(e);
+                if (t < 1) requestAnimationFrame(tick);
+                else resolve();
+            });
+        });
+    }
+
+    /* ═══ Phase 0 — 菜单按钮描线 ═══ */
+    async function phaseMenu() {
+        var spans = document.querySelectorAll('.menu-btn span');
+        for (var i = 0; i < spans.length; i++) {
+            await animate(350, (function(el) {
+                return function(e) { el.style.transform = 'scaleX(' + e + ')'; };
+            })(spans[i]));
+            if (i < spans.length - 1) await wait(80);
+        }
+        for (var j = 0; j < spans.length; j++) {
+            spans[j].style.willChange = 'auto';
+            spans[j].style.transition = 'all 0.3s ease';
+        }
+    }
+
+    /* ═══ Phase 1 — Logo 描线 → 填充 ═══ */
     async function phaseLogo() {
-        svgHi.style.transition = 'opacity 0.55s ease';
-        svgHi.style.opacity = '0';
-        await wait(650);
-        svgHi.style.display = 'none';
         svgLogo.style.opacity = '1';
         await Promise.all([
             drawPath(lHead, 2200, 0),
@@ -406,6 +488,8 @@
         fadeIn(lHlR, 500);
         await wait(600);
     }
+
+    /* ═══ Phase 2 — 打字效果 ═══ */
     async function phaseType() {
         var text = '你好，我是ZYRVIS';
         typingWrap.style.transition = 'opacity 0.4s ease';
@@ -418,38 +502,74 @@
             await wait(ch === '，' ? 280 : /[A-Z]/.test(ch) ? 85 : 130);
         }
         cursor.classList.remove('on');
-        cursor.style.opacity = '1';
+        cursor.style.transition = 'opacity 0.4s ease';
+        cursor.style.opacity = '0';
     }
 
+    /* ═══ Phase 3 — 液态玻璃对话框 ═══ */
+    async function phaseChatBubble() {
+        await wait(300);
+        chatBubble.style.transition = 'opacity 0.3s ease';
+        chatBubble.style.opacity = '1';
+        await wait(400);
+        var startTop = 17, startSide = 50 - (7 / 3);
+        await animate(600, function(e) {
+            var top  = startTop * (1 - e);
+            var side = startSide * (1 - e);
+            chatBubble.style.clipPath =
+                'inset(' + top + 'px ' + side + '% ' + top + 'px ' + side + '% round 24px)';
+        });
+        chatBubble.style.clipPath = 'inset(0 0 0 0 round 24px)';
+        chatBubble.style.willChange = 'auto';
+        var input = document.getElementById('chatInput');
+        input.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        input.style.opacity = '1';
+        input.style.transform = 'translateY(0)';
+    }
+
+    /* ═══ 待机 — 随机眨眼 ═══ */
+    function startBlinking() {
+        var eyes = [lEyeL, lEyeR, lHlL, lHlR];
+        eyes.forEach(function(el) {
+            el.style.transformBox = 'fill-box';
+            el.style.transformOrigin = 'center center';
+        });
+        function singleBlink() {
+            return new Promise(function(resolve) {
+                eyes.forEach(function(el) {
+                    el.style.transition = 'transform 0.08s ease-in';
+                    el.style.transform = 'scaleY(0.05)';
+                });
+                setTimeout(function() {
+                    eyes.forEach(function(el) {
+                        el.style.transition = 'transform 0.14s ease-out';
+                        el.style.transform = 'scaleY(1)';
+                    });
+                    setTimeout(resolve, 150);
+                }, 100);
+            });
+        }
+        (async function blinkLoop() {
+            while (true) {
+                await wait(2500 + Math.random() * 4000);
+                await singleBlink();
+                if (Math.random() < 0.3) {
+                    await wait(180);
+                    await singleBlink();
+                }
+            }
+        })();
+    }
+
+    /* ═══ 启动 ═══ */
     (async function() {
-        await wait(500);
-        await phaseHi();
+        await wait(400);
+        phaseMenu();
         await phaseLogo();
         await phaseType();
+        await phaseChatBubble();
+        startBlinking();
     })();
-})();
-
-// ── 左上角产品入口 交互 ──
-(function() {
-    var toggle = document.getElementById('launcherToggle');
-    var menu   = document.getElementById('launcherMenu');
-    toggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        var open = menu.classList.toggle('open');
-        toggle.classList.toggle('open', open);
-    });
-    document.addEventListener('click', function(e) {
-        if (!menu.contains(e.target) && e.target !== toggle) {
-            menu.classList.remove('open');
-            toggle.classList.remove('open');
-        }
-    });
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            menu.classList.remove('open');
-            toggle.classList.remove('open');
-        }
-    });
 })();
 </script>
 </body>
