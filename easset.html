@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Easset — 视觉饮食资产收藏簿</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Nunito',-apple-system,'PingFang SC',system-ui,sans-serif;background:#080808;color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::-webkit-scrollbar{display:none}
+em{font-style:italic}
+:root{
+  --cream:#F6F1E7;--paper:#FFFDF8;--sand:#EDE4D2;
+  --ink:#2A2520;--ink2:#6B6158;--ink3:#A89E91;
+  --mocha:#B08A5B;--mochaDk:#8A6740;--mochaLt:#D9C2A4;
+  --sage:#A8B89A;--sageDk:#7D9274;--rose:#D9A9A2;
+  --sky:#B8CFD9;--butter:#F2D58A;--plum:#9E7BA0;
+  --coral:#FF6B6B;--electric:#F2D58A;--sun:#FF9500;--mint:#A8E6CF;        /* Easset:coral + butter 三档 mode */
+  --line:rgba(255,255,255,0.1);
+  --shadow:0 1px 2px rgba(0,0,0,0.2),0 4px 14px rgba(0,0,0,0.15);
+  --shadowLg:0 8px 40px rgba(0,0,0,0.4);
+}
+
+/* ── CAPSULE NAV ── */
+.sidenav{position:fixed;left:20px;top:50%;transform:translateY(-50%);width:44px;z-index:9999;background:rgba(20,20,20,0.9);backdrop-filter:blur(28px) saturate(1.4);-webkit-backdrop-filter:blur(28px) saturate(1.4);border:0.5px solid rgba(255,255,255,0.12);border-radius:28px;padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:5px;box-shadow:0 8px 32px rgba(0,0,0,0.4),inset 0 1px 1px rgba(255,255,255,0.08)}
+.sc-logo{font-family:'Fraunces',Georgia,serif;font-size:13px;font-weight:800;color:#fff;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:10px;transition:background 0.15s;text-decoration:none}
+.sc-logo:hover{background:rgba(255,255,255,0.1)}
+.sc-sep{width:20px;height:0.5px;background:rgba(255,255,255,0.12);margin:4px 0;flex-shrink:0}
+.sc-dot{width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;position:relative;transition:background 0.15s;flex-shrink:0}
+.sc-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all 0.2s}
+.sc-dot.active::before{background:#fff;transform:scale(1.25)}
+.sc-dot:hover::before{background:rgba(255,255,255,0.8);transform:scale(1.1)}
+.sc-dot::after,.sc-logo::after,.sc-cta::after,.sc-back::after{content:attr(data-tip);position:absolute;left:calc(100% + 14px);top:50%;transform:translateY(-50%);background:rgba(20,20,20,0.95);color:#fff;padding:5px 11px;border-radius:10px;font-size:11px;font-weight:700;white-space:nowrap;font-family:'Nunito',sans-serif;opacity:0;pointer-events:none;transition:opacity 0.15s;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:0.5px solid rgba(255,255,255,0.1)}
+.sc-dot:hover::after,.sc-logo:hover::after,.sc-cta:hover::after,.sc-back:hover::after{opacity:1}
+.sc-cta{width:28px;height:28px;border-radius:10px;background:rgba(255,255,255,0.15);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;font-size:11px;font-weight:900;transition:all 0.15s;position:relative;border:none;font-family:'Nunito',sans-serif}
+.sc-cta:hover{background:rgba(255,255,255,0.25)}
+.sc-back{width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;font-size:9px;font-weight:900;color:rgba(255,255,255,0.4);letter-spacing:0.5px;transition:all 0.15s;position:relative}
+.sc-back:hover{color:#fff;background:rgba(255,255,255,0.08)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#080808;padding:80px 60px;text-align:center}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);font-size:12px;font-weight:700;color:rgba(255,255,255,0.65);margin-bottom:32px;position:relative;z-index:1}
+.hero-h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(52px,7vw,90px);font-weight:800;line-height:1.02;color:#fff;letter-spacing:-2.5px;margin-bottom:24px;position:relative;z-index:1}
+.hero-h1 em{color:var(--coral);font-style:italic}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.62);max-width:620px;margin:0 auto 40px;line-height:1.65;position:relative;z-index:1}
+.hero-stats{display:flex;gap:14px;margin-bottom:40px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1}
+.hero-stat{padding:18px 24px;border-radius:20px;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);min-width:130px;transition:background 0.2s}
+.hero-stat:hover{background:rgba(255,255,255,0.1)}
+.hero-stat-num{font-family:'Fraunces',Georgia,serif;font-size:30px;font-weight:800;color:#fff;line-height:1;margin-bottom:6px}
+.hero-stat-num em{color:var(--coral);font-style:normal}
+.hero-stat-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.3px}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.hero-btn-primary{background:#fff;color:#080808;border:none;padding:14px 36px;border-radius:999px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 6px 24px rgba(255,255,255,0.15);transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;display:inline-block}
+.hero-btn-primary:hover{transform:scale(1.04);box-shadow:0 10px 32px rgba(255,255,255,0.22)}
+.hero-btn-secondary{background:transparent;color:rgba(255,255,255,0.75);border:0.5px solid rgba(255,255,255,0.25);padding:14px 28px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-decoration:none;display:inline-block}
+.hero-btn-secondary:hover{color:#fff;border-color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.06)}
+
+/* ── FEATURE SECTIONS (含偏左修复) ── */
+.feature-section{min-height:100vh;padding:100px 64px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#080808}
+.feature-inner{max-width:1200px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:80px;flex-wrap:wrap;position:relative;z-index:1;padding:0 24px}
+.feature-inner.rev{flex-direction:row-reverse}
+.feature-text{flex:1;min-width:340px;max-width:480px;position:relative;z-index:2;margin:0 auto}
+.feature-visual{flex:0 0 auto;display:flex;justify-content:center;position:relative;z-index:2;margin:0 auto}
+.feat-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:999px;border:0.5px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.1);font-size:12px;font-weight:700;color:rgba(255,255,255,0.82);margin-bottom:22px}
+.feat-h2{font-family:'Fraunces',Georgia,serif;font-size:clamp(36px,4.5vw,56px);font-weight:800;line-height:1.07;color:#fff;letter-spacing:-1.2px;margin-bottom:20px}
+.feat-h2 em{color:var(--coral);font-style:italic}
+.feat-desc{font-size:15.5px;line-height:1.68;color:rgba(255,255,255,0.76);max-width:440px;margin-bottom:24px}
+.feat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,0.1);border:0.5px solid rgba(255,255,255,0.16);font-size:12px;font-weight:700;color:rgba(255,255,255,0.9)}
+.feat-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:440px}
+.feat-card{background:rgba(255,255,255,0.07);border-radius:18px;padding:16px 14px;border:0.5px solid rgba(255,255,255,0.11)}
+.feat-card-icon{font-size:22px;margin-bottom:8px}
+.feat-card-title{font-size:13px;font-weight:800;color:#fff;margin-bottom:4px}
+.feat-card-desc{font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5}
+
+/* ── BROWSER ── */
+.browser{width:560px;border-radius:14px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.08);flex-shrink:0}
+.browser.wide{width:620px}
+.bbar{background:#1A1A1A;padding:10px 14px;display:flex;align-items:center;gap:6px;border-bottom:0.5px solid rgba(255,255,255,0.06)}
+.bdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.bdot.r{background:#FF5F57}.bdot.y{background:#FFBD2E}.bdot.g{background:#28C940}
+.burl{flex:1;background:rgba(255,255,255,0.07);border-radius:5px;height:20px;margin:0 16px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0.28);font-weight:600;letter-spacing:0.3px}
+.bcontent{background:#111;height:400px;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── DARK SURFACES ── */
+.phone.dark{background:linear-gradient(180deg,#0a0a0a 0%,#1a1a1a 100%)}
+.phone.dark .phone-bar{color:rgba(255,255,255,0.4)}
+.dk-surface{background:linear-gradient(180deg,#0a0a0a 0%,#1a1a1a 100%);color:#fff}
+.dk-card{background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.1);border-radius:14px;color:#fff}
+.dk-card .meta{color:rgba(255,255,255,0.5)}
+.dk-stat{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);color:#fff}
+.dk-stat .num{background:linear-gradient(135deg,#FF6B6B,#F2D58A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dk-stat .label{color:rgba(255,255,255,0.5)}
+
+/* ── PHONE ── */
+.phone{width:300px;background:#000;border-radius:36px;padding:10px;box-shadow:0 30px 80px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.05);flex-shrink:0;overflow:hidden}
+.phone.wide{width:380px}
+.phone-bar{height:20px;background:transparent;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,0.4);font-weight:600}
+
+/* ── SHAPES ── */
+.shape{position:absolute;pointer-events:none;z-index:0}
+@keyframes sFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+@keyframes sDrift{0%,100%{transform:translateX(0)}50%{transform:translateX(20px)}}
+@keyframes sPulse{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.28;transform:scale(1.07)}}
+@keyframes sBob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-16px) scale(1.04)}}
+
+/* ── REVEAL ── */
+body.js-reveal-ready .reveal{opacity:0;transform:translateY(28px);transition:opacity 0.75s ease,transform 0.75s ease}
+body.js-reveal-ready .reveal.visible{opacity:1;transform:translateY(0)}
+body.js-reveal-ready .reveal.delay-1{transition-delay:0.1s}
+body.js-reveal-ready .reveal.delay-2{transition-delay:0.22s}
+body.js-reveal-ready .reveal.delay-3{transition-delay:0.34s}
+
+/* ── CTA ── */
+.cta-section{min-height:70vh;padding:120px 60px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;position:relative;overflow:hidden;background:#080808}
+.cta-inner{position:relative;z-index:1;max-width:700px}
+.cta-h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(44px,6vw,76px);font-weight:800;line-height:1.05;color:#fff;letter-spacing:-2px;margin-bottom:20px}
+.cta-h1 em{color:var(--coral);font-style:italic}
+.cta-sub{font-size:17px;color:rgba(255,255,255,0.58);max-width:520px;margin:0 auto 40px;line-height:1.65}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ── */
+.footer{background:#080808;padding:48px 32px 32px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;border-top:0.5px solid rgba(255,255,255,0.08)}
+.footer-logo{font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.footer-link{font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);text-decoration:none;cursor:pointer;transition:color 0.2s}
+.footer-link:hover{color:#fff}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.4)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  .sidenav{display:none}
+  .shape{display:none}
+  .feature-section,.ai-section{padding:72px 24px}
+  .feature-inner,.ai-inner{flex-direction:column!important;gap:44px}
+  .feature-text{min-width:unset}
+  .feature-inner.rev{flex-direction:column!important}
+  .hero{padding:80px 24px}
+  .hero-stats{gap:10px}
+  .hero-stat{padding:14px 18px;min-width:100px}
+  .cta-section{padding:72px 24px}
+  .browser,.phone{width:100%;max-width:100%}
+  .bcontent{height:300px}
+  .feat-cards{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .hero-h1{font-size:clamp(38px,10vw,52px)}
+  .cta-h1{font-size:clamp(34px,9vw,48px)}
+  .feature-section{padding:56px 20px}
+  .feat-h2{font-size:clamp(30px,8vw,42px)}
+}
+
+/* ── Easset SPECIFIC ── */
+
+/* §1 贴纸墙(canvas) */
+.ea-wall{position:relative;width:100%;max-width:560px;aspect-ratio:1;background:linear-gradient(135deg,#2A1F18 0%,#1A1108 100%);border-radius:20px;padding:24px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.5);border:0.5px solid rgba(255,255,255,0.08)}
+.ea-wall::before{content:'我的贴纸墙';position:absolute;top:14px;left:20px;font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:0.5px}
+.ea-wall::after{content:'🍀 宽松老友';position:absolute;top:14px;right:20px;font-size:10px;color:#A8E6CF;background:rgba(168,230,207,0.1);padding:2px 8px;border-radius:8px;font-weight:700}
+.ea-grid{position:relative;width:100%;height:calc(100% - 20px);margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:6px}
+.ea-sticker{background:rgba(255,255,255,0.06);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative;cursor:pointer;transition:all 0.3s;border:0.5px solid rgba(255,255,255,0.08);transform:rotate(var(--r,0deg))}
+.ea-sticker:hover{transform:rotate(0deg) scale(1.1);background:rgba(255,255,255,0.1);z-index:2;box-shadow:0 8px 20px rgba(0,0,0,0.3)}
+.ea-sticker.added{background:linear-gradient(135deg,rgba(168,230,207,0.2),rgba(168,230,207,0.05));border-color:rgba(168,230,207,0.4)}
+.ea-sticker span{font-size:9px;position:absolute;bottom:3px;right:4px;color:rgba(255,255,255,0.5);font-weight:600}
+
+/* §2 三档 mode 切换器(JS) */
+.ea-mode{background:rgba(255,255,255,0.04);border-radius:14px;padding:16px;width:100%;max-width:560px;border:0.5px solid rgba(255,255,255,0.08)}
+.ea-mode-h{font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:0.5px;margin-bottom:12px;text-align:center}
+.ea-mode-row{display:flex;gap:8px;align-items:stretch;background:rgba(0,0,0,0.3);border-radius:10px;padding:4px;margin-bottom:14px}
+.ea-mode-btn{flex:1;padding:11px 6px;background:transparent;border:none;border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.2s;text-align:center}
+.ea-mode-btn.on.casual{background:linear-gradient(135deg,#A8E6CF,#34C759);color:#1d1d1f;box-shadow:0 2px 8px rgba(168,230,207,0.3)}
+.ea-mode-btn.on.standard{background:linear-gradient(135deg,#F2D58A,#FF9500);color:#1d1d1f;box-shadow:0 2px 8px rgba(242,213,138,0.3)}
+.ea-mode-btn.on.strict{background:linear-gradient(135deg,#FF6B6B,#EE5A6F);color:#fff;box-shadow:0 2px 8px rgba(255,107,107,0.3)}
+.ea-mode-icon{font-size:18px;display:block;margin-bottom:4px}
+.ea-mode-quote{padding:14px 18px;background:rgba(255,255,255,0.05);border-radius:12px;border:0.5px solid rgba(255,255,255,0.08);font-size:13px;color:rgba(255,255,255,0.85);line-height:1.5;font-style:italic;text-align:center}
+.ea-mode-quote.casual{border-color:rgba(168,230,207,0.2)}
+.ea-mode-quote.standard{border-color:rgba(242,213,138,0.2)}
+.ea-mode-quote.strict{border-color:rgba(255,107,107,0.2)}
+
+/* §3 心情色条(JS 拖动) */
+.ea-mood{background:rgba(255,255,255,0.04);border-radius:14px;padding:16px;width:100%;max-width:560px;border:0.5px solid rgba(255,255,255,0.08)}
+.ea-mood-h{font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:0.5px;margin-bottom:10px}
+.ea-mood-bar{position:relative;height:42px;border-radius:10px;overflow:hidden;margin-bottom:12px;background:linear-gradient(90deg,#A8E6CF 0%,#FFE66D 25%,#FF9500 50%,#FF6B6B 75%,#9B59B6 100%)}
+.ea-mood-cursor{position:absolute;top:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.3);border:2px solid rgba(0,0,0,0.2);cursor:grab;z-index:2;transition:left 0.2s}
+.ea-mood-cursor:active{cursor:grabbing}
+.ea-mood-labels{display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.5);font-weight:600;padding:0 4px}
+.ea-mood-current{text-align:center;padding:11px;background:rgba(255,255,255,0.05);border-radius:8px;font-size:12px;color:#fff;margin-top:10px}
+.ea-mood-current em{color:#F2D58A;font-style:normal;font-weight:700;margin-left:6px}
+
+/* §4 勋章网格(JS 解锁动画) */
+.ea-medals{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;width:100%;max-width:560px}
+.ea-medal{aspect-ratio:1;background:rgba(255,255,255,0.05);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;border:0.5px solid rgba(255,255,255,0.08);position:relative;cursor:pointer;transition:all 0.3s}
+.ea-medal.locked{opacity:0.25;filter:grayscale(1)}
+.ea-medal.unlocked{background:linear-gradient(135deg,rgba(242,213,138,0.12),rgba(255,107,107,0.06));border-color:rgba(242,213,138,0.3)}
+.ea-medal.unlocked:hover{transform:scale(1.1);box-shadow:0 0 20px rgba(242,213,138,0.3)}
+.ea-medal span{font-size:8px;color:rgba(255,255,255,0.6);margin-top:2px;font-weight:600;text-align:center;line-height:1.1}
+
+/* §5 12 月热力图 */
+.ea-heatmap{background:rgba(255,255,255,0.04);border-radius:14px;padding:16px;width:100%;max-width:560px;border:0.5px solid rgba(255,255,255,0.08)}
+.ea-heatmap-h{font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:0.5px;margin-bottom:12px;text-align:center}
+.ea-heatmap-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-bottom:8px}
+.ea-heatmap-cell{aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,0.05);font-size:9px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-weight:600;cursor:default}
+.ea-heatmap-cell:hover{transform:scale(1.1)}
+
+/* §6 物理引擎 3 滑块 */
+.ea-physics{background:rgba(255,255,255,0.04);border-radius:14px;padding:20px;width:100%;max-width:560px;border:0.5px solid rgba(255,255,255,0.08)}
+.ea-physics-h{font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:0.5px;margin-bottom:14px;text-align:center}
+.ea-physics-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ea-physics-label{font-size:11px;color:#fff;font-weight:600;width:60px;flex-shrink:0}
+.ea-physics-input{flex:1;accent-color:#F2D58A}
+.ea-physics-val{font-size:11px;color:#F2D58A;font-weight:700;width:40px;text-align:right;font-family:monospace}
+.ea-physics-preview{margin-top:14px;padding:14px;background:rgba(0,0,0,0.3);border-radius:10px;display:flex;gap:6px;align-items:center;justify-content:center;height:60px;overflow:hidden}
+.ea-physics-preview span{font-size:24px;transition:transform 0.3s}
+
+/* §7 4 屏汇总(浏览器框架) */
+.ea-summary{background:#fff;border-radius:14px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ea-summary-tile{padding:11px;background:rgba(0,0,0,0.04);border-radius:8px;text-align:center}
+.ea-summary-tile .ic{font-size:18px;margin-bottom:4px}
+.ea-summary-tile .n{font-size:18px;font-weight:700;color:#1d1d1f;line-height:1;margin-bottom:2px}
+.ea-summary-tile .l{font-size:9px;color:#86868b;font-weight:500}
+
+</style>
+</head>
+<body>
+
+<nav class="sidenav">
+  <a class="sc-logo" data-tip="Easset" href="#hero">🍱</a>
+  <div class="sc-sep"></div>
+  <a class="sc-dot active" data-idx="0" data-tip="概览" href="#hero"></a>
+  <a class="sc-dot" data-idx="1" data-tip="贴纸墙" href="#sec1"></a>
+  <a class="sc-dot" data-idx="2" data-tip="三档 mode" href="#sec2"></a>
+  <a class="sc-dot" data-idx="3" data-tip="5 心情色" href="#sec3"></a>
+  <a class="sc-dot" data-idx="4" data-tip="18 勋章" href="#sec4"></a>
+  <a class="sc-dot" data-idx="5" data-tip="12 月热图" href="#sec5"></a>
+  <a class="sc-dot" data-idx="6" data-tip="物理引擎" href="#sec6"></a>
+  <a class="sc-dot" data-idx="7" data-tip="4 屏汇总" href="#cta"></a>
+  <div class="sc-sep"></div>
+  <a class="sc-cta" data-tip="App Store" href="#cta">↓</a>
+  <a class="sc-back" data-tip="ZYRVIS" href="index.html">Z</a>
+</nav>
+
+<!-- ── § 0  HERO ── -->
+<section class="hero" id="hero" data-idx="0">
+  <div class="shape" style="width:500px;height:500px;border-radius:50%;background:rgba(255,107,107,0.08);top:-140px;right:-140px;animation:sPulse 8s ease-in-out infinite"></div>
+  <div class="shape" style="width:360px;height:360px;border-radius:50%;background:rgba(168,230,207,0.06);bottom:-80px;left:-80px;animation:sPulse 10s ease-in-out infinite 2s"></div>
+  <div class="shape" style="width:280px;height:70px;border-radius:999px;background:rgba(242,213,138,0.1);top:30%;right:-40px;animation:sDrift 7s ease-in-out infinite 1s"></div>
+  <div class="shape" style="width:200px;height:200px;border-radius:40px;background:rgba(155,89,182,0.08);bottom:20%;left:40px;animation:sFloat 9s ease-in-out infinite 3s"></div>
+
+  <div class="hero-inner">
+    <div class="hero-eyebrow reveal">🍱 Easset · 视觉饮食资产收藏簿</div>
+    <h1 class="hero-h1 reveal delay-1">贴纸墙，<br/>而非<em>卡路里</em>。</h1>
+    <p class="hero-sub reveal delay-2">把"今天吃了什么"变成视觉资产。AI 在幕后默默懂你,你只需要看一眼漂亮的贴纸墙 —— 零负罪感,有参与感。</p>
+    <div class="hero-stats reveal delay-2">
+      <div class="hero-stat"><div class="hero-stat-num">16<em>*</em></div><div class="hero-stat-label">手绘贴纸</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">3<em>档</em></div><div class="hero-stat-label">AI 语气</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">18</div><div class="hero-stat-label">勋章</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">¥0</div><div class="hero-stat-label">零商业化</div></div>
+    </div>
+    <div class="hero-btns reveal delay-3">
+      <button class="hero-btn-primary" onclick="alert('Easset iOS 测试版即将发布')">📱 下载 iOS →</button>
+      <button class="hero-btn-secondary" onclick="document.getElementById('sec1').scrollIntoView({behavior:'smooth'})">看贴纸墙</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 1  16 种贴纸墙(JS 点击) ── -->
+<section class="feature-section" id="sec1" data-idx="1">
+  <div class="shape" style="width:380px;height:380px;border-radius:50%;background:rgba(255,107,107,0.1);top:-80px;right:-80px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:220px;height:60px;border-radius:999px;background:rgba(242,213,138,0.12);bottom:100px;left:-20px;animation:sDrift 8s ease-in-out infinite 1s"></div>
+  <div class="feature-inner rev">
+    <div class="feature-text reveal">
+      <span class="feat-tag">📸 拍 → 贴 → 收</span>
+      <h2 class="feat-h2">16 种手绘贴纸，<br/><em>真物理引擎</em>。</h2>
+      <p class="feat-desc">对焦食物 → 端侧自动抠图 → 贴纸入墙。重力 1.12、弹性 0.44、摇晃手机触发冲量 —— 16 种 SwiftUI Path 手绘 glyph。</p>
+      <div class="feat-chips">
+        <span class="chip">📸 端侧抠图</span>
+        <span class="chip">🎨 16 glyph</span>
+        <span class="chip">⚡ 物理引擎</span>
+        <span class="chip">📳 摇晃冲量</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">📸</div><div class="feat-card-title">端侧抠图</div><div class="feat-card-desc">MobileSAM 本地推理,无需联网</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🎨</div><div class="feat-card-title">16 glyph</div><div class="feat-card-desc">咖啡/奶茶/蛋糕/寿司等</div></div>
+        <div class="feat-card"><div class="feat-card-icon">⚡</div><div class="feat-card-title">真物理</div><div class="feat-card-desc">重力 1.12 / 弹性 0.44</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📳</div><div class="feat-card-title">摇晃冲量</div><div class="feat-card-desc">CoreMotion 检测摇晃</div></div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="ea-wall">
+        <div class="ea-grid" id="eaStickerGrid"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 2  三档 AI mode(JS 切换) ── -->
+<section class="feature-section" id="sec2" data-idx="2">
+  <div class="shape" style="width:300px;height:420px;border-radius:40px;background:rgba(168,230,207,0.08);top:-30px;left:-60px;animation:sFloat 9s ease-in-out infinite"></div>
+  <div class="shape" style="width:320px;height:160px;border-radius:0 0 160px 160px;background:rgba(255,107,107,0.1);bottom:0;right:-40px;animation:sDrift 8s ease-in-out infinite 2s"></div>
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="ea-mode">
+        <div class="ea-mode-h">🎚️ AI 语气模式 · 一键切换</div>
+        <div class="ea-mode-row">
+          <button class="ea-mode-btn on casual" onclick="eaSetMode('casual',this)">
+            <span class="ea-mode-icon">🍀</span>宽松老友
+          </button>
+          <button class="ea-mode-btn standard" onclick="eaSetMode('standard',this)">
+            <span class="ea-mode-icon">🔥</span>标准管家
+          </button>
+          <button class="ea-mode-btn strict" onclick="eaSetMode('strict',this)">
+            <span class="ea-mode-icon">⚖️</span>严厉教练
+          </button>
+        </div>
+        <div class="ea-mode-quote casual" id="eaQuote">
+          "又吃蛋糕呀,开心就好~ 偶尔放纵也是爱自己的一种方式嘛 🌸"
+        </div>
+      </div>
+    </div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">🎚️ 三档 AI 模式</span>
+      <h2 class="feat-h2">语气随 mode 变，<br/>从<em>鼓励</em>到<em>警告</em>。</h2>
+      <p class="feat-desc">宽松老友(安慰)/ 标准管家(温和)/ 严厉教练(直说),同一顿饭三种不同反馈,看你今天想被怎么对待。</p>
+      <div class="feat-chips">
+        <span class="chip">🍀 鼓励</span>
+        <span class="chip">🔥 中立</span>
+        <span class="chip">⚖️ 直言</span>
+        <span class="chip">🤖 端侧</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🍀</div><div class="feat-card-title">宽松老友</div><div class="feat-card-desc">鼓励 + 安慰,零负罪感</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🔥</div><div class="feat-card-title">标准管家</div><div class="feat-card-desc">温和提醒,平衡建议</div></div>
+        <div class="feat-card"><div class="feat-card-icon">⚖️</div><div class="feat-card-title">严厉教练</div><div class="feat-card-desc">直接说,数据驱动</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🤖</div><div class="feat-card-title">端侧 AI</div><div class="feat-card-desc">本地 LLM,离线可用</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 3  5 心情色条(JS 拖动) ── -->
+<section class="feature-section" id="sec3" data-idx="3">
+  <div class="shape" style="width:370px;height:290px;border-radius:44px;background:rgba(242,213,138,0.08);top:-40px;right:-60px;animation:sFloat 8s ease-in-out infinite 0.5s"></div>
+  <div class="shape" style="width:250px;height:65px;border-radius:999px;background:rgba(168,230,207,0.1);bottom:100px;left:-30px;animation:sDrift 7s ease-in-out infinite 2s"></div>
+  <div class="feature-inner rev">
+    <div class="feature-text reveal">
+      <span class="feat-tag">🎨 5 心情色</span>
+      <h2 class="feat-h2">用颜色<br/><em>记录心情</em>。</h2>
+      <p class="feat-desc">5 心情色条:bloom/calm/muse/spicy/velvet。每顿饭不仅记录吃了什么,还记录当时的心情。颜色 = 情绪的快门。</p>
+      <div class="feat-chips">
+        <span class="chip">🌸 Bloom</span>
+        <span class="chip">🌊 Calm</span>
+        <span class="chip">✨ Muse</span>
+        <span class="chip">🌶️ Spicy</span>
+        <span class="chip">🪻 Velvet</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🌸</div><div class="feat-card-title">Bloom 绽放</div><div class="feat-card-desc">开心 / 庆祝 / 约会</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🌊</div><div class="feat-card-title">Calm 平静</div><div class="feat-card-desc">独食 / 冥想 / 慢食</div></div>
+        <div class="feat-card"><div class="feat-card-icon">✨</div><div class="feat-card-title">Muse 灵感</div><div class="feat-card-desc">尝试新菜 / 探索</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🌶️</div><div class="feat-card-title">Spicy 刺激</div><div class="feat-card-desc">重口味 / 减压</div></div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="ea-mood">
+        <div class="ea-mood-h">🎨 5 心情色条</div>
+        <div class="ea-mood-bar" id="eaMoodBar" onclick="eaMoodClick(event)">
+          <div class="ea-mood-cursor" id="eaMoodCursor" style="left:50%">●</div>
+        </div>
+        <div class="ea-mood-labels">
+          <span>🌸 Bloom</span>
+          <span>🌊 Calm</span>
+          <span>✨ Muse</span>
+          <span>🌶️ Spicy</span>
+          <span>🪻 Velvet</span>
+        </div>
+        <div class="ea-mood-current">今天心情:<em id="eaMoodLabel">Calm 平静</em></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 4  18 勋章(JS 解锁动画) ── -->
+<section class="feature-section" id="sec4" data-idx="4">
+  <div class="shape" style="width:350px;height:350px;border-radius:50%;background:rgba(255,107,107,0.08);top:-60px;left:-60px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:280px;height:70px;border-radius:999px;background:rgba(242,213,138,0.1);bottom:100px;right:-30px;animation:sDrift 9s ease-in-out infinite 2s"></div>
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="dk-surface" style="background:linear-gradient(180deg,#0a0a0a 0%,#1a1a1a 100%);border-radius:18px;padding:20px;width:100%;max-width:560px;box-shadow:0 20px 60px rgba(0,0,0,0.3);border:1px solid rgba(242,213,138,0.15)">
+        <div style="text-align:center;font-size:12px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:0.5px;margin-bottom:14px">🏆 18 枚勋章 · <span id="eaMedalCount">12</span>/18 已解锁</div>
+        <div class="ea-medals" id="eaMedalGrid"></div>
+        <div style="text-align:center;margin-top:14px;padding:10px;background:rgba(0,0,0,0.3);border-radius:8px;font-size:11px;color:rgba(255,255,255,0.5)">吃得多反而解锁勋章 · 0 健康提醒 · 🌙 Wild mode 昼夜双主题</div>
+      </div>
+    </div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">🏆 18 枚勋章</span>
+      <h2 class="feat-h2">吃得猛<br/>反而<em>解锁勋章</em>。</h2>
+      <p class="feat-desc">豁出去模式:吃得猛反而解锁 18 枚勋章 + 粒子动画,0 健康提醒,次日自然过渡 —— 把"卡路里负担"变成"探索游戏"。</p>
+      <div class="feat-chips">
+        <span class="chip">🏅 18 勋章</span>
+        <span class="chip">🎉 粒子</span>
+        <span class="chip">🟢 零提醒</span>
+        <span class="chip">🌙 昼夜主题</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">🏅</div><div class="feat-card-title">18 勋章</div><div class="feat-card-desc">吃得多 / 辣 / 甜 / 异域菜 / 夜宵</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🎉</div><div class="feat-card-title">粒子动画</div><div class="feat-card-desc">解锁瞬间金色粒子喷发</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🟢</div><div class="feat-card-title">零提醒</div><div class="feat-card-desc">Wild 模式完全无健康提醒</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🌙</div><div class="feat-card-title">昼夜双主题</div><div class="feat-card-desc">日间 / 夜间自动切换</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 5  12 月热力图 ── -->
+<section class="feature-section" id="sec5" data-idx="5">
+  <div class="shape" style="width:340px;height:340px;border-radius:50%;background:rgba(155,89,182,0.1);top:-60px;right:-60px;animation:sPulse 8s ease-in-out infinite"></div>
+  <div class="shape" style="width:200px;height:200px;border-radius:40px;background:rgba(168,230,207,0.08);bottom:-40px;left:60px;animation:sFloat 7s ease-in-out infinite 3s"></div>
+  <div class="feature-inner rev">
+    <div class="feature-text reveal">
+      <span class="feat-tag">📅 12 月热力图</span>
+      <h2 class="feat-h2">年视图，<br/><em>一图</em>看完一整年。</h2>
+      <p class="feat-desc">12 个月热力图,贴纸数 + 营养饼图叠加,年底自动生成"年度美食报告"。看看今年去了哪 87 家店、吃了 12 种菜系。</p>
+      <div class="feat-chips">
+        <span class="chip">📅 月度热图</span>
+        <span class="chip">🍱 营养叠加</span>
+        <span class="chip">📊 年度报告</span>
+        <span class="chip">🏆 12 菜系</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">📅</div><div class="feat-card-title">月热图</div><div class="feat-card-desc">12 月 × 31 天,贴纸数颜色深浅</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🍱</div><div class="feat-card-title">营养叠加</div><div class="feat-card-desc">P/C/F 三维营养饼图</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📊</div><div class="feat-card-title">年度报告</div><div class="feat-card-desc">87 家店 / 12 菜系 / Top 5</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🏆</div><div class="feat-card-title">里程碑</div><div class="feat-card-desc">满 30/100/365 贴纸有惊喜</div></div>
+      </div>
+    </div>
+    <div class="feature-visual reveal delay-2">
+      <div class="ea-heatmap">
+        <div class="ea-heatmap-h">2026 年 · 12 月热图</div>
+        <div class="ea-heatmap-grid" id="eaHeatmap"></div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.5);font-weight:600;padding:0 4px">
+          <span>1月</span><span>2月</span><span>3月</span><span>4月</span><span>5月</span><span>6月</span>
+          <span>7月</span><span>8月</span><span>9月</span><span>10月</span><span>11月</span><span>12月</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:10px;color:rgba(255,255,255,0.6)">
+          <span>少</span>
+          <div style="flex:1;margin:0 10px;height:6px;border-radius:3px;background:linear-gradient(90deg,rgba(255,255,255,0.05),#A8E6CF,#F2D58A,#FF9500,#FF6B6B)"></div>
+          <span>多</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 6  物理引擎 3 滑块(JS) ── -->
+<section class="feature-section" id="sec6" data-idx="6">
+  <div class="shape" style="width:380px;height:380px;border-radius:50%;background:rgba(168,230,207,0.08);top:-80px;left:-80px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:220px;height:60px;border-radius:999px;background:rgba(242,213,138,0.1);bottom:100px;right:-20px;animation:sDrift 8s ease-in-out infinite 1s"></div>
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="ea-physics">
+        <div class="ea-physics-h">⚙️ 物理引擎参数</div>
+        <div class="ea-physics-row">
+          <span class="ea-physics-label">重力</span>
+          <input type="range" min="0" max="20" step="1" value="11" class="ea-physics-input" oninput="eaPhysics()">
+          <span class="ea-physics-val" id="eaGrav">1.1</span>
+        </div>
+        <div class="ea-physics-row">
+          <span class="ea-physics-label">弹性</span>
+          <input type="range" min="0" max="10" step="1" value="4" class="ea-physics-input" oninput="eaPhysics()">
+          <span class="ea-physics-val" id="eaElast">0.4</span>
+        </div>
+        <div class="ea-physics-row" style="margin-bottom:0">
+          <span class="ea-physics-label">摩擦</span>
+          <input type="range" min="0" max="10" step="1" value="6" class="ea-physics-input" oninput="eaPhysics()">
+          <span class="ea-physics-val" id="eaFric">0.6</span>
+        </div>
+        <div class="ea-physics-preview" id="eaPreview">
+          <span>🍔</span><span>🍣</span><span>🍰</span><span>☕</span><span>🍜</span>
+        </div>
+      </div>
+    </div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">⚙️ 真物理引擎</span>
+      <h2 class="feat-h2">重力 + 弹性 + 摩擦，<br/>3 <em>滑块</em>玩出花。</h2>
+      <p class="feat-desc">重力 1.12 / 弹性 0.44 / 摩擦 0.6 —— 拖动滑块实时看贴纸行为变化。低重力下贴纸飘起来,高弹性下像橡皮球。</p>
+      <div class="feat-chips">
+        <span class="chip">⚖️ 重力</span>
+        <span class="chip">🏀 弹性</span>
+        <span class="chip">🛞 摩擦</span>
+        <span class="chip">📳 摇晃</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">⚖️</div><div class="feat-card-title">重力 1.12</div><div class="feat-card-desc">贴纸自然下落,慢慢粘</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🏀</div><div class="feat-card-title">弹性 0.44</div><div class="feat-card-desc">撞击反弹,有果冻感</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🛞</div><div class="feat-card-title">摩擦 0.6</div><div class="feat-card-desc">滑动阻力,慢慢停</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📳</div><div class="feat-card-title">摇晃冲量</div><div class="feat-card-desc">CoreMotion 检测,给贴纸一个力</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── § 7  4 屏汇总(浏览器框架) ── -->
+<section class="feature-section" id="sec7" data-idx="7">
+  <div class="shape" style="width:380px;height:380px;border-radius:50%;background:rgba(155,89,182,0.1);top:-80px;left:-80px;animation:sPulse 7s ease-in-out infinite"></div>
+  <div class="shape" style="width:220px;height:60px;border-radius:999px;background:rgba(255,107,107,0.1);bottom:100px;right:-20px;animation:sDrift 8s ease-in-out infinite 1s"></div>
+  <div class="feature-inner">
+    <div class="feature-visual reveal">
+      <div class="browser wide">
+        <div class="bbar">
+          <div class="bdot r"></div><div class="bdot y"></div><div class="bdot g"></div>
+          <div class="burl">easset.app / main</div>
+        </div>
+        <div class="bcontent" style="background:#f5f5f7;height:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px">
+          <div class="ea-summary-tile" style="background:#fff"><div class="ic">🍱</div><div class="n" style="color:#1d1d1f">87</div><div class="l">家店</div></div>
+          <div class="ea-summary-tile" style="background:#fff"><div class="ic">📸</div><div class="n" style="color:#1d1d1f">214</div><div class="l">次打卡</div></div>
+          <div class="ea-summary-tile" style="background:#fff"><div class="ic">🌶️</div><div class="n" style="color:#1d1d1f">12</div><div class="l">种菜系</div></div>
+          <div class="ea-summary-tile" style="background:#fff"><div class="ic">🏆</div><div class="n" style="color:#1d1d1f">18</div><div class="l">勋章</div></div>
+        </div>
+        <div style="background:#f5f5f7;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px;border-top:0.5px solid rgba(0,0,0,0.06)">
+          <div style="background:#fff;padding:8px;border-radius:6px;display:flex;align-items:center;gap:6px;font-size:10px;color:#1d1d1f">
+            <div style="font-size:18px">📋</div><div><div style="font-weight:600">List</div><div style="color:#86868b;font-size:8px">7 大主屏</div></div>
+          </div>
+          <div style="background:#fff;padding:8px;border-radius:6px;display:flex;align-items:center;gap:6px;font-size:10px;color:#1d1d1f">
+            <div style="font-size:18px">📷</div><div><div style="font-weight:600">CheckIn</div><div style="color:#86868b;font-size:8px">拍 → 贴</div></div>
+          </div>
+          <div style="background:#fff;padding:8px;border-radius:6px;display:flex;align-items:center;gap:6px;font-size:10px;color:#1d1d1f">
+            <div style="font-size:18px">🗺️</div><div><div style="font-weight:600">Nearby</div><div style="color:#86868b;font-size:8px">附近</div></div>
+          </div>
+          <div style="background:#fff;padding:8px;border-radius:6px;display:flex;align-items:center;gap:6px;font-size:10px;color:#1d1d1f">
+            <div style="font-size:18px">📊</div><div><div style="font-weight:600">Report</div><div style="color:#86868b;font-size:8px">年度报告</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-text reveal delay-2">
+      <span class="feat-tag">📱 7 大主屏</span>
+      <h2 class="feat-h2">List · Detail · CheckIn，<br/>还有<em>4 个</em>没画。</h2>
+      <p class="feat-desc">9 个 SPM 模块 + 7 大主屏 + 3 屏 Onboarding + DockBar 5 tab。完全模块化,Swift 5.9 + SwiftData,端侧离线优先。</p>
+      <div class="feat-chips">
+        <span class="chip">📋 List</span>
+        <span class="chip">📷 CheckIn</span>
+        <span class="chip">🗺️ Nearby</span>
+        <span class="chip">📊 Report</span>
+      </div>
+      <div class="feat-cards">
+        <div class="feat-card"><div class="feat-card-icon">📋</div><div class="feat-card-title">List 列表</div><div class="feat-card-desc">所有贴纸 + 心情色筛选</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📷</div><div class="feat-card-title">CheckIn 打卡</div><div class="feat-card-desc">拍 → 端侧抠图 → 入贴纸</div></div>
+        <div class="feat-card"><div class="feat-card-icon">🗺️</div><div class="feat-card-title">Nearby 附近</div><div class="feat-card-desc">Apple Maps 找同好</div></div>
+        <div class="feat-card"><div class="feat-card-icon">📊</div><div class="feat-card-title">Report 报告</div><div class="feat-card-desc">营养饼图 + 月度趋势</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section" id="cta" data-idx="7">
+  <div class="shape" style="width:420px;height:420px;border-radius:50%;background:rgba(255,107,107,0.08);top:-120px;right:-120px;animation:sPulse 9s ease-in-out infinite"></div>
+  <div class="shape" style="width:280px;height:75px;border-radius:999px;background:rgba(168,230,207,0.1);bottom:80px;left:-40px;animation:sDrift 7s ease-in-out infinite 1.5s"></div>
+  <div class="shape" style="width:110px;height:110px;border-radius:50%;background:rgba(242,213,138,0.15);top:38%;left:80px;animation:sBob 5s ease-in-out infinite 0.8s"></div>
+  <div class="cta-inner reveal">
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.15);font-size:12px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:28px">🍱 Easset · iOS 测试版即将发布</div>
+    <h1 class="cta-h1">把吃饭<br/>变成<em>收藏</em>。</h1>
+    <p class="cta-sub">Easset 不是卡路里计数器,不是 MyFitnessPal,只是把"今天吃了什么"变成漂亮的视觉资产。零负罪感,有参与感。</p>
+    <div class="cta-btns">
+      <button class="hero-btn-primary" onclick="alert('iOS TestFlight 即将开放')">📱 申请测试 →</button>
+      <button class="hero-btn-secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">回到顶部</button>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-logo">Easset</div>
+  <div class="footer-links">
+    <a class="footer-link" href="index.html">ZYRVIS 首页</a>
+    <a class="footer-link" href="#hero">回到顶部</a>
+    <a class="footer-link" href="#cta">下载</a>
+  </div>
+  <div class="footer-copy">© 2026 ZYRVIS · Easset · 视觉饮食资产收藏簿</div>
+</footer>
+
+<script>
+/* ── NAV ── */
+const sections = document.querySelectorAll('[data-idx]');
+const dots = document.querySelectorAll('.sc-dot');
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.intersectionRatio > 0.3) {
+      const idx = e.target.dataset.idx;
+      dots.forEach(d => d.classList.remove('active'));
+      const a = document.querySelector(`.sc-dot[data-idx="${idx}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => navObs.observe(s));
+
+/* ── SMOOTH SCROLL ── */
+document.querySelectorAll('[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+
+/* ── REVEAL ── */
+document.body.classList.add('js-reveal-ready');
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(r => revObs.observe(r));
+
+/* ── §1 16 种贴纸 ── */
+const eaStickers = [
+  {emoji:'☕',name:'咖啡',rot:-3},
+  {emoji:'🍵',name:'奶茶',rot:2},
+  {emoji:'🍰',name:'蛋糕',rot:-2},
+  {emoji:'🍣',name:'寿司',rot:3},
+  {emoji:'🍜',name:'面条',rot:-1},
+  {emoji:'🍱',name:'便当',rot:2},
+  {emoji:'🥗',name:'沙拉',rot:-2},
+  {emoji:'🍔',name:'汉堡',rot:1},
+  {emoji:'🍕',name:'披萨',rot:-3},
+  {emoji:'🥟',name:'饺子',rot:2},
+  {emoji:'🥐',name:'可颂',rot:-1},
+  {emoji:'🍩',name:'甜甜圈',rot:3},
+  {emoji:'🍦',name:'冰激凌',rot:-2},
+  {emoji:'🍺',name:'啤酒',rot:2},
+  {emoji:'🍷',name:'红酒',rot:-1},
+  {emoji:'🥂',name:'香槟',rot:3}
+];
+const sg = document.getElementById('eaStickerGrid');
+if(sg){
+  eaStickers.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'ea-sticker' + (i < 3 ? ' added' : '');
+    div.style.setProperty('--r', s.rot + 'deg');
+    div.innerHTML = s.emoji + '<span>' + s.name + '</span>';
+    div.onclick = function(){ this.classList.toggle('added'); };
+    sg.appendChild(div);
+  });
+}
+
+/* ── §2 三档 mode 切换 ── */
+const eaQuotes = {
+  casual: ['"又吃蛋糕呀,开心就好~ 偶尔放纵也是爱自己的一种方式嘛 🌸"',
+           '"热奶茶配周末,完美 🌸 明天可以吃清淡点哦"',
+           '"又是咖啡时间,好惬意 ~ 享受当下就好 ☕"'],
+  standard: ['"今日咖啡因 +200mg,周累计 1.2g,在推荐范围内 ✓"',
+             '"摄入 580 kcal,蛋白质偏低,建议下一餐加 20g 蛋白"',
+             '"蔬菜不足 100g,建议晚餐加 1 份绿叶菜"'],
+  strict: ['"又来甜的,本周第 3 次甜食 ⚠️ 热量已超 200 kcal"',
+            '"红肉摄入超标,本周建议改白肉或鱼"',
+            '"完全没蔬菜 ⚠️⚠️⚠️ 紧急补充!"']
+};
+let eaModeIdx = 0;
+window.eaSetMode = function(mode, btn){
+  document.querySelectorAll('.ea-mode-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const q = document.getElementById('eaQuote');
+  q.className = 'ea-mode-quote ' + mode;
+  eaModeIdx = 0;
+  eaRotateQuote(mode);
+  // 轮换 3 个 quote
+  if(window._eaModeTimer) clearInterval(window._eaModeTimer);
+  window._eaModeTimer = setInterval(() => {
+    eaModeIdx = (eaModeIdx + 1) % 3;
+    eaRotateQuote(mode);
+  }, 4000);
+};
+function eaRotateQuote(mode){
+  const q = document.getElementById('eaQuote');
+  if(q) q.textContent = eaQuotes[mode][eaModeIdx % 3];
+}
+
+/* ── §3 5 心情色条 ── */
+const eaMoods = ['🌸 Bloom 绽放','🌊 Calm 平静','✨ Muse 灵感','🌶️ Spicy 刺激','🪻 Velvet 高雅'];
+window.eaMoodClick = function(e){
+  const bar = document.getElementById('eaMoodBar');
+  const rect = bar.getBoundingClientRect();
+  const pct = ((e.clientX - rect.left) / rect.width) * 100;
+  const idx = Math.min(4, Math.max(0, Math.floor(pct / 20)));
+  document.getElementById('eaMoodCursor').style.left = pct + '%';
+  document.getElementById('eaMoodLabel').textContent = eaMoods[idx];
+};
+
+/* ── §4 18 勋章网格 ── */
+const eaMedalList = [
+  {ic:'🏅',name:'首批打卡',unlocked:true},
+  {ic:'🌶️',name:'辣王',unlocked:true},
+  {ic:'🍰',name:'甜党',unlocked:true},
+  {ic:'🥗',name:'健康派',unlocked:true},
+  {ic:'🍺',name:'酒仙',unlocked:true},
+  {ic:'☕',name:'咖啡成瘾',unlocked:true},
+  {ic:'🌙',name:'夜猫子',unlocked:true},
+  {ic:'🍳',name:'早鸟',unlocked:false},
+  {ic:'🌏',name:'异域菜',unlocked:true},
+  {ic:'📅',name:'30 天连击',unlocked:true},
+  {ic:'🏆',name:'100 贴纸',unlocked:true},
+  {ic:'💯',name:'365 贴纸',unlocked:false},
+  {ic:'🔥',name:'Wild 模式',unlocked:true},
+  {ic:'🌈',name:'全色解锁',unlocked:false},
+  {ic:'👯',name:'社交达人',unlocked:false},
+  {ic:'🏆',name:'冠军',unlocked:false},
+  {ic:'🎖️',name:'VIP',unlocked:false},
+  {ic:'💎',name:'终极',unlocked:false}
+];
+const mg = document.getElementById('eaMedalGrid');
+if(mg){
+  let unlocked = 0;
+  eaMedalList.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'ea-medal ' + (m.unlocked ? 'unlocked' : 'locked');
+    div.innerHTML = m.ic + '<span>' + m.name + '</span>';
+    if(m.unlocked) unlocked++;
+    div.onclick = function(){
+      if(!m.unlocked){
+        m.unlocked = true;
+        this.classList.remove('locked');
+        this.classList.add('unlocked');
+        unlocked++;
+        document.getElementById('eaMedalCount').textContent = unlocked;
+        // 粒子效果
+        for(let i=0; i<8; i++){
+          const p = document.createElement('div');
+          p.textContent = '✨';
+          p.style.cssText = 'position:absolute;font-size:14px;pointer-events:none;animation:eaBurst 1s ease-out forwards;left:' + (Math.random()*100) + '%;top:' + (Math.random()*100) + '%';
+          this.appendChild(p);
+        }
+      }
+    };
+    mg.appendChild(div);
+  });
+  document.getElementById('eaMedalCount').textContent = unlocked;
+}
+// 粒子动画
+const eaStyle = document.createElement('style');
+eaStyle.textContent = '@keyframes eaBurst{from{opacity:1;transform:translate(0,0) scale(0.5)}to{opacity:0;transform:translate(var(--tx,30px),var(--ty,-30px)) scale(1.2)}}';
+document.head.appendChild(eaStyle);
+
+/* ── §5 12 月热力图 ── */
+const hmg = document.getElementById('eaHeatmap');
+if(hmg){
+  // 12 月 × 7 行
+  for(let m=0; m<12; m++){
+    for(let d=0; d<7; d++){
+      const cell = document.createElement('div');
+      cell.className = 'ea-heatmap-cell';
+      // 随机数,模拟热力图
+      const val = Math.random();
+      let bg;
+      if(val < 0.2) bg = 'rgba(255,255,255,0.04)';
+      else if(val < 0.4) bg = 'rgba(168,230,207,0.25)';
+      else if(val < 0.6) bg = 'rgba(242,213,138,0.35)';
+      else if(val < 0.8) bg = 'rgba(255,149,0,0.45)';
+      else bg = 'rgba(255,107,107,0.55)';
+      cell.style.background = bg;
+      cell.textContent = Math.floor(val * 8) + 1;
+      hmg.appendChild(cell);
+    }
+  }
+}
+
+/* ── §6 物理引擎滑块 ── */
+window.eaPhysics = function(){
+  const grav = document.querySelectorAll('.ea-physics-input')[0].value;
+  const elast = document.querySelectorAll('.ea-physics-input')[1].value;
+  const fric = document.querySelectorAll('.ea-physics-input')[2].value;
+  document.getElementById('eaGrav').textContent = (grav/10).toFixed(1);
+  document.getElementById('eaElast').textContent = (elast/10).toFixed(1);
+  document.getElementById('eaFric').textContent = (fric/10).toFixed(1);
+  // 预览小图标随重力飞起
+  const preview = document.getElementById('eaPreview');
+  const lift = (grav/20) * 30; // 0-30px
+  preview.querySelectorAll('span').forEach((s, i) => {
+    s.style.transform = `translateY(${-lift}px) rotate(${i*5}deg)`;
+  });
+};
+</script>
+</body>
+</html>
