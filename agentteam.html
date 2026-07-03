@@ -18,30 +18,36 @@
 
 <section class="ap-hero">
   <span class="ap-eyebrow">PRODUCT · 08 · 开源 MIT</span>
-  <h1 class="ap-title">agentteam</h1>
-  <p class="ap-sub">290 specialized AI agents organized as a complete company.</p>
+  <h1 class="ap-title">agent<em>team</em></h1>
+  <p class="ap-sub" id="atSub">290 主用 + 1,300+ 上游收录 = <span id="atNum">290</span>+ AI Agents · organized as a complete company</p>
   <div class="ap-cta">
     <a class="ap-btn-primary" href="#">GitHub 仓库</a>
     <a class="ap-btn-link" href="#features">了解架构 →</a>
   </div>
 </section>
 
-<!-- 渲染图:组织架构 -->
+<!-- 渲染图 1:智能路由(核心交互) -->
 <section class="ap-render">
-  <div class="ap-render-tag">RENDER · 5 部门架构</div>
+  <div class="ap-render-tag">INTERACTIVE · 输入文本,实时路由到 Agent</div>
   <div class="ap-mockup">
-    <div class="ap-at-org">
-      <div class="ap-at-ceo">👤 CEO</div>
-      <div class="ap-at-depts">
-        <div class="ap-at-dept"><div class="ap-at-d-emoji">⚙️</div><div class="ap-at-d-t">CTO</div><div class="ap-at-d-s">技术部</div></div>
-        <div class="ap-at-dept"><div class="ap-at-d-emoji">📊</div><div class="ap-at-d-t">COO</div><div class="ap-at-d-s">运营部</div></div>
-        <div class="ap-at-dept"><div class="ap-at-d-emoji">💰</div><div class="ap-at-d-t">CFO</div><div class="ap-at-d-s">财务部</div></div>
-        <div class="ap-at-dept"><div class="ap-at-d-emoji">📣</div><div class="ap-at-d-t">CMO</div><div class="ap-at-d-s">市场部</div></div>
-        <div class="ap-at-dept"><div class="ap-at-d-emoji">🎯</div><div class="ap-at-d-t">CPO</div><div class="ap-at-d-s">产品部</div></div>
+    <div class="at-router">
+      <div class="at-router-input">
+        <span class="at-router-prompt">→</span>
+        <input type="text" id="atQuery" placeholder='试试输入:"用 CEO 视角评估这个项目" 或 "小红书种草" 或 "前端开发 React"...' value="用 CEO 视角评估这个项目的商业模式" oninput="atRoute()">
       </div>
-      <div class="ap-at-depts small">
-        <div class="ap-at-dept small"><div class="ap-at-d-emoji">👥</div><div class="ap-at-d-t">CHRO</div><div class="ap-at-d-s">HR部</div></div>
-        <div class="ap-at-dept small"><div class="ap-at-d-emoji">🔒</div><div class="ap-at-d-t">CISO</div><div class="ap-at-d-s">安全部</div></div>
+      <div class="at-router-result" id="atResult">
+        <div class="at-route-path">
+          <div class="at-route-step">输入</div>
+          <div class="at-route-arrow">↓</div>
+          <div class="at-route-step">关键词匹配</div>
+          <div class="at-route-arrow">↓</div>
+          <div class="at-route-step">部门路由</div>
+          <div class="at-route-arrow">↓</div>
+          <div class="at-route-step">Agent 调度</div>
+        </div>
+        <div class="at-route-dept">👤 CEO(战略 · 优先级)</div>
+        <div class="at-route-agent">🎯 chief-executive-officer</div>
+        <div class="at-route-meta">优先级: <span class="at-prio">P0</span> · 触发词: CEO / 战略 / 优先级 / 评估</div>
       </div>
     </div>
   </div>
@@ -50,14 +56,36 @@
 <!-- 功能 1 -->
 <section class="ap-feature" id="features">
   <div class="ap-feature-text">
-    <span class="ap-feature-tag">01 · 完整公司</span>
-    <h2>不是单 Agent 框架,<br>是一家公司的数字孪生。</h2>
-    <p>8 大高管 + 9 个专业部门 + 290 个 Agent。不是"几个 Agent",是一家可运行的公司。</p>
+    <span class="ap-feature-tag">01 · 自动路由</span>
+    <h2>输入一句话,<br>自动匹配 Agent。</h2>
+    <p>不用记 290 个 Agent 名字。关键词命中 → 部门路由 → Agent 调度,P0/P1/P2/P3 优先级自动分配。</p>
   </div>
   <div class="ap-feature-visual">
     <div class="ap-mockup-card">
-      <div class="ap-mockup-emoji">🏢</div>
-      <div class="ap-mockup-label">5-Division Company</div>
+      <div class="ap-mockup-emoji">🎯</div>
+      <div class="ap-mockup-label">Smart Routing</div>
+    </div>
+  </div>
+</section>
+
+<!-- 渲染图 2:5 部门架构(交互 - 展开) -->
+<section class="ap-render alt">
+  <div class="ap-render-tag">RENDER · 6 部门 + 3 权分立(点击展开)</div>
+  <div class="ap-mockup">
+    <div class="at-org">
+      <div class="at-leaders">
+        <div class="at-leader" data-name="CEO" data-dept="战略" data-words="CEO 战略 优先级 评估 商业模式 顶层决策" data-prio="P0">👤 CEO</div>
+        <div class="at-leader" data-name="CTO" data-dept="技术" data-words="CTO 技术 架构 选型 后端 前端 React" data-prio="P0">⚙️ CTO</div>
+        <div class="at-leader" data-name="COO" data-dept="运营" data-words="COO 运营 调度 拆解 派发 监控 任务" data-prio="P0">📊 COO</div>
+      </div>
+      <div class="at-depts" id="atDepts">
+        <div class="at-dept on" data-name="PRD" data-dept="PRD" data-words="产品 需求 PRD 路线图" data-agents="105" data-color="purple" data-words-c="产品 需求 PRD 路线图 商业模式"><div class="at-dept-emoji">📋</div><div class="at-dept-name">PRD</div><div class="at-dept-h">产品研发</div><div class="at-dept-n">105 agents</div></div>
+        <div class="at-dept" data-name="MKT" data-dept="MKT" data-agents="45" data-color="orange" data-words="小红书 抖音 LinkedIn 种草 营销 增长"><div class="at-dept-emoji">📣</div><div class="at-dept-name">MKT</div><div class="at-dept-h">市场营销</div><div class="at-dept-n">45 agents</div></div>
+        <div class="at-dept" data-name="DES" data-dept="DES" data-agents="26" data-color="red" data-words="设计 UI UX 视觉 logo 品牌"><div class="at-dept-emoji">🎨</div><div class="at-dept-name">DES</div><div class="at-dept-h">设计</div><div class="at-dept-n">26 agents</div></div>
+        <div class="at-dept" data-name="SAL" data-dept="SAL" data-agents="15" data-color="gold" data-words="销售 客户 BD 商务 谈判"><div class="at-dept-emoji">💰</div><div class="at-dept-name">SAL</div><div class="at-dept-h">销售</div><div class="at-dept-n">15 agents</div></div>
+        <div class="at-dept" data-name="CSM" data-dept="CSM" data-agents="98" data-color="green" data-words="客服 客户 售后 支持 文档"><div class="at-dept-emoji">🤝</div><div class="at-dept-name">CSM</div><div class="at-dept-h">客户成功</div><div class="at-dept-n">98 agents</div></div>
+        <div class="at-dept" data-name="RES" data-dept="RES" data-agents="22" data-color="blue" data-words="研究 学术 论文 调研 数据分析"><div class="at-dept-emoji">🔬</div><div class="at-dept-name">RES</div><div class="at-dept-h">基础研究</div><div class="at-dept-n">22 agents</div></div>
+      </div>
     </div>
   </div>
 </section>
@@ -65,9 +93,57 @@
 <!-- 功能 2 -->
 <section class="ap-feature rev">
   <div class="ap-feature-text">
-    <span class="ap-feature-tag">02 · 24 meta-skills</span>
-    <h2>跨 Agent 复用的能力包。</h2>
-    <p>从代码评审到合规审查,24 个 meta-skills 跨部门复用,一次编写多处使用。</p>
+    <span class="ap-feature-tag">02 · 完整公司</span>
+    <h2>不是单 Agent 框架,<br>是一家公司的数字孪生。</h2>
+    <p>3 权分立(CEO/CTO/COO)+ 6 大部门 + 290+ Agent。每个 Agent 都有具体职能,不是占位符。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🏢</div>
+      <div class="ap-mockup-label">5-Division Co.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 渲染图 3:24 meta-skills -->
+<section class="ap-render">
+  <div class="ap-render-tag">RENDER · 24 个 meta-skills</div>
+  <div class="ap-mockup">
+    <div class="ap-skills">
+      <div class="ap-skill">using-agentteam</div>
+      <div class="ap-skill">agent-manager</div>
+      <div class="ap-skill">list-agents</div>
+      <div class="ap-skill">writing-skills</div>
+      <div class="ap-skill">TDD</div>
+      <div class="ap-skill">systematic-debugging</div>
+      <div class="ap-skill">code-review</div>
+      <div class="ap-skill">test-driven-development</div>
+      <div class="ap-skill">verification-before-completion</div>
+      <div class="ap-skill">brainstorming</div>
+      <div class="ap-skill">writing-plans</div>
+      <div class="ap-skill">executing-plans</div>
+      <div class="ap-skill">requesting-code-review</div>
+      <div class="ap-skill">subagent-driven-development</div>
+      <div class="ap-skill">test-isolation</div>
+      <div class="ap-skill">testing-anti-patterns</div>
+      <div class="ap-skill">using-git-worktrees</div>
+      <div class="ap-skill">finishing-a-development-branch</div>
+      <div class="ap-skill">receiving-code-review</div>
+      <div class="ap-skill">dispatching-parallel-agents</div>
+      <div class="ap-skill">sharing-skills</div>
+      <div class="ap-skill">writing-good-eval-cases</div>
+      <div class="ap-skill">measuing-llm-judge-quality</div>
+      <div class="ap-skill">crafting-effective-llm-prompts</div>
+    </div>
+  </div>
+</section>
+
+<!-- 功能 3 -->
+<section class="ap-feature">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">03 · 24 meta-skills</span>
+    <h2>跨 Agent 复用的<br>能力包。</h2>
+    <p>TDD / 代码审查 / 写计划 / 派子 agent — 24 个方法论,100% 对齐 obra/superpowers。</p>
   </div>
   <div class="ap-feature-visual">
     <div class="ap-mockup-card">
@@ -77,39 +153,98 @@
   </div>
 </section>
 
-<!-- 渲染图:12 IDE 适配 -->
+<!-- 渲染图 4:12 IDE 集成 -->
 <section class="ap-render alt">
-  <div class="ap-render-tag">DEMO · 12 IDE 适配</div>
+  <div class="ap-render-tag">RENDER · 12 个 IDE 集成</div>
   <div class="ap-mockup">
-    <div class="ap-at-ides">
-      <div class="ap-at-ide">⌘ Claude Code</div>
-      <div class="ap-at-ide">◉ Cursor</div>
-      <div class="ap-at-ide">≋ Windsurf</div>
-      <div class="ap-at-ide">⌬ Cline</div>
-      <div class="ap-at-ide">◇ Continue</div>
-      <div class="ap-at-ide">◈ Cody</div>
-      <div class="ap-at-ide">◐ Tabnine</div>
-      <div class="ap-at-ide">▣ Zed</div>
-      <div class="ap-at-ide">◉ JetBrains</div>
-      <div class="ap-at-ide">◍ VS Code</div>
-      <div class="ap-at-ide">◌ Trae</div>
-      <div class="ap-at-ide">◐ Aider</div>
+    <div class="ap-ides">
+      <div class="ap-ide">⌘ Claude Code</div>
+      <div class="ap-ide">◉ Cursor</div>
+      <div class="ap-ide">≋ Windsurf</div>
+      <div class="ap-ide">⌬ Cline</div>
+      <div class="ap-ide">◇ Continue</div>
+      <div class="ap-ide">◈ Cody</div>
+      <div class="ap-ide">◐ Tabnine</div>
+      <div class="ap-ide">▣ Zed</div>
+      <div class="ap-ide">◉ JetBrains</div>
+      <div class="ap-ide">◍ VS Code</div>
+      <div class="ap-ide">◌ Trae</div>
+      <div class="ap-ide">◐ Aider</div>
     </div>
   </div>
 </section>
 
-<!-- 功能 3 -->
-<section class="ap-feature">
+<!-- 功能 4 -->
+<section class="ap-feature rev">
   <div class="ap-feature-text">
-    <span class="ap-feature-tag">03 · 52 passing 测试</span>
-    <h2>业界最严的 Agent 测试覆盖率。</h2>
-    <p>持续集成 + 自动健康检查 + Mission Control。把"AI 框架"做成"可生产部署的系统"。</p>
+    <span class="ap-feature-tag">04 · 12 IDE 集成</span>
+    <h2>在哪个 IDE,<br>都能用。</h2>
+    <p>Claude Code / Cursor / Windsurf / Cline / Continue... 12 个主流 IDE 全部适配,统一体验。</p>
   </div>
   <div class="ap-feature-visual">
     <div class="ap-mockup-card">
-      <div class="ap-mockup-emoji">🧪</div>
-      <div class="ap-mockup-label">52 Tests Pass</div>
+      <div class="ap-mockup-emoji">💻</div>
+      <div class="ap-mockup-label">12 IDEs</div>
     </div>
+  </div>
+</section>
+
+<!-- 渲染图 5:版本时间轴(交互) -->
+<section class="ap-render">
+  <div class="ap-render-tag">TIMELINE · 版本演进(点击查看)</div>
+  <div class="ap-mockup">
+    <div class="at-timeline">
+      <div class="at-tl-item on" onclick="atTl(0)">
+        <div class="at-tl-dot v1"></div>
+        <div class="at-tl-date">v1.0</div>
+        <div class="at-tl-name">2026-06-09</div>
+        <div class="at-tl-d">初始版本 · 5 部门 · 12 IDE</div>
+      </div>
+      <div class="at-tl-item" onclick="atTl(1)">
+        <div class="at-tl-dot v2"></div>
+        <div class="at-tl-date">v1.3</div>
+        <div class="at-tl-name">2026-06-14</div>
+        <div class="at-tl-d">中文文档 · 5.0 文档链 · 50+ examples</div>
+      </div>
+      <div class="at-tl-item" onclick="atTl(2)">
+        <div class="at-tl-dot v3"></div>
+        <div class="at-tl-date">v2.0</div>
+        <div class="at-tl-name">2026-06-16</div>
+        <div class="at-tl-d">集成微软 SkillOpt · 88 新 Agent · 自进化</div>
+      </div>
+      <div class="at-tl-item" onclick="atTl(3)">
+        <div class="at-tl-dot v4"></div>
+        <div class="at-tl-date">v2.1</div>
+        <div class="at-tl-name">2026-06-17</div>
+        <div class="at-tl-d">SkillOpt 排行榜 · Leaderboard 公开</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 功能 5 -->
+<section class="ap-feature">
+  <div class="ap-feature-text">
+    <span class="ap-feature-tag">05 · 自进化</span>
+    <h2>集成 SkillOpt,<br>Agent 越用越强。</h2>
+    <p>微软 SkillOpt 自进化评估器,持续优化 Agent 输出质量。每日排行榜公开,持续迭代。</p>
+  </div>
+  <div class="ap-feature-visual">
+    <div class="ap-mockup-card">
+      <div class="ap-mockup-emoji">🧬</div>
+      <div class="ap-mockup-label">Self-Evolving</div>
+    </div>
+  </div>
+</section>
+
+<!-- 核心数据 -->
+<section class="ap-promise">
+  <h2 class="ap-promise-h">agentteam 数字</h2>
+  <div class="ap-promise-grid">
+    <div class="ap-promise-item"><div class="ap-promise-icon">🤖</div><div class="ap-promise-text">290 主用 + 1,300+ 收录</div></div>
+    <div class="ap-promise-item"><div class="ap-promise-icon">🛠️</div><div class="ap-promise-text">24 meta-skills</div></div>
+    <div class="ap-promise-item"><div class="ap-promise-icon">💻</div><div class="ap-promise-text">12 个 IDE 集成</div></div>
+    <div class="ap-promise-item"><div class="ap-promise-icon">✅</div><div class="ap-promise-text">52 passing · MIT</div></div>
   </div>
 </section>
 
@@ -119,29 +254,150 @@
     <a href="index.html">首页</a>
     <a href="agentteam.html">agentteam</a>
   </div>
-  <div class="ap-foot-copy">© 2026 ZYRVIS · agentteam v1.3</div>
+  <div class="ap-foot-copy">© 2026 ZYRVIS · agentteam v2.1</div>
 </footer>
 
 <style>
-.ap-at-org{width:100%;max-width:780px;background:#fff;border-radius:20px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.04)}
-.ap-at-ceo{text-align:center;background:linear-gradient(135deg,#1d1d1f,#3a3a3c);color:#fff;padding:14px;border-radius:14px;font-size:18px;font-weight:600;margin-bottom:24px;max-width:200px;margin-left:auto;margin-right:auto}
-.ap-at-depts{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px;position:relative}
-.ap-at-depts::before{content:'';position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:2px;height:12px;background:rgba(0,0,0,0.1)}
-.ap-at-dept{background:rgba(0,0,0,0.03);border-radius:14px;padding:18px 8px;text-align:center;transition:all 0.2s}
-.ap-at-dept:hover{background:rgba(0,113,227,0.08);transform:translateY(-2px)}
-.ap-at-dept.small{padding:14px 8px}
-.ap-at-depts.small{grid-template-columns:repeat(2,1fr);max-width:400px;margin:0 auto}
-.ap-at-d-emoji{font-size:28px;margin-bottom:8px}
-.ap-at-dept.small .ap-at-d-emoji{font-size:22px;margin-bottom:6px}
-.ap-at-d-t{font-size:15px;font-weight:600;color:#1d1d1f;margin-bottom:2px}
-.ap-at-dept.small .ap-at-d-t{font-size:13px}
-.ap-at-d-s{font-size:11px;color:#86868b}
-.ap-at-dept.small .ap-at-d-s{font-size:10px}
+/* agentteam 专属 */
+.at-router{width:100%;max-width:680px;background:#fff;border-radius:18px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.04)}
+.at-router-input{display:flex;align-items:center;gap:10px;padding:14px 18px;background:rgba(0,0,0,0.04);border-radius:12px;margin-bottom:20px}
+.at-router-prompt{color:#0071e3;font-weight:700;font-size:18px}
+.at-router-input input{flex:1;background:transparent;border:none;outline:none;font-size:14px;font-family:inherit;color:#1d1d1f}
+.at-router-input input::placeholder{color:#86868b}
+.at-router-result{padding:16px;background:linear-gradient(135deg,rgba(0,113,227,0.04),rgba(90,200,250,0.02));border-radius:12px;border:1px solid rgba(0,113,227,0.15);transition:all 0.3s}
+.at-route-path{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:8px 0}
+.at-route-step{padding:6px 10px;background:rgba(0,113,227,0.1);color:#0071e3;border-radius:8px;font-size:11px;font-weight:600;flex:1;text-align:center}
+.at-route-arrow{color:#0071e3;font-size:14px;padding:0 4px}
+.at-route-dept{padding:14px 16px;background:linear-gradient(135deg,#0071e3,#5ac8fa);color:#fff;border-radius:12px;font-size:15px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.at-route-agent{padding:10px 14px;background:#fff;border:1.5px solid #0071e3;color:#0071e3;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:6px;display:inline-block}
+.at-route-meta{font-size:12px;color:#86868b}
+.at-prio{display:inline-block;padding:1px 7px;border-radius:6px;font-weight:700;margin:0 4px;font-size:11px}
+.at-prio{background:#ff3b30;color:#fff}
+.at-route-meta[data-prio="P1"] .at-prio{background:#ff9500}
+.at-route-meta[data-prio="P2"] .at-prio{background:#5ac8fa;color:#fff}
+.at-route-meta[data-prio="P3"] .at-prio{background:#34c759;color:#fff}
 
-.ap-at-ides{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;width:100%;max-width:780px}
-.ap-at-ide{background:#fff;border-radius:12px;padding:14px;font-size:13px;font-weight:600;color:#1d1d1f;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.05);letter-spacing:0.3px}
-.ap-at-ide:hover{border-color:rgba(0,113,227,0.3);color:#0071e3}
+.at-org{width:100%;max-width:920px;display:flex;flex-direction:column;gap:16px}
+.at-leaders{display:flex;gap:12px;justify-content:center;margin-bottom:8px}
+.at-leader{padding:14px 20px;background:linear-gradient(135deg,#1d1d1f,#3a3a3c);color:#fff;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;transition:transform 0.2s;flex:1;max-width:200px;text-align:center}
+.at-leader:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,0.2)}
+.at-leader.on{outline:3px solid #0071e3;outline-offset:2px}
+.at-depts{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.at-dept{background:#fff;border-radius:14px;padding:16px 10px;text-align:center;cursor:pointer;transition:all 0.2s;border:1.5px solid transparent;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
+.at-dept.on{border-color:#0071e3;background:linear-gradient(135deg,rgba(0,113,227,0.08),rgba(90,200,250,0.04))}
+.at-dept:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.at-dept-emoji{font-size:28px;margin-bottom:6px}
+.at-dept-name{font-size:14px;font-weight:700;color:#1d1d1f;margin-bottom:2px}
+.at-dept-h{font-size:10px;color:#86868b;margin-bottom:4px}
+.at-dept-n{font-size:11px;font-weight:600;color:#0071e3}
+
+.ap-skills{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:100%;max-width:680px}
+.ap-skill{padding:6px 12px;background:#fff;border:1px solid rgba(0,0,0,0.08);border-radius:999px;font-size:12px;color:#0071e3;font-weight:500;font-family:monospace;transition:all 0.2s;cursor:default}
+.ap-skill:hover{background:linear-gradient(135deg,#0071e3,#5ac8fa);color:#fff;border-color:transparent;transform:translateY(-2px)}
+
+.ap-ides{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;width:100%;max-width:680px}
+.ap-ide{background:#fff;border-radius:12px;padding:14px;font-size:12px;font-weight:600;color:#1d1d1f;text-align:center;letter-spacing:0.3px;box-shadow:0 2px 8px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.05);transition:all 0.2s;cursor:default}
+.ap-ide:hover{border-color:rgba(0,113,227,0.3);color:#0071e3;transform:translateY(-2px)}
+
+.at-timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;max-width:680px}
+.at-tl-item{padding:16px;background:#fff;border-radius:14px;cursor:pointer;transition:all 0.2s;border:1.5px solid transparent;position:relative;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
+.at-tl-item.on{border-color:#0071e3;background:linear-gradient(135deg,rgba(0,113,227,0.06),rgba(90,200,250,0.02))}
+.at-tl-item:hover{transform:translateY(-2px)}
+.at-tl-dot{width:12px;height:12px;border-radius:50%;margin-bottom:10px}
+.at-tl-dot.v1{background:#5ac8fa}
+.at-tl-dot.v2{background:#34c759}
+.at-tl-dot.v3{background:#ff9500}
+.at-tl-dot.v4{background:#af52de}
+.at-tl-date{font-size:18px;font-weight:700;color:#1d1d1f;margin-bottom:2px;letter-spacing:-0.5px}
+.at-tl-name{font-size:11px;color:#86868b;font-family:monospace;margin-bottom:6px}
+.at-tl-d{font-size:12px;color:#1d1d1f;line-height:1.4}
+@media(max-width:760px){
+  .at-depts{grid-template-columns:repeat(3,1fr)}
+  .at-timeline{grid-template-columns:1fr 1fr}
+  .at-leaders{flex-direction:column}
+  .at-leader{max-width:100%}
+}
 </style>
+
+<script>
+// agentteam 交互
+(function(){
+  // 1. 数字累加动画(290 → 1600)
+  const numEl = document.getElementById('atNum');
+  if(numEl){
+    const target = 1600;
+    let cur = 0;
+    const dur = 2000;
+    const start = Date.now();
+    function tick(){
+      const t = Math.min((Date.now()-start)/dur, 1);
+      const e = 1 - Math.pow(1-t, 2);
+      cur = Math.floor(target * e);
+      numEl.textContent = cur.toLocaleString();
+      if(t<1) requestAnimationFrame(tick);
+    }
+    setTimeout(tick, 500);
+  }
+
+  // 2. 路由演示
+  const routes = [
+    {match:['CEO','战略','优先级','评估','商业模式','顶层'],target:'CEO',dept:'战略',agent:'chief-executive-officer',prio:'P0'},
+    {match:['CTO','技术','架构','选型','后端','前端','React','Vue','Python'],target:'CTO',dept:'技术',agent:'chief-technology-officer',prio:'P0'},
+    {match:['COO','运营','调度','拆解','派发','监控','任务'],target:'COO',dept:'运营',agent:'chief-operating-officer',prio:'P0'},
+    {match:['小红书','抖音','LinkedIn','种草','营销','增长','文案'],target:'MKT',dept:'市场营销',agent:'xiaohongshu-specialist',prio:'P1'},
+    {match:['产品','需求','PRD','路线图','商业模式'],target:'PRD',dept:'产品研发',agent:'product-manager',prio:'P1'},
+    {match:['设计','UI','UX','视觉','logo','品牌'],target:'DES',dept:'设计',agent:'ui-designer',prio:'P1'},
+    {match:['销售','客户','BD','商务','谈判'],target:'SAL',dept:'销售',agent:'sales-manager',prio:'P1'},
+    {match:['客服','售后','支持','文档','FAQ'],target:'CSM',dept:'客户成功',agent:'customer-support',prio:'P1'},
+    {match:['研究','学术','论文','调研','数据分析','可视化'],target:'RES',dept:'基础研究',agent:'data-scientist',prio:'P1'},
+    {match:['八字','算命','Bazi','紫微','塔罗','玄学'],target:'CSM',dept:'客户成功',agent:'bazi-fortune-teller',prio:'P2'},
+    {match:['马斯克','第一性','Elon','5 步算法'],target:'PRD',dept:'战略思维',agent:'elon-musk-perspective',prio:'P2'}
+  ];
+  window.atRoute = function(){
+    const q = (document.getElementById('atQuery').value || '').toLowerCase().trim();
+    const res = document.getElementById('atResult');
+    if(!q){ res.innerHTML = '<div style="text-align:center;color:#86868b;padding:20px">输入一些关键词试试,例如 "CEO 战略" / "前端 React" / "小红书"</div>'; return; }
+    let match = null;
+    for(const r of routes){
+      if(r.match.some(k => q.includes(k.toLowerCase()))){ match = r; break; }
+    }
+    if(!match){
+      res.innerHTML = `<div class="at-route-path"><div class="at-route-step">输入</div><div class="at-route-arrow">↓</div><div class="at-route-step">关键词匹配</div><div class="at-route-arrow">↓</div><div class="at-route-step">模糊路由</div></div><div class="at-route-dept">❓ 通用 Fallback</div><div class="at-route-agent">general-purpose</div><div class="at-route-meta" data-prio="P4">优先级: <span class="at-prio">P4</span> · 未找到精确匹配,使用通用 Agent</div>`;
+      return;
+    }
+    res.innerHTML = `<div class="at-route-path"><div class="at-route-step">输入</div><div class="at-route-arrow">↓</div><div class="at-route-step">关键词匹配</div><div class="at-route-arrow">↓</div><div class="at-route-step">部门路由</div><div class="at-route-arrow">↓</div><div class="at-route-step">Agent 调度</div></div><div class="at-route-dept">👤 ${match.target}(${match.dept})</div><div class="at-route-agent">🎯 ${match.agent}</div><div class="at-route-meta" data-prio="${match.prio}">优先级: <span class="at-prio">${match.prio}</span> · 触发词: ${match.match.filter(k=>q.toLowerCase().includes(k.toLowerCase())).join(' / ')}</div>`;
+  };
+
+  // 3. 部门点击
+  document.querySelectorAll('.at-dept').forEach(d => {
+    d.addEventListener('click', () => {
+      document.querySelectorAll('.at-dept').forEach(x => x.classList.remove('on'));
+      d.classList.add('on');
+      const words = d.dataset.words || '';
+      document.getElementById('atQuery').value = words.split(' ')[0] + ' 相关需求';
+      atRoute();
+    });
+  });
+  document.querySelectorAll('.at-leader').forEach(l => {
+    l.addEventListener('click', () => {
+      document.querySelectorAll('.at-leader').forEach(x => x.classList.remove('on'));
+      l.classList.add('on');
+      const words = l.dataset.words || '';
+      document.getElementById('atQuery').value = words.split(' ').slice(0,3).join(' ');
+      atRoute();
+    });
+  });
+
+  // 4. 时间轴
+  window.atTl = function(i){
+    document.querySelectorAll('.at-tl-item').forEach(x => x.classList.remove('on'));
+    document.querySelectorAll('.at-tl-item')[i].classList.add('on');
+  };
+
+  // 初始路由
+  atRoute();
+})();
+</script>
 
 </body>
 </html>
