@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>懂吃 v6 · 地图定位</title>
+<style>
+  /* ============================================================
+     懂吃 UI Demo v6 — 地图定位（v5 + 高德地图）
+     ─────────────────────────────────────────────
+     v5 → v6 演进：
+     • 新增地图视图（高德地图 JS API 2.0）
+     • 双场景：①打卡定位  ②附近推荐（1km/3km/5km）
+     • 自定义品牌色地图标记（coral / electric / sunshine）
+     • 同心圆可视化 + 半径切换（capsule 按钮组）
+     • mock 模式：?mock=1 用纯 SVG 渲染（无 Key 也能体验）
+     • 沿用 v5 ZYRVIS Design Tokens
+     ============================================================ */
+
+  :root {
+    --coral-500: #FF6B6B;
+    --coral-400: #FF8E8E;
+    --coral-100: #FFE5E5;
+    --coral-soft: #FFF0EE;
+    --electric-500: #4ECDC4;
+    --electric-soft: #E5F8F7;
+    --sunshine-500: #FFE66D;
+    --sunshine-soft: #FFF8DC;
+    --grape-500: #9B59B6;
+    --mint-500: #A8E6CF;
+    --sky-500: #74B9FF;
+
+    --ink-primary: #1F1B16;
+    --ink-secondary: #6B635A;
+    --ink-tertiary: #A39A8E;
+    --ink-quaternary: #D6CFC4;
+
+    --paper: #FAF7F2;
+    --paper-elevated: #FFFFFF;
+    --paper-warm: #F5EFE6;
+
+    --border: #ECE5DA;
+    --border-strong: #D6CFC4;
+
+    --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
+    --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+
+    --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 24px; --r-full: 9999px;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, "HarmonyOS Sans", "PingFang SC", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+
+    --dur-fast: 150ms;
+    --dur-normal: 250ms;
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--paper);
+    color: var(--ink-primary);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app { max-width: 960px; margin: 0 auto; padding: 0 var(--s-5); }
+
+  /* ========== Topbar ========== */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--s-5) 0;
+    margin-bottom: var(--s-5);
+  }
+  .brand { display: flex; align-items: baseline; gap: var(--s-2); }
+  .brand-mark { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+  .brand-tagline {
+    font-size: 11px;
+    color: var(--ink-tertiary);
+    letter-spacing: 1px;
+    font-weight: 500;
+  }
+  .brand-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--coral-500);
+    margin: 0 var(--s-1);
+  }
+
+  /* ========== Page Header ========== */
+  .page-header { margin-bottom: var(--s-5); }
+  .page-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-1);
+    padding: var(--s-1) var(--s-3);
+    background: var(--coral-soft);
+    color: var(--coral-500);
+    border-radius: var(--r-full);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--s-3);
+  }
+  .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--ink-primary);
+  }
+  .page-sub {
+    font-size: 14px;
+    color: var(--ink-secondary);
+    margin-top: var(--s-1);
+  }
+
+  /* ========== Mode Tabs ========== */
+  .mode-tabs {
+    display: inline-flex;
+    background: var(--paper-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-full);
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: var(--s-5);
+  }
+  .mode-tab {
+    height: 40px;
+    padding: 0 var(--s-5);
+    background: transparent;
+    border: none;
+    border-radius: var(--r-full);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-secondary);
+    cursor: pointer;
+    transition: all var(--dur-normal) var(--ease-out);
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .mode-tab:hover { color: var(--ink-primary); }
+  .mode-tab.active {
+    background: var(--coral-500);
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.25);
+  }
+
+  /* ========== Radius Tabs ========== */
+  .radius-tabs {
+    display: inline-flex;
+    background: var(--paper-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-full);
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: var(--s-3);
+  }
+  .radius-tab {
+    height: 32px;
+    padding: 0 var(--s-4);
+    background: transparent;
+    border: none;
+    border-radius: var(--r-full);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-secondary);
+    cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+  }
+  .radius-tab.active {
+    background: var(--coral-500);
+    color: white;
+  }
+  .radius-tab:not(.active):hover {
+    background: var(--paper-warm);
+    color: var(--ink-primary);
+  }
+
+  /* ========== Map Container ========== */
+  .map-wrap {
+    position: relative;
+    margin-bottom: var(--s-5);
+  }
+  .map-container {
+    height: 400px;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(31, 27, 22, 0.04);
+    background: var(--paper-warm);
+  }
+
+  /* 浮动控件（地图上方） */
+  .map-overlay-tl {
+    position: absolute;
+    top: var(--s-3);
+    left: var(--s-3);
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    padding: var(--s-2) var(--s-3);
+    border-radius: var(--r-md);
+    font-size: 12px;
+    color: var(--ink-secondary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  .map-overlay-tl strong { color: var(--ink-primary); font-weight: 700; }
+  .map-overlay-tr {
+    position: absolute;
+    top: var(--s-3);
+    right: var(--s-3);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+  .map-zoom-btn {
+    width: 36px; height: 36px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: none;
+    border-radius: var(--r-md);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink-primary);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  /* ========== 地图标记（高德 DOM） ========== */
+  .dongchi-marker {
+    width: 36px; height: 36px;
+    background: var(--coral-500);
+    border: 3px solid white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
+    cursor: pointer;
+    transition: transform var(--dur-fast) var(--spring);
+  }
+  .dongchi-marker.visited { background: var(--coral-500); }
+  .dongchi-marker.want_to_try { background: var(--sunshine-500); color: var(--ink-primary); }
+  .dongchi-marker.old_restaurant { background: var(--electric-500); }
+  .dongchi-marker:hover { transform: scale(1.15); }
+  .dongchi-marker.selected {
+    transform: scale(1.35);
+    box-shadow: 0 0 0 6px var(--coral-soft), 0 4px 16px rgba(255, 107, 107, 0.5);
+  }
+  .dongchi-marker.current-location {
+    background: var(--sky-500);
+    box-shadow: 0 0 0 6px rgba(116, 185, 255, 0.2), 0 2px 8px rgba(116, 185, 255, 0.4);
+  }
+
+  /* ========== Legend ========== */
+  .legend {
+    display: flex;
+    gap: var(--s-4);
+    padding: var(--s-3) var(--s-4);
+    background: var(--paper-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    margin-bottom: var(--s-5);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-size: 12px;
+    color: var(--ink-secondary);
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px var(--border);
+  }
+  .legend-dot.visited { background: var(--coral-500); }
+  .legend-dot.want_to_try { background: var(--sunshine-500); }
+  .legend-dot.old_restaurant { background: var(--electric-500); }
+  .legend-dot.current { background: var(--sky-500); }
+
+  /* ========== Selected Restaurant Card ========== */
+  .selected-card {
+    background: var(--paper-elevated);
+    border: 1.5px solid var(--ink-primary);
+    border-radius: var(--r-lg);
+    padding: var(--s-5);
+    margin-bottom: var(--s-4);
+    display: none;
+    animation: slideUp var(--dur-normal) var(--ease-out);
+  }
+  .selected-card.visible { display: block; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .selected-card-head {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    margin-bottom: var(--s-3);
+  }
+  .selected-thumb {
+    width: 48px; height: 48px;
+    border-radius: var(--r-md);
+    background: linear-gradient(135deg, #FFE66D 0%, #FF6B6B 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    color: white;
+  }
+  .selected-name {
+    flex: 1;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink-primary);
+  }
+  .selected-rating {
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--coral-500);
+  }
+  .selected-meta {
+    font-size: 12px;
+    color: var(--ink-tertiary);
+    margin-bottom: var(--s-3);
+  }
+  .selected-meta span { margin-right: var(--s-2); }
+  .selected-actions {
+    display: flex;
+    gap: var(--s-2);
+  }
+
+  /* ========== Nearby List ========== */
+  .nearby-list {
+    background: var(--paper-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .nearby-header {
+    padding: var(--s-4) var(--s-5);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nearby-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-primary);
+  }
+  .nearby-count {
+    font-size: 12px;
+    color: var(--ink-tertiary);
+  }
+  .nearby-count strong { color: var(--coral-500); font-weight: 700; }
+  .nearby-empty {
+    padding: var(--s-7) var(--s-5);
+    text-align: center;
+    color: var(--ink-tertiary);
+    font-size: 14px;
+  }
+  .nearby-item {
+    padding: var(--s-4) var(--s-5);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    cursor: pointer;
+    transition: background var(--dur-fast);
+  }
+  .nearby-item:last-child { border-bottom: none; }
+  .nearby-item:hover { background: var(--paper-warm); }
+  .nearby-rank {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--paper-warm);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-secondary);
+  }
+  .nearby-item:nth-child(2) .nearby-rank { background: #FFE66D; color: var(--ink-primary); }
+  .nearby-item:nth-child(3) .nearby-rank { background: #D4C4B0; color: var(--ink-primary); }
+  .nearby-item:nth-child(4) .nearby-rank { background: #C9A687; color: white; }
+
+  .nearby-body { flex: 1; min-width: 0; }
+  .nearby-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-primary);
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .nearby-name-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+    background: rgba(31, 27, 22, 0.08);
+    color: var(--ink-secondary);
+    border-radius: var(--r-full);
+    font-weight: 600;
+  }
+  .nearby-name-tag.want { background: var(--sunshine-soft); color: #B8923A; }
+  .nearby-name-tag.old { background: var(--electric-soft); color: var(--electric-500); }
+  .nearby-meta {
+    font-size: 12px;
+    color: var(--ink-tertiary);
+  }
+  .nearby-stats {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .nearby-rating {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--coral-500);
+  }
+  .nearby-rating.muted { color: var(--ink-tertiary); }
+  .nearby-distance {
+    font-size: 11px;
+    color: var(--ink-tertiary);
+    font-family: var(--font-mono);
+  }
+
+  /* ========== Buttons ========== */
+  .btn {
+    height: 44px;
+    padding: 0 var(--s-5);
+    background: var(--paper-elevated);
+    color: var(--ink-primary);
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--r-full);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all var(--dur-normal) var(--ease-out);
+  }
+  .btn:hover { border-color: var(--ink-primary); }
+  .btn-primary {
+    background: var(--coral-500);
+    color: white;
+    border-color: var(--coral-500);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.25);
+  }
+  .btn-primary:hover {
+    background: var(--coral-400);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.35);
+  }
+
+  /* ========== Mock Mode ========== */
+  .mock-notice {
+    background: var(--sunshine-soft);
+    border: 1px dashed #B8923A;
+    color: #8B6914;
+    padding: var(--s-3) var(--s-4);
+    border-radius: var(--r-md);
+    font-size: 12px;
+    margin-bottom: var(--s-3);
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+
+  /* ========== Footer ========== */
+  .footer {
+    text-align: center;
+    padding: var(--s-7) 0 var(--s-5);
+    font-size: 11px;
+    color: var(--ink-tertiary);
+  }
+  .footer-versions {
+    display: inline-flex;
+    gap: var(--s-2);
+    margin-top: var(--s-2);
+    padding: var(--s-1) var(--s-3);
+    background: var(--paper-warm);
+    border-radius: var(--r-full);
+  }
+  .footer-versions a {
+    color: var(--ink-tertiary);
+    text-decoration: none;
+    font-family: var(--font-mono);
+  }
+  .footer-versions a.current { color: var(--coral-500); font-weight: 700; }
+
+  /* ========== Responsive ========== */
+  @media (max-width: 640px) {
+    .app { padding: 0 var(--s-4); }
+    .page-title { font-size: 24px; }
+    .map-container { height: 320px; }
+    .mode-tabs { width: 100%; }
+    .mode-tab { flex: 1; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-mark">懂吃</span>
+      <span class="brand-dot"></span>
+      <span class="brand-tagline">ZYRVIS DESIGN · V6 · 地图</span>
+    </div>
+    <span style="font-size: 11px; color: var(--ink-tertiary); font-family: var(--font-mono);">2026-06-28</span>
+  </div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-eyebrow">📍 地图定位 · 双场景</div>
+    <h1 class="page-title">在哪吃，吃什么</h1>
+    <p class="page-sub">打卡时定位选店 · 不知道吃什么时看附近历史</p>
+  </div>
+
+  <!-- Mode Tabs -->
+  <div class="mode-tabs" role="tablist">
+    <button class="mode-tab active" data-mode="check-in">
+      <span>📍</span> 打卡
+    </button>
+    <button class="mode-tab" data-mode="nearby">
+      <span>🍽️</span> 不知道吃什么
+    </button>
+  </div>
+
+  <!-- Mock Notice (only shown in mock mode) -->
+  <div class="mock-notice" id="mock-notice" style="display: none;">
+    🧪 <strong>Mock 模式</strong>：未配置高德 API Key，使用 SVG 模拟地图（坐标已对齐真实经纬度）
+  </div>
+
+  <!-- Radius Tabs (only in nearby mode) -->
+  <div id="radius-section" style="display: none;">
+    <div class="radius-tabs" role="tablist">
+      <button class="radius-tab active" data-radius="1">1 km</button>
+      <button class="radius-tab" data-radius="3">3 km</button>
+      <button class="radius-tab" data-radius="5">5 km</button>
+    </div>
+    <p style="font-size: 12px; color: var(--ink-tertiary); margin-bottom: var(--s-3);">
+      💡 以"当前位置"为圆心，切换半径查看附近打卡分布
+    </p>
+  </div>
+
+  <!-- Map -->
+  <div class="map-wrap">
+    <div class="map-container" id="map"></div>
+    <div class="map-overlay-tl">
+      📍 <strong id="overlay-location">深圳·南山·科技园</strong>
+    </div>
+    <div class="map-overlay-tr">
+      <button class="map-zoom-btn" id="zoom-in">+</button>
+      <button class="map-zoom-btn" id="zoom-out">−</button>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot visited"></div>已打卡</div>
+    <div class="legend-item"><div class="legend-dot want_to_try"></div>想去</div>
+    <div class="legend-item"><div class="legend-dot old_restaurant"></div>老店推荐</div>
+    <div class="legend-item"><div class="legend-dot current"></div>当前位置</div>
+  </div>
+
+  <!-- Selected Card (check-in mode) -->
+  <div class="selected-card" id="selected-card">
+    <div class="selected-card-head">
+      <div class="selected-thumb" id="selected-thumb">🍲</div>
+      <div class="selected-name" id="selected-name">小馆川菜</div>
+      <div class="selected-rating" id="selected-rating">4.3</div>
+    </div>
+    <div class="selected-meta">
+      <span id="selected-cuisine">🌶 川菜</span>
+      <span id="selected-price">💰 ¥80/人</span>
+      <span id="selected-distance">📍 280m</span>
+    </div>
+    <div class="selected-actions">
+      <button class="btn btn-primary" style="flex: 1;">为它打分 →</button>
+      <button class="btn" id="close-selected">关闭</button>
+    </div>
+  </div>
+
+  <!-- Nearby List (nearby mode) -->
+  <div id="nearby-section" style="display: none;">
+    <div class="nearby-list">
+      <div class="nearby-header">
+        <div class="nearby-title">📍 附近餐厅</div>
+        <div class="nearby-count">共 <strong id="nearby-count">3</strong> 家 · <span id="nearby-radius-label">1 km</span></div>
+      </div>
+      <div id="nearby-items"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>懂吃 v6 · 我的美食外脑 · 地理记忆层</div>
+    <div class="footer-versions">
+      <a href="index.html">v1</a>
+      <a href="v2.html">v2</a>
+      <a href="v3.html">v3</a>
+      <a href="v4.html">v4</a>
+      <a href="v5.html">v5</a>
+      <a href="v6.html" class="current">v6 ★</a>
+    </div>
+    <div style="margin-top: var(--s-3);">
+      <span style="color: var(--coral-500);">●</span> 宪章红线：仅本地 vault，绝不上传打卡数据
+    </div>
+  </div>
+
+</div>
+
+<!-- 数据源：与 7 张卡片完全一致 -->
+<script>
+  // 真实数据：与 restaurants/ 卡片 frontmatter 完全对齐
+  const RESTAURANTS = [
+    { id: 'damend', name: '大董烤鸭', cuisine: '粤菜', scene: ['商务','家庭','仪式感'],
+      rating: 4.8, price_per_person: 350,
+      location: { address: '北京·朝阳·工体北路', lat: 39.9388, lng: 116.4574, district: '朝阳', city: '北京' },
+      type: 'visited', emoji: '🦆', lastVisited: '2026-05-15', visitCount: 1 },
+
+    { id: 'aoki', name: '鮨·青木', cuisine: '日料', scene: ['约会','独处','仪式感'],
+      rating: 4.7, price_per_person: 800,
+      location: { address: '深圳·福田·平安金融中心', lat: 22.5410, lng: 114.0596, district: '福田', city: '深圳' },
+      type: 'visited', emoji: '🍣', lastVisited: '2026-04-22', visitCount: 1 },
+
+    { id: 'element', name: 'Element 新鲜元素', cuisine: '西餐', scene: ['约会','商务','家庭'],
+      rating: 4.5, price_per_person: 280,
+      location: { address: '深圳·福田·平安金融中心', lat: 22.5410, lng: 114.0596, district: '福田', city: '深圳' },
+      type: 'visited', emoji: '🥩', lastVisited: '2026-02-14', visitCount: 1 },
+
+    { id: 'xiaoguan', name: '小馆川菜', cuisine: '川菜', scene: ['朋友聚餐','家庭','工作餐'],
+      rating: 4.3, price_per_person: 80,
+      location: { address: '深圳·南山·科技园', lat: 22.5431, lng: 113.9526, district: '南山', city: '深圳' },
+      type: 'visited', emoji: '🌶', lastVisited: '2026-03-10', visitCount: 3 },
+
+    { id: 'manner', name: 'Manner Coffee', cuisine: '咖啡', scene: ['工作餐','独处','快'],
+      rating: 4.2, price_per_person: 25,
+      location: { address: '深圳·南山·科技园', lat: 22.5431, lng: 113.9526, district: '南山', city: '深圳' },
+      type: 'visited', emoji: '☕', lastVisited: '2026-06-12', visitCount: 1 },
+
+    { id: 'xicha', name: '喜茶·深圳湾万象城', cuisine: '茶饮', scene: ['独处','朋友聚餐'],
+      rating: null, price_per_person: 35,
+      location: { address: '深圳·南山·深圳湾万象城', lat: 22.5175, lng: 113.9432, district: '南山', city: '深圳' },
+      type: 'want_to_try', emoji: '🧋', lastVisited: null, visitCount: 0 },
+
+    { id: 'taotao', name: '陶陶居', cuisine: '粤菜', scene: ['家庭','朋友聚餐','仪式感'],
+      rating: null, price_per_person: 130,
+      location: { address: '广州·天河·天河城', lat: 23.1357, lng: 113.3245, district: '天河', city: '广州' },
+      type: 'old_restaurant', emoji: '🥟', lastVisited: null, visitCount: 0 },
+  ];
+
+  // 默认当前位置：深圳·南山·科技园（小馆川菜 / Manner 同位置）
+  const CURRENT_LOCATION = { lat: 22.5431, lng: 113.9526, label: '深圳·南山·科技园' };
+
+  // ── 距离计算（haversine，米） ────────────────────
+  function haversine(c1, c2) {
+    const R = 6371000;
+    const toRad = d => d * Math.PI / 180;
+    const dLat = toRad(c2.lat - c1.lat);
+    const dLng = toRad(c2.lng - c1.lng);
+    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(c1.lat)) * Math.cos(toRad(c2.lat)) * Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+  function formatDistance(m) {
+    if (m < 1000) return Math.round(m) + 'm';
+    return (m/1000).toFixed(1) + 'km';
+  }
+
+  // ── 全局状态 ─────────────────────────────────────
+  let state = {
+    mode: 'check-in',
+    radius: 1,
+    selected: null,
+    map: null,
+    markers: {},
+    circle: null,
+    currentMarker: null,
+    mockMode: new URLSearchParams(location.search).get('mock') === '1',
+  };
+
+  // ── 启动：根据 mock 参数决定使用高德 API 还是 SVG 模拟 ──
+  function init() {
+    if (state.mockMode || typeof AMap === 'undefined') {
+      document.getElementById('mock-notice').style.display = 'flex';
+      initMockMap();
+    } else {
+      initAmapMap();
+    }
+    bindEvents();
+  }
+
+  // ── 高德地图实现 ──────────────────────────────────
+  function initAmapMap() {
+    state.map = new AMap.Map('map', {
+      center: [CURRENT_LOCATION.lng, CURRENT_LOCATION.lat],
+      zoom: 13,
+      mapStyle: 'amap://styles/normal',
+    });
+    state.map.addControl(new AMap.ToolBar({ position: 'RB' }));
+
+    // 当前位置标记
+    state.currentMarker = new AMap.Marker({
+      position: [CURRENT_LOCATION.lng, CURRENT_LOCATION.lat],
+      content: '<div class="dongchi-marker current-location">📍</div>',
+      offset: new AMap.Pixel(-18, -18),
+      zIndex: 200,
+    });
+    state.map.add(state.currentMarker);
+
+    // 渲染 7 个餐厅标记
+    RESTAURANTS.forEach(r => {
+      const marker = new AMap.Marker({
+        position: [r.location.lng, r.location.lat],
+        content: `<div class="dongchi-marker ${r.type}">${r.emoji}</div>`,
+        offset: new AMap.Pixel(-18, -18),
+      });
+      marker.on('click', () => selectRestaurant(r));
+      state.map.add(marker);
+      state.markers[r.id] = marker;
+    });
+  }
+
+  // ── SVG 模拟地图（无 Key fallback） ────────────────
+  function initMockMap() {
+    const mapEl = document.getElementById('map');
+    // Mock 模式只展示"当前城市"（深圳）的餐厅 + 当前位置
+    // 跨城餐厅（如北京大董、广州陶陶居）通过列表展示，避免投影失真
+    const sameCity = RESTAURANTS.filter(r => r.location.city === CURRENT_LOCATION.label.split('·')[0]);
+    const otherCity = RESTAURANTS.filter(r => r.location.city !== CURRENT_LOCATION.label.split('·')[0]);
+
+    // 局部 bounds：以"当前位置"为中心
+    const allPoints = [...sameCity.map(r => ({lat: r.location.lat, lng: r.location.lng})), CURRENT_LOCATION];
+    const lats = allPoints.map(p => p.lat);
+    const lngs = allPoints.map(p => p.lng);
+    // 1km / 3km / 5km 半径对应的度数差（粗略：1° ≈ 111km）
+    // 实际显示范围要比最大半径（5km）大，给跨区餐厅（如鮨·青木 11km）留余地
+    const maxRadiusKm = 15;
+    const pad = maxRadiusKm / 111;
+    const centerLat = CURRENT_LOCATION.lat;
+    const centerLng = CURRENT_LOCATION.lng;
+    const bounds = {
+      minLat: centerLat - pad,
+      maxLat: centerLat + pad,
+      minLng: centerLng - pad * 1.4,  // lng 缩放因子（深圳纬度 22.5° 附近 cos 校正）
+      maxLng: centerLng + pad * 1.4,
+    };
+
+    // 投影函数：经纬度 → SVG 坐标（中心点 = 50%, 50%）
+    const project = (lat, lng) => {
+      const x = ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng)) * 100;
+      const y = (1 - (lat - bounds.minLat) / (bounds.maxLat - bounds.minLat)) * 100;
+      return { x, y };
+    };
+
+    // 简化的"街区"背景（SVG，使用 viewBox 单位 0-100）
+    const streets = [];
+    for (let i = 0; i < 8; i++) {
+      const y = i * 12 + 5;
+      streets.push(`<line x1="0" y1="${y}" x2="100" y2="${y}" stroke="#E8E1D4" stroke-width="0.3"/>`);
+    }
+    for (let i = 0; i < 10; i++) {
+      const x = i * 10 + 5;
+      streets.push(`<line x1="${x}" y1="0" x2="${x}" y2="100" stroke="#E8E1D4" stroke-width="0.3"/>`);
+    }
+
+    // 河流（装饰）
+    streets.push('<path d="M 0 60 Q 30 50 50 65 T 100 55" stroke="#B8D4E3" stroke-width="1" fill="none" opacity="0.6"/>');
+    streets.push('<path d="M 0 80 Q 40 70 60 85 T 100 75" stroke="#B8D4E3" stroke-width="0.8" fill="none" opacity="0.4"/>');
+
+    // 同城餐厅标记（用 SVG <circle> + <text>，避免 foreignObject 渲染问题）
+    const colorMap = {
+      'visited': '#FF6B6B',
+      'want_to_try': '#FFE66D',
+      'old_restaurant': '#4ECDC4',
+    };
+    const restaurantMarkers = sameCity.map(r => {
+      const p = project(r.location.lat, r.location.lng);
+      const fillColor = colorMap[r.type] || '#FF6B6B';
+      const textColor = r.type === 'want_to_try' ? '#1F1B16' : '#FFFFFF';
+      // 添加透明度让重叠餐厅（如小馆+Manner）可分辨
+      const dist = haversine(CURRENT_LOCATION, { lat: r.location.lat, lng: r.location.lng });
+      const opacity = dist < 0.5 ? 1 : 1;
+      return `<g class="marker-group" data-id="${r.id}" style="cursor: pointer;">
+        <circle cx="${p.x}" cy="${p.y}" r="2.2" fill="${fillColor}" stroke="white" stroke-width="0.5" opacity="${opacity}"/>
+        <text x="${p.x}" y="${p.y + 0.8}" text-anchor="middle" font-size="2.4" style="pointer-events: none;">${r.emoji}</text>
+      </g>`;
+    }).join('');
+
+    // 当前位置（中心点）
+    const currentMarkerSvg = `
+      <g style="cursor: pointer;">
+        <circle cx="50" cy="50" r="4" fill="rgba(116, 185, 255, 0.2)" class="pulse"/>
+        <circle cx="50" cy="50" r="2.5" fill="#74B9FF" stroke="white" stroke-width="0.6"/>
+        <text x="50" y="51" text-anchor="middle" font-size="2.5" style="pointer-events: none;">📍</text>
+      </g>`;
+
+    mapEl.innerHTML = `
+      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%; background: linear-gradient(135deg, #F5EFE6 0%, #FAF7F2 100%);">
+        ${streets.join('')}
+        ${restaurantMarkers}
+        ${currentMarkerSvg}
+        <circle id="mock-circle" cx="50" cy="50" r="0" fill="#FF6B6B" fill-opacity="0.05" stroke="#FF6B6B" stroke-opacity="0.4" stroke-width="0.4"/>
+      </svg>
+    `;
+
+    // 绑定点击
+    mapEl.querySelectorAll('.marker-group').forEach(g => {
+      g.addEventListener('click', () => {
+        const id = g.dataset.id;
+        const r = RESTAURANTS.find(x => x.id === id);
+        if (r) selectRestaurant(r);
+      });
+    });
+
+    // 把"其他城市"餐厅信息存在 state 里，附近列表会用到
+    state.otherCity = otherCity;
+
+    // 模拟 zoom 按钮
+    document.getElementById('zoom-in').onclick = () => alert('Mock 模式不支持缩放');
+    document.getElementById('zoom-out').onclick = () => alert('Mock 模式不支持缩放');
+  }
+
+  // ── 选中餐厅（check-in 模式） ─────────────────────
+  function selectRestaurant(r) {
+    state.selected = r;
+    const card = document.getElementById('selected-card');
+    document.getElementById('selected-thumb').textContent = r.emoji;
+    document.getElementById('selected-name').textContent = r.name;
+    document.getElementById('selected-rating').textContent = r.rating ?? '—';
+    document.getElementById('selected-cuisine').innerHTML = `${getCuisineEmoji(r.cuisine)} ${r.cuisine}`;
+    document.getElementById('selected-price').innerHTML = `💰 ¥${r.price_per_person}/人`;
+
+    const dist = haversine(CURRENT_LOCATION, { lat: r.location.lat, lng: r.location.lng });
+    document.getElementById('selected-distance').innerHTML = `📍 ${formatDistance(dist)}`;
+
+    card.classList.add('visible');
+
+    // 标记选中态
+    if (state.mockMode) {
+      document.querySelectorAll('.marker-group').forEach(g => {
+        const m = g.querySelector('.dongchi-marker');
+        if (m) m.classList.toggle('selected', m.dataset.id === r.id);
+      });
+    } else if (state.markers[r.id]) {
+      Object.values(state.markers).forEach(m => {
+        const el = m.getContent();
+        if (el && el.includes('selected')) {
+          m.setContent(el.replace(/ selected/g, ''));
+        }
+      });
+      const el = state.markers[r.id].getContent();
+      state.markers[r.id].setContent(el.replace('dongchi-marker', 'dongchi-marker selected'));
+    }
+  }
+
+  function getCuisineEmoji(c) {
+    return { '粤菜':'🦆','日料':'🍣','西餐':'🥩','川菜':'🌶','咖啡':'☕','茶饮':'🧋' }[c] || '🍽️';
+  }
+
+  // ── 半径切换（nearby 模式） ───────────────────────
+  function setRadius(km) {
+    state.radius = km;
+    document.querySelectorAll('.radius-tab').forEach(t => t.classList.toggle('active', +t.dataset.radius === km));
+    document.getElementById('nearby-radius-label').textContent = km + ' km';
+
+    // 计算并渲染列表
+    const center = CURRENT_LOCATION;
+    const nearby = RESTAURANTS.map(r => ({
+      ...r,
+      distance: haversine(center, { lat: r.location.lat, lng: r.location.lng }),
+    })).filter(r => r.distance <= km * 1000)
+      .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0) || a.distance - b.distance);
+
+    document.getElementById('nearby-count').textContent = nearby.length;
+
+    if (nearby.length === 0) {
+      document.getElementById('nearby-items').innerHTML =
+        '<div class="nearby-empty">🍃 这个范围内还没有打卡记录<br><small>把"想吃"或"去过"的店加进来吧</small></div>';
+    } else {
+      document.getElementById('nearby-items').innerHTML = nearby.map((r, i) => `
+        <div class="nearby-item" data-id="${r.id}">
+          <div class="nearby-rank">${i + 1}</div>
+          <div class="nearby-body">
+            <div class="nearby-name">
+              ${r.name}
+              ${r.type === 'want_to_try' ? '<span class="nearby-name-tag want">想去</span>' :
+                r.type === 'old_restaurant' ? '<span class="nearby-name-tag old">老店</span>' :
+                '<span class="nearby-name-tag">已去</span>'}
+            </div>
+            <div class="nearby-meta">${r.emoji} ${r.cuisine} · ¥${r.price_per_person}/人</div>
+          </div>
+          <div class="nearby-stats">
+            <div class="nearby-rating ${r.rating === null ? 'muted' : ''}">${r.rating ?? '想去'}</div>
+            <div class="nearby-distance">${formatDistance(r.distance)}</div>
+          </div>
+        </div>
+      `).join('');
+
+      // 绑定点击
+      document.querySelectorAll('.nearby-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const r = RESTAURANTS.find(x => x.id === item.dataset.id);
+          if (r) selectRestaurant(r);
+          document.getElementById('selected-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      });
+    }
+
+    // 更新地图圆圈
+    if (state.mockMode) {
+      const circle = document.getElementById('mock-circle');
+      if (circle) {
+        const ratio = km / 15;  // 15km 对应地图全宽
+        circle.setAttribute('r', ratio * 50);
+      }
+    } else if (state.map) {
+      if (state.circle) state.map.remove(state.circle);
+      state.circle = new AMap.Circle({
+        center: [CURRENT_LOCATION.lng, CURRENT_LOCATION.lat],
+        radius: km * 1000,
+        strokeColor: '#FF6B6B',
+        fillColor: '#FF6B6B',
+        fillOpacity: 0.05,
+        strokeOpacity: 0.4,
+        strokeWeight: 1.5,
+      });
+      state.map.add(state.circle);
+    }
+  }
+
+  // ── 模式切换 ─────────────────────────────────────
+  function setMode(mode) {
+    state.mode = mode;
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+    document.getElementById('radius-section').style.display = mode === 'nearby' ? 'block' : 'none';
+    document.getElementById('nearby-section').style.display = mode === 'nearby' ? 'block' : 'none';
+
+    if (mode === 'check-in') {
+      // 清除圆圈
+      if (state.mockMode) {
+        const c = document.getElementById('mock-circle');
+        if (c) c.setAttribute('r', 0);
+      } else if (state.circle && state.map) {
+        state.map.remove(state.circle);
+        state.circle = null;
+      }
+    } else {
+      setRadius(state.radius);
+    }
+  }
+
+  // ── 事件绑定 ─────────────────────────────────────
+  function bindEvents() {
+    document.querySelectorAll('.mode-tab').forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
+    document.querySelectorAll('.radius-tab').forEach(t => t.addEventListener('click', () => setRadius(+t.dataset.radius)));
+    document.getElementById('close-selected').addEventListener('click', () => {
+      document.getElementById('selected-card').classList.remove('visible');
+    });
+  }
+
+  // 启动
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+</script>
+
+<!--
+  ════════════════════════════════════════════════════════════
+  高德地图 JS API 引入（按需启用）
+  ════════════════════════════════════════════════════════════
+  申请地址：https://lbs.amap.com/dev/key/app
+  取消下方注释，并把 YOUR_AMAP_KEY 替换为真实 key：
+
+  <script src="https://webapi.amap.com/maps?v=2.0&key=YOUR_AMAP_KEY"></script>
+
+  Mock 模式（无需 Key）：在 URL 后加 ?mock=1
+  ════════════════════════════════════════════════════════════
+-->
+
+</body>
+</html>

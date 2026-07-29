@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>懂吃 · 个人美食外脑</title>
+<style>
+  /* ============================================
+     懂吃 Demo · 设计原则
+     - 极简：单色调 + 留白 + 无渐变
+     - 真实：所有数据来自 vault 种子
+     - 可解释：每条推荐都有"为什么"
+     - 私域：零外部依赖、零追踪
+     ============================================ */
+
+  :root {
+    --bg: #faf8f5;
+    --bg-card: #ffffff;
+    --text: #1a1a1a;
+    --text-soft: #666666;
+    --text-light: #999999;
+    --border: #e8e4dc;
+    --accent: #c8553d;        /* 陶土红 — 食物色调 */
+    --accent-soft: #f4ebe6;
+    --visited: #c8553d;
+    --want: #d4a574;          /* 米色 */
+    --old: #6b8e6b;           /* 抹茶绿 */
+    --shadow: 0 1px 3px rgba(0,0,0,0.04);
+    --radius: 6px;
+    --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* ========== Header ========== */
+  .header {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 32px 24px;
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    color: var(--text-soft);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .header .charter {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 4px 10px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  /* ========== Nav ========== */
+  .nav {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px 16px;
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav button {
+    background: none;
+    border: none;
+    padding: 10px 16px;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--text-soft);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav button:hover { color: var(--text); }
+  .nav button.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ========== Main ========== */
+  .main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px;
+  }
+
+  /* ========== Page hidden by default ========== */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ========== Search Box ========== */
+  .search-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .search-box h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+  .search-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .search-row label {
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .search-row select, .search-row input {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--font);
+    font-size: 14px;
+    background: white;
+    min-width: 140px;
+  }
+  .btn {
+    padding: 10px 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-family: var(--font);
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .btn:hover { background: #b04632; }
+  .btn-secondary {
+    background: white;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  /* ========== Restaurant Card ========== */
+  .restaurant {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    transition: all 0.15s;
+  }
+  .restaurant:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .restaurant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 8px;
+  }
+  .restaurant-name {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .restaurant-meta {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+  }
+  .restaurant-rating {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .restaurant-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 8px 0;
+  }
+  .tag {
+    padding: 2px 8px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 3px;
+    font-size: 12px;
+  }
+  .tag.scene { background: #f0f0ec; color: #555; }
+  .tag.experience { background: #fef9e7; color: #7d6608; }
+  .type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-right: 6px;
+  }
+  .type-visited { background: var(--accent); color: white; }
+  .type-want { background: var(--want); color: white; }
+  .type-old { background: var(--old); color: white; }
+  .restaurant-review {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--bg);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+    font-size: 14px;
+    color: var(--text);
+    font-style: italic;
+  }
+  .must-try {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+  .must-try strong { color: var(--text); }
+  .source {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-light);
+    padding: 4px 8px;
+    background: var(--bg);
+    border-radius: 3px;
+    display: inline-block;
+  }
+
+  /* ========== Recommendation ========== */
+  .recommend-result {
+    margin-top: 16px;
+  }
+  .recommend-reason {
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  /* ========== Section Header ========== */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 32px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .section-count {
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+
+  /* ========== Stats ========== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-soft);
+    margin-top: 6px;
+  }
+
+  /* ========== Footer ========== */
+  .footer {
+    max-width: 960px;
+    margin: 64px auto 32px;
+    padding: 24px 32px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-light);
+    text-align: center;
+  }
+  .footer .principles {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text-light);
+  }
+
+  /* ========== Add Card Form ========== */
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-bottom: 6px;
+  }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--font);
+    font-size: 14px;
+  }
+  .form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  /* ========== Cuisine Filter Pills ========== */
+  .pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .pill {
+    padding: 4px 12px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pill:hover { border-color: var(--accent); }
+  .pill.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .header h1 { font-size: 24px; }
+    .header, .nav, .main, .footer { padding-left: 16px; padding-right: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== Header ========== -->
+<div class="header">
+  <h1>🍜 懂吃</h1>
+  <div class="subtitle">个人美食外脑 · 真实 · 私域 · 可信 · 永久</div>
+  <div class="charter">个人私有 × 算法推荐 × 好友分享 × 零商业化</div>
+</div>
+
+<!-- ========== Nav ========== -->
+<nav class="nav">
+  <button class="active" data-page="index">🏠 餐厅索引</button>
+  <button data-page="recommend">🎯 推荐查询</button>
+  <button data-page="add">➕ 新打卡</button>
+  <button data-page="charter">📜 项目宪章</button>
+</nav>
+
+<!-- ========== Main ========== -->
+<main class="main">
+
+  <!-- ========== Page: Index ========== -->
+  <div class="page active" id="page-index">
+    <div class="stats" id="stats"></div>
+
+    <div class="section-header">
+      <h2>🍽️ 餐厅索引</h2>
+      <span class="section-count" id="filter-count"></span>
+    </div>
+
+    <div class="pills" id="cuisine-pills"></div>
+
+    <div id="restaurant-list"></div>
+  </div>
+
+  <!-- ========== Page: Recommend ========== -->
+  <div class="page" id="page-recommend">
+    <div class="search-box">
+      <h2>🎯 今天吃什么？</h2>
+      <div class="search-row">
+        <div>
+          <label>场景</label>
+          <select id="rec-scene">
+            <option value="">不限</option>
+            <option>独处</option>
+            <option>约会</option>
+            <option>商务</option>
+            <option>家庭</option>
+            <option>朋友聚餐</option>
+            <option>工作餐</option>
+          </select>
+        </div>
+        <div>
+          <label>价位区间（元）</label>
+          <select id="rec-price">
+            <option value="0-1000">不限</option>
+            <option value="0-50">50 以下</option>
+            <option value="50-150">50-150</option>
+            <option value="150-300">150-300</option>
+            <option value="300-1000">300+</option>
+          </select>
+        </div>
+        <div>
+          <label>菜系</label>
+          <select id="rec-cuisine">
+            <option value="">不限</option>
+            <option>粤菜</option>
+            <option>川菜</option>
+            <option>日料</option>
+            <option>西餐</option>
+            <option>咖啡</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="runRecommend()">🔍 推荐</button>
+    </div>
+
+    <div id="recommend-result"></div>
+  </div>
+
+  <!-- ========== Page: Add ========== -->
+  <div class="page" id="page-add">
+    <div class="search-box">
+      <h2>➕ 新打卡（30 秒）</h2>
+      <div class="form-group">
+        <label>餐厅名</label>
+        <input type="text" id="add-name" placeholder="如：大董烤鸭">
+      </div>
+      <div class="search-row">
+        <div class="form-group">
+          <label>菜系</label>
+          <select id="add-cuisine">
+            <option>粤菜</option><option>川菜</option><option>日料</option>
+            <option>西餐</option><option>咖啡</option><option>茶饮</option>
+            <option>湘菜</option><option>江浙菜</option><option>火锅</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>评分</label>
+          <select id="add-rating">
+            <option>5</option><option>4.5</option><option>4</option>
+            <option>3.5</option><option>3</option><option>2.5</option><option>2</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>人均（元）</label>
+          <input type="number" id="add-price" value="100">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>场景（多选）</label>
+        <input type="text" id="add-scene" placeholder="如：约会, 商务">
+      </div>
+      <div class="form-group">
+        <label>一句话评价（必填）</label>
+        <textarea id="add-review" placeholder="如：仪式感满分，烤鸭现场片"></textarea>
+      </div>
+      <div class="form-group">
+        <label>必点菜（多个用逗号）</label>
+        <input type="text" id="add-must-try" placeholder="如：烤鸭, 芥末鸭掌">
+      </div>
+      <button class="btn" onclick="addRestaurant()">💾 保存到 vault</button>
+      <button class="btn btn-secondary" onclick="resetForm()" style="margin-left:8px">🔄 重置</button>
+      <div id="add-feedback" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- ========== Page: Charter ========== -->
+  <div class="page" id="page-charter">
+    <div class="search-box">
+      <h2>📜 项目宪章（4 条底线，不可修改）</h2>
+      <p style="margin-top:16px; color: var(--text-soft); font-size: 14px;">
+        修改宪章需 30 天冷静期 + 不违反以下 4 条底线。
+      </p>
+      <div style="margin-top: 24px;">
+        <h3 style="font-size: 16px; margin-bottom: 8px;">1️⃣ 个人私有</h3>
+        <p style="color: var(--text-soft); font-size: 14px; margin-bottom: 16px;">
+          数据 100% 在本地 vault，不上传第三方。无账号、无追踪、无画像、无广告。
+        </p>
+        <h3 style="font-size: 16px; margin-bottom: 8px;">2️⃣ 零商业化</h3>
+        <p style="color: var(--text-soft); font-size: 14px; margin-bottom: 16px;">
+          永远不以盈利为目的。不接广告、不合作、不推广、不会员。
+        </p>
+        <h3 style="font-size: 16px; margin-bottom: 8px;">3️⃣ 可解释</h3>
+        <p style="color: var(--text-soft); font-size: 14px; margin-bottom: 16px;">
+          推荐算法永远可解释，永不黑盒。每条推荐都带"为什么"。
+        </p>
+        <h3 style="font-size: 16px; margin-bottom: 8px;">4️⃣ 退出权</h3>
+        <p style="color: var(--text-soft); font-size: 14px; margin-bottom: 16px;">
+          用户永远可随时退出任何扩展形态（A/B/C）。
+        </p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ========== Footer ========== -->
+<div class="footer">
+  <div>懂吃 · 我的美食外脑 · v1.1 Demo</div>
+  <div class="principles">个人私有 · 零商业化 · 可解释 · 退出权</div>
+</div>
+
+<!-- ========== Data + Logic ========== -->
+<script>
+  // ============================================
+  // 7 家种子数据（来自 vault 真实记录）
+  // ============================================
+  const RESTAURANTS = [
+    {
+      type: "visited", name: "大董烤鸭", cuisine: ["粤菜"],
+      scene: ["商务", "家庭", "仪式感"], rating: 4.8,
+      price_per_person: 350, visited: "2026-05-15",
+      location: "北京·朝阳·工体北路",
+      must_try: ["烤鸭", "芥末鸭掌", "鸭肝"],
+      tags: ["仪式感", "必点", "氛围好"],
+      review: "仪式感满分，烤鸭现场片，皮脆肉嫩，朋友来访必带的'北京名片'餐厅。"
+    },
+    {
+      type: "visited", name: "鮨·青木", cuisine: ["日料"],
+      scene: ["约会", "独处", "仪式感"], rating: 4.7,
+      price_per_person: 800, visited: "2026-04-22",
+      location: "深圳·福田·平安金融中心",
+      must_try: ["Omakase 套餐", "海胆军舰", "蓝鳍金枪鱼大腹"],
+      tags: ["仪式感", "必点", "氛围好"],
+      review: "深圳最值得的 Omakase 之一，板前 12 贯，性价比超预期。"
+    },
+    {
+      type: "visited", name: "Element·新鲜元素", cuisine: ["西餐"],
+      scene: ["约会", "商务", "家庭"], rating: 4.5,
+      price_per_person: 280, visited: "2026-02-14",
+      location: "深圳·福田·平安金融中心",
+      must_try: ["战斧牛排", "黑松露意面", "提拉米苏"],
+      tags: ["仪式感", "必点", "氛围好"],
+      review: "情人节晚餐，战斧牛排现切、黑松露意面浓郁，性价比超预期。"
+    },
+    {
+      type: "visited", name: "小馆川菜", cuisine: ["川菜"],
+      scene: ["朋友聚餐", "家庭", "工作餐"], rating: 4.3,
+      price_per_person: 80, visited: "2026-03-10",
+      location: "深圳·南山·科技园",
+      must_try: ["水煮鱼", "麻婆豆腐", "口水鸡"],
+      tags: ["必点", "平价", "重口味"],
+      review: "科技园平价川菜王者，工作日中午的稳定选择，重口味但不出错。"
+    },
+    {
+      type: "visited", name: "Manner Coffee", cuisine: ["咖啡"],
+      scene: ["工作餐", "独处", "快"], rating: 4.2,
+      price_per_person: 25, visited: "2026-06-12",
+      location: "深圳·南山·科技园",
+      must_try: ["拿铁", "冰美式"],
+      tags: ["平价", "快", "日常"],
+      review: "科技园打工人续命咖啡，性价比之王，自带杯还便宜 5 元。"
+    },
+    {
+      type: "want_to_try", name: "喜茶·深圳湾万象城", cuisine: ["茶饮"],
+      scene: ["独处", "朋友聚餐"], rating: null,
+      price_per_person: 35, visited: "2026-06-14",
+      location: "深圳·南山·深圳湾万象城",
+      must_try: ["多肉葡萄", "芝芝莓莓"],
+      tags: ["网红", "饮品"],
+      source: { platform: "小红书", trust_level: "L3" },
+      review: "小红书探店笔记看到，未验证。"
+    },
+    {
+      type: "old_restaurant", name: "陶陶居·广州", cuisine: ["粤菜"],
+      scene: ["家庭", "朋友聚餐", "仪式感"], rating: null,
+      price_per_person: 130, visited: "1880-01-01",
+      location: "广州·天河·天河城",
+      must_try: ["虾饺皇", "烧麦", "蛋挞"],
+      tags: ["老字号", "历史悠久"],
+      source: { platform: "当地美食志", trust_level: "L2" },
+      review: "138 年历史广州老字号，《广州美食志》收录。"
+    }
+  ];
+
+  // ============================================
+  // 渲染：餐厅列表
+  // ============================================
+  function renderRestaurants(filter = "all") {
+    const list = document.getElementById("restaurant-list");
+    const filtered = filter === "all"
+      ? RESTAURANTS
+      : RESTAURANTS.filter(r =>
+          (r.type === "visited" || r.type === "want_to_try" || r.type === "old_restaurant")
+          && r.cuisine.includes(filter));
+
+    document.getElementById("filter-count").textContent = `${filtered.length} 家`;
+
+    list.innerHTML = filtered.map(r => {
+      const typeBadge = {
+        "visited": '<span class="type-badge type-visited">已打卡</span>',
+        "want_to_try": '<span class="type-badge type-want">想去吃</span>',
+        "old_restaurant": '<span class="type-badge type-old">老店推荐</span>'
+      }[r.type];
+
+      const rating = r.rating !== null
+        ? `<span class="restaurant-rating">⭐ ${r.rating}/5</span>`
+        : `<span class="restaurant-rating">⭐ 待验证</span>`;
+
+      const sourceInfo = r.source
+        ? `<div class="source">📡 来源：${r.source.platform} · 信任级别 ${r.source.trust_level}</div>`
+        : '';
+
+      const date = r.type === "visited" ? r.visited
+        : r.type === "want_to_try" ? `导入：${r.visited}`
+        : `${r.visited} 创立`;
+
+      return `
+        <div class="restaurant">
+          <div class="restaurant-header">
+            <div>
+              <div class="restaurant-name">${typeBadge}${r.name}</div>
+              <div class="restaurant-meta">📍 ${r.location} · 💰 ¥${r.price_per_person} · 📅 ${date}</div>
+            </div>
+            ${rating}
+          </div>
+          <div class="restaurant-tags">
+            ${r.scene.map(s => `<span class="tag scene">${s}</span>`).join('')}
+            ${r.tags.map(t => `<span class="tag experience">${t}</span>`).join('')}
+          </div>
+          ${r.must_try && r.must_try.length > 0 ? `
+            <div class="must-try">
+              <strong>必点：</strong>${r.must_try.join(' · ')}
+            </div>
+          ` : ''}
+          ${sourceInfo}
+          <div class="restaurant-review">"${r.review}"</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ============================================
+  // 渲染：统计
+  // ============================================
+  function renderStats() {
+    const visited = RESTAURANTS.filter(r => r.type === "visited").length;
+    const want = RESTAURANTS.filter(r => r.type === "want_to_try").length;
+    const old = RESTAURANTS.filter(r => r.type === "old_restaurant").length;
+    const cuisines = [...new Set(RESTAURANTS.flatMap(r => r.cuisine))].length;
+
+    document.getElementById("stats").innerHTML = `
+      <div class="stat"><div class="stat-num">${visited}</div><div class="stat-label">已打卡</div></div>
+      <div class="stat"><div class="stat-num">${want}</div><div class="stat-label">想去吃</div></div>
+      <div class="stat"><div class="stat-num">${old}</div><div class="stat-label">老店推荐</div></div>
+      <div class="stat"><div class="stat-num">${cuisines}</div><div class="stat-label">菜系覆盖</div></div>
+    `;
+  }
+
+  // ============================================
+  // 渲染：菜系筛选
+  // ============================================
+  function renderCuisinePills() {
+    const cuisines = [...new Set(RESTAURANTS.flatMap(r => r.cuisine))];
+    const html = [`<div class="pill active" data-cuisine="all">全部</div>`]
+      .concat(cuisines.map(c => `<div class="pill" data-cuisine="${c}">${c}</div>`))
+      .join('');
+
+    document.getElementById("cuisine-pills").innerHTML = html;
+
+    document.querySelectorAll(".pill").forEach(p => {
+      p.addEventListener("click", () => {
+        document.querySelectorAll(".pill").forEach(x => x.classList.remove("active"));
+        p.classList.add("active");
+        renderRestaurants(p.dataset.cuisine);
+      });
+    });
+  }
+
+  // ============================================
+  // 推荐算法（v1 简化版：基于 5 维度向量）
+  // ============================================
+  function runRecommend() {
+    const scene = document.getElementById("rec-scene").value;
+    const priceRange = document.getElementById("rec-price").value;
+    const cuisine = document.getElementById("rec-cuisine").value;
+    const [minP, maxP] = priceRange.split("-").map(Number);
+
+    let candidates = RESTAURANTS.filter(r => r.type === "visited");
+
+    // 维度筛选
+    if (scene) candidates = candidates.filter(r => r.scene.includes(scene));
+    if (cuisine) candidates = candidates.filter(r => r.cuisine.includes(cuisine));
+    candidates = candidates.filter(r => r.price_per_person >= minP && r.price_per_person <= maxP);
+
+    // 时间衰减权重（最近 30 天降权）
+    const today = new Date();
+    candidates = candidates.map(r => {
+      const visited = new Date(r.visited);
+      const daysSince = Math.floor((today - visited) / (1000 * 60 * 60 * 24));
+      let timePenalty = 1.0;
+      if (daysSince < 7) timePenalty = 0.3;
+      else if (daysSince < 30) timePenalty = 0.7;
+      else if (daysSince < 90) timePenalty = 1.0;
+      else timePenalty = 1.2;
+
+      // 评分 × 时间衰减
+      const finalScore = r.rating * timePenalty;
+      return { ...r, finalScore, timePenalty, daysSince };
+    });
+
+    candidates.sort((a, b) => b.finalScore - a.finalScore);
+    const top = candidates.slice(0, 3);
+
+    if (top.length === 0) {
+      document.getElementById("recommend-result").innerHTML = `
+        <div class="search-box">
+          <p style="color: var(--text-soft);">😅 没有找到符合条件的餐厅。试试放宽筛选条件？</p>
+        </div>
+      `;
+      return;
+    }
+
+    const html = `
+      <div class="recommend-result">
+        ${top.map((r, i) => {
+          const reasons = [];
+          if (scene && r.scene.includes(scene)) reasons.push(`✓ 适合${scene}场景`);
+          if (cuisine && r.cuisine.includes(cuisine)) reasons.push(`✓ ${cuisine}`);
+          reasons.push(`⭐ 评分 ${r.rating}/5`);
+          reasons.push(r.daysSince < 7 ? `⏰ ${r.daysSince}天前去过（降权）`
+            : r.daysSince < 30 ? `⏰ ${r.daysSince}天前去过（中等权重）`
+            : `⏰ ${r.daysSince}天前去过（想重温 +20%）`);
+
+          const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉";
+
+          return `
+            <div class="restaurant">
+              <div class="recommend-reason">${medal} 推荐 #${i+1} · 综合分 ${r.finalScore.toFixed(2)}</div>
+              <div class="restaurant-header">
+                <div>
+                  <div class="restaurant-name">${r.name}</div>
+                  <div class="restaurant-meta">📍 ${r.location} · 💰 ¥${r.price_per_person}</div>
+                </div>
+                <span class="restaurant-rating">⭐ ${r.rating}/5</span>
+              </div>
+              <div style="margin: 8px 0; font-size: 13px; color: var(--accent);">
+                ${reasons.join(' · ')}
+              </div>
+              <div class="restaurant-review">"${r.review}"</div>
+              ${r.must_try && r.must_try.length > 0 ? `
+                <div class="must-try"><strong>必点：</strong>${r.must_try.join(' · ')}</div>
+              ` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+
+    document.getElementById("recommend-result").innerHTML = html;
+  }
+
+  // ============================================
+  // 新增餐厅（演示）
+  // ============================================
+  function addRestaurant() {
+    const name = document.getElementById("add-name").value.trim();
+    const cuisine = document.getElementById("add-cuisine").value;
+    const rating = parseFloat(document.getElementById("add-rating").value);
+    const price = parseInt(document.getElementById("add-price").value);
+    const scene = document.getElementById("add-scene").value.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+    const review = document.getElementById("add-review").value.trim();
+    const mustTry = document.getElementById("add-must-try").value.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+
+    if (!name || !review) {
+      document.getElementById("add-feedback").innerHTML =
+        '<p style="color: var(--accent);">⚠️ 餐厅名和一句话评价是必填项</p>';
+      return;
+    }
+
+    const newR = {
+      type: "visited", name, cuisine: [cuisine],
+      scene, rating, price_per_person: price,
+      visited: new Date().toISOString().slice(0, 10),
+      location: "（待补充）",
+      must_try: mustTry, tags: [],
+      review
+    };
+
+    RESTAURANTS.push(newR);
+    document.getElementById("add-feedback").innerHTML =
+      `<p style="color: var(--accent);">✅ 已添加 ${name} 到 demo 数据（实际 vault 请用 Templater 模板）</p>`;
+
+    renderStats();
+    renderRestaurants("all");
+    resetForm();
+  }
+
+  function resetForm() {
+    document.getElementById("add-name").value = "";
+    document.getElementById("add-review").value = "";
+    document.getElementById("add-scene").value = "";
+    document.getElementById("add-must-try").value = "";
+    document.getElementById("add-feedback").innerHTML = "";
+  }
+
+  // ============================================
+  // Nav 切换
+  // ============================================
+  document.querySelectorAll(".nav button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById(`page-${btn.dataset.page}`).classList.add("active");
+    });
+  });
+
+  // ============================================
+  // 初始化
+  // ============================================
+  renderStats();
+  renderCuisinePills();
+  renderRestaurants("all");
+</script>
+
+</body>
+</html>
