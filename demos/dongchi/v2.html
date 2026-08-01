@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>懂吃 · Personal Food Second Brain</title>
+<style>
+  /* ============================================================
+     懂吃 UI Demo v2 — 设计原则
+     ────────────────────────────────
+     • Calm Interface（平静界面）：单色调 + 大量留白 + 无渐变
+     • Transparent AI（透明 AI）：每条推荐都带"为什么"
+     • End of Visual Theatrics（结束视觉表演）：无彩虹、无阴影堆叠、无紫色
+     • 4 特点：真实 · 私域 · 可信 · 永久
+     • 4 底线：个人私有 · 零商业化 · 可解释 · 退出权
+     ============================================================ */
+
+  :root {
+    /* 中性色板（单一灰度 + 食物陶土色 accent） */
+    --bg: #faf9f7;
+    --bg-elevated: #ffffff;
+    --bg-subtle: #f4f2ee;
+    --text: #1a1a1a;
+    --text-secondary: #555555;
+    --text-tertiary: #999999;
+    --text-quaternary: #cccccc;
+    --border: #e8e6e1;
+    --border-strong: #d4d2cd;
+    --accent: #c8553d;        /* 陶土红 — 食物色调 */
+    --accent-soft: #f4ebe6;
+    --accent-strong: #a93f2a;
+
+    /* 三态颜色（克制使用） */
+    --state-visited: #c8553d;
+    --state-want: #b8923a;     /* 米色 / 蜂蜜色 */
+    --state-old: #5a7a5a;      /* 抹茶绿 */
+
+    /* 评分色（从高到低） */
+    --rating-high: #c8553d;
+    --rating-mid: #b8923a;
+    --rating-low: #999999;
+
+    /* 间距（8px 栅格） */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+
+    /* 字体 */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "PingFang SC", "Helvetica Neue", sans-serif;
+    --font-mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+    --font-serif: "New York", "Songti SC", "Noto Serif SC", serif;
+
+    /* 圆角（克制） */
+    --radius-sm: 4px;
+    --radius: 6px;
+    --radius-lg: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ========== Layout ========== */
+  .app {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 var(--space-5);
+  }
+
+  /* ========== Header ========== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-6);
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
+  .brand-mark {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+  .brand-tagline {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .topbar-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .topbar-meta .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* ========== Hero ========== */
+  .hero {
+    padding: var(--space-6) 0 var(--space-7);
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-7);
+  }
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: 48px;
+    font-weight: 500;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: var(--space-4);
+  }
+  .hero p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 540px;
+    margin: 0 auto var(--space-5);
+  }
+  .hero-chips {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .chip {
+    padding: 6px 12px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 0.2px;
+  }
+  .chip.accent {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent-soft);
+  }
+
+  /* ========== Tabs ========== */
+  .tabs {
+    display: flex;
+    gap: var(--space-1);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-6);
+    overflow-x: auto;
+  }
+  .tab {
+    padding: var(--space-3) var(--space-4);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ========== Section Header ========== */
+  .section {
+    margin-bottom: var(--space-7);
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--space-5);
+  }
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+  }
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--text-tertiary);
+  }
+
+  /* ========== Stats ========== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-3);
+  }
+  .stat {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+  }
+  .stat-num {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: var(--space-2);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  /* ========== Restaurant Card ========== */
+  .rgrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+  .rcard {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+  .rcard:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+  }
+  .rcard-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-3);
+  }
+  .rcard-name {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: var(--space-1);
+  }
+  .rcard-sub {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .rcard-rating {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .rcard-rating.pending {
+    color: var(--text-quaternary);
+    font-size: 12px;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    padding: 4px 8px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 4px;
+  }
+  .rcard-meta {
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .rcard-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .rcard-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
+  }
+  .rtag {
+    padding: 2px 8px;
+    background: var(--bg-subtle);
+    border-radius: 3px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 0.2px;
+  }
+  .rtag.scene { background: transparent; border: 1px solid var(--border); }
+  .rcard-quote {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    padding: var(--space-3);
+    background: var(--bg);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+    font-style: italic;
+  }
+  .rcard-source {
+    margin-top: var(--space-3);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+  }
+  .rcard-must {
+    margin-top: var(--space-3);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .rcard-must strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .type-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .type-visited { background: var(--accent-soft); color: var(--accent); }
+  .type-want { background: #f5edd9; color: var(--state-want); }
+  .type-old { background: #e8eee5; color: var(--state-old); }
+
+  /* ========== Taste Profile (Radar) ========== */
+  .profile {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: var(--space-6);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+  }
+  .radar {
+    width: 280px;
+    height: 280px;
+  }
+  .profile-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .profile-row:last-child { border-bottom: none; }
+  .profile-key {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .profile-value {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* ========== Recommend Form ========== */
+  .reco-form {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+    margin-bottom: var(--space-5);
+  }
+  .reco-fields {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .field select, .field input {
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--text);
+    transition: border 0.15s;
+  }
+  .field select:focus, .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: var(--text);
+    color: var(--bg);
+    border: 1px solid var(--text);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--accent); border-color: var(--accent); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+  }
+  .btn-secondary:hover {
+    background: var(--bg-subtle);
+    color: var(--text);
+  }
+
+  /* ========== Recommendation Result ========== */
+  .reco-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .reco-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+    position: relative;
+  }
+  .reco-medal {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--text-tertiary);
+  }
+  .reco-reason {
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    margin-bottom: var(--space-3);
+    line-height: 1.5;
+  }
+  .reco-reason-label {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-right: 6px;
+  }
+
+  /* ========== Add Form ========== */
+  .add-form {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+    max-width: 640px;
+  }
+  .add-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+  .input, .textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--text);
+  }
+  .input:focus, .textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .textarea { min-height: 80px; resize: vertical; font-family: var(--font-sans); }
+
+  /* ========== Share Preview ========== */
+  .share-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    max-width: 480px;
+    font-family: var(--font-sans);
+  }
+  .share-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+  .share-mark {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--text-tertiary);
+  }
+  .share-name {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+  }
+  .share-sub {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-4);
+  }
+  .share-rating {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: var(--space-4);
+  }
+  .share-quote {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    padding-left: var(--space-3);
+    border-left: 2px solid var(--accent);
+    margin-bottom: var(--space-4);
+  }
+  .share-must {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-4);
+  }
+  .share-footer {
+    font-size: 11px;
+    color: var(--text-quaternary);
+    text-align: right;
+    letter-spacing: 0.3px;
+  }
+
+  /* ========== Charter Page ========== */
+  .charter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+  .charter-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+  }
+  .charter-num {
+    font-family: var(--font-serif);
+    font-size: 12px;
+    color: var(--text-tertiary);
+    letter-spacing: 1px;
+    margin-bottom: var(--space-2);
+  }
+  .charter-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+  }
+  .charter-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .charter-warn {
+    margin-top: var(--space-5);
+    padding: var(--space-4);
+    background: var(--accent-soft);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--accent);
+    line-height: 1.6;
+  }
+
+  /* ========== Empty State ========== */
+  .empty {
+    padding: var(--space-8) var(--space-5);
+    text-align: center;
+    color: var(--text-tertiary);
+  }
+  .empty-title {
+    font-size: 15px;
+    margin-bottom: var(--space-2);
+  }
+  .empty-desc {
+    font-size: 13px;
+  }
+
+  /* ========== Mobile ========== */
+  @media (max-width: 768px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .rgrid { grid-template-columns: 1fr; }
+    .reco-fields { grid-template-columns: 1fr; }
+    .add-row { grid-template-columns: 1fr; }
+    .charter-grid { grid-template-columns: 1fr; }
+    .profile { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 32px; }
+    .topbar { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ========== Topbar ========== -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">懂吃</span>
+      <span class="brand-tagline">Personal Food Second Brain</span>
+    </div>
+    <div class="topbar-meta">
+      <span><span class="dot"></span>vault synced · 7 entries</span>
+      <span>v1.1 demo</span>
+    </div>
+  </header>
+
+  <!-- ========== Hero ========== -->
+  <section class="hero">
+    <h1>把每次吃饭<br>变成一次懂吃</h1>
+    <p>个人私有 · 算法推荐 · 好友分享 · 零商业化。<br>不靠算法推荐热门店，靠你自己的判断记录一座美食人生档案。</p>
+    <div class="hero-chips">
+      <span class="chip">真实</span>
+      <span class="chip">私域</span>
+      <span class="chip">可信</span>
+      <span class="chip accent">永久</span>
+    </div>
+  </section>
+
+  <!-- ========== Tabs ========== -->
+  <nav class="tabs">
+    <button class="tab active" data-page="index">索引</button>
+    <button class="tab" data-page="profile">口味画像</button>
+    <button class="tab" data-page="reco">推荐</button>
+    <button class="tab" data-page="add">打卡</button>
+    <button class="tab" data-page="share">分享</button>
+    <button class="tab" data-page="charter">宪章</button>
+  </nav>
+
+  <!-- ========== Page: Index ========== -->
+  <div class="page active" id="page-index">
+    <div class="section">
+      <div class="stats" id="stats"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">餐厅索引</h2>
+          <p class="section-subtitle">7 家 · 5 种菜系 · 三态分离</p>
+        </div>
+      </div>
+      <div class="rgrid" id="rgrid"></div>
+    </div>
+  </div>
+
+  <!-- ========== Page: Profile ========== -->
+  <div class="page" id="page-profile">
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">我的口味画像</h2>
+          <p class="section-subtitle">基于 5 维度向量 · 自动生成 · 永远可解释</p>
+        </div>
+      </div>
+      <div class="profile">
+        <svg class="radar" viewBox="0 0 280 280">
+          <!-- Pentagon grid -->
+          <g fill="none" stroke="var(--border)" stroke-width="1">
+            <polygon points="140,30 245,90 220,220 60,220 35,90" opacity="0.3"/>
+            <polygon points="140,70 215,110 195,200 85,200 65,110" opacity="0.4"/>
+            <polygon points="140,110 180,135 165,170 115,170 100,135" opacity="0.5"/>
+          </g>
+          <!-- Labels -->
+          <text x="140" y="20" text-anchor="middle" font-size="11" fill="var(--text-tertiary)">Cuisine</text>
+          <text x="255" y="90" text-anchor="start" font-size="11" fill="var(--text-tertiary)">Scene</text>
+          <text x="220" y="245" text-anchor="middle" font-size="11" fill="var(--text-tertiary)">Value</text>
+          <text x="60" y="245" text-anchor="middle" font-size="11" fill="var(--text-tertiary)">Experience</text>
+          <text x="25" y="90" text-anchor="end" font-size="11" fill="var(--text-tertiary)">Time</text>
+          <!-- Data polygon -->
+          <polygon points="140,45 235,98 195,200 75,205 50,108"
+                   fill="var(--accent)" fill-opacity="0.15"
+                   stroke="var(--accent)" stroke-width="2"/>
+          <!-- Data points -->
+          <circle cx="140" cy="45" r="4" fill="var(--accent)"/>
+          <circle cx="235" cy="98" r="4" fill="var(--accent)"/>
+          <circle cx="195" cy="200" r="4" fill="var(--accent)"/>
+          <circle cx="75" cy="205" r="4" fill="var(--accent)"/>
+          <circle cx="50" cy="108" r="4" fill="var(--accent)"/>
+        </svg>
+        <div class="profile-list">
+          <div class="profile-row">
+            <span class="profile-key">最爱菜系</span>
+            <span class="profile-value">粤菜 4.65 · 日料 4.7</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-key">常用场景</span>
+            <span class="profile-value">约会 · 商务 · 仪式感</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-key">价位区间</span>
+            <span class="profile-value">¥80 – ¥300（弹性 30-800）</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-key">重视体验</span>
+            <span class="profile-value">仪式感 · 氛围好 · 必点菜</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-key">避免</span>
+            <span class="profile-value">排队王 · 网红</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-key">打卡频率</span>
+            <span class="profile-value">约 1.2 家 / 月</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-key">最近访问</span>
+            <span class="profile-value">Manner · 4 天前</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Page: Recommend ========== -->
+  <div class="page" id="page-reco">
+    <div class="section">
+      <div class="reco-form">
+        <h2 class="section-title" style="margin-bottom: var(--space-2)">今天吃什么？</h2>
+        <p class="section-subtitle" style="margin-bottom: var(--space-5)">基于你的 5 维度画像 · 每条推荐都带"为什么"</p>
+        <div class="reco-fields">
+          <div class="field">
+            <label>场景</label>
+            <select id="reco-scene">
+              <option value="">不限</option>
+              <option>独处</option>
+              <option>约会</option>
+              <option>商务</option>
+              <option>家庭</option>
+              <option>朋友聚餐</option>
+              <option>工作餐</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>价位（元）</label>
+            <select id="reco-price">
+              <option value="0-1000">不限</option>
+              <option value="0-100">100 以下</option>
+              <option value="100-300">100 – 300</option>
+              <option value="300-1000">300+</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>菜系</label>
+            <select id="reco-cuisine">
+              <option value="">不限</option>
+              <option>粤菜</option>
+              <option>日料</option>
+              <option>川菜</option>
+              <option>西餐</option>
+              <option>咖啡</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; gap: var(--space-2);">
+          <button class="btn" onclick="runReco()">推荐</button>
+          <button class="btn btn-secondary" onclick="resetReco()">重置</button>
+        </div>
+      </div>
+      <div class="reco-list" id="reco-list"></div>
+    </div>
+  </div>
+
+  <!-- ========== Page: Add ========== -->
+  <div class="page" id="page-add">
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">新打卡 · 30 秒</h2>
+          <p class="section-subtitle">极简字段 · 即时反馈 · 周末兜底</p>
+        </div>
+      </div>
+      <div class="add-form">
+        <div class="add-row">
+          <div class="field">
+            <label>餐厅名 *</label>
+            <input class="input" id="add-name" placeholder="如：大董烤鸭">
+          </div>
+          <div class="field">
+            <label>菜系 *</label>
+            <select class="input" id="add-cuisine">
+              <option>粤菜</option><option>川菜</option><option>日料</option>
+              <option>西餐</option><option>咖啡</option><option>茶饮</option>
+              <option>湘菜</option><option>江浙菜</option><option>火锅</option>
+            </select>
+          </div>
+        </div>
+        <div class="add-row" style="margin-top: var(--space-3)">
+          <div class="field">
+            <label>评分</label>
+            <select class="input" id="add-rating">
+              <option>5</option><option>4.5</option><option>4</option>
+              <option>3.5</option><option>3</option>
+              <option>2.5</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>人均（元）</label>
+            <input class="input" type="number" id="add-price" value="100">
+          </div>
+        </div>
+        <div class="field" style="margin-top: var(--space-3)">
+          <label>场景（逗号分隔）</label>
+          <input class="input" id="add-scene" placeholder="约会, 商务">
+        </div>
+        <div class="field" style="margin-top: var(--space-3)">
+          <label>一句话评价 *</label>
+          <textarea class="textarea" id="add-review" placeholder="用一句话说清楚为什么推荐或避雷"></textarea>
+        </div>
+        <div class="field" style="margin-top: var(--space-3)">
+          <label>必点菜（可选）</label>
+          <input class="input" id="add-must" placeholder="烤鸭, 芥末鸭掌">
+        </div>
+        <div style="display: flex; gap: var(--space-2); margin-top: var(--space-5)">
+          <button class="btn" onclick="addRest()">保存到 vault</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('add-feedback').innerHTML=''">清空</button>
+        </div>
+        <div id="add-feedback" style="margin-top: var(--space-4); font-size: 13px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Page: Share ========== -->
+  <div class="page" id="page-share">
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">分享给朋友</h2>
+          <p class="section-subtitle">生成只读静态卡片 · 朋友看到的永远是我推荐的</p>
+        </div>
+      </div>
+      <div class="share-card" id="share-card">
+        <div class="share-header">
+          <span class="share-mark">— 来自懂吃 —</span>
+        </div>
+        <div class="share-name">大董烤鸭</div>
+        <div class="share-sub">北京 · 朝阳 · 工体北路</div>
+        <div class="share-rating">★ 4.8 / 5.0 · ¥350 / 人</div>
+        <div class="share-quote">"仪式感满分，烤鸭现场片，皮脆肉嫩，朋友来访必带的'北京名片'餐厅。"</div>
+        <div class="share-must">必点：烤鸭 · 芥末鸭掌 · 鸭肝</div>
+        <div class="share-must">适合：商务 / 家庭 / 仪式感</div>
+        <div class="share-footer">PERSONAL FOOD SECOND BRAIN · DONCCHI.VAULT</div>
+      </div>
+      <p style="margin-top: var(--space-4); font-size: 12px; color: var(--text-tertiary)">
+        → 长按复制 · 微信分享 · 朋友看到的是"我推荐的"，不是"系统算的"
+      </p>
+    </div>
+  </div>
+
+  <!-- ========== Page: Charter ========== -->
+  <div class="page" id="page-charter">
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">项目宪章</h2>
+          <p class="section-subtitle">4 条底线 · 不可修改 · 决策冲突时回到这里</p>
+        </div>
+      </div>
+      <div class="charter-grid">
+        <div class="charter-card">
+          <div class="charter-num">01</div>
+          <div class="charter-title">个人私有</div>
+          <div class="charter-desc">数据 100% 在本地 vault。不上传第三方、无账号、无追踪、无画像、无广告。</div>
+        </div>
+        <div class="charter-card">
+          <div class="charter-num">02</div>
+          <div class="charter-title">零商业化</div>
+          <div class="charter-desc">永远不以盈利为目的。不接广告、不合作、不推广、不会员、不接投资。</div>
+        </div>
+        <div class="charter-card">
+          <div class="charter-num">03</div>
+          <div class="charter-title">可解释</div>
+          <div class="charter-desc">推荐算法永远可解释，永不黑盒。每条推荐都带"为什么"。</div>
+        </div>
+        <div class="charter-card">
+          <div class="charter-num">04</div>
+          <div class="charter-title">退出权</div>
+          <div class="charter-desc">用户永远可随时退出任何扩展形态（A/B/C）。开关默认关闭。</div>
+        </div>
+      </div>
+      <div class="charter-warn">
+        ⚠️ 修改宪章需 30 天冷静期 + 不违反 4 条底线。<br>
+        不可修改的底线：个人私有 + 零商业化。
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ============================================
+  // 7 家真实种子数据（来自 vault）
+  // ============================================
+  const RESTAURANTS = [
+    {
+      type: "visited", name: "大董烤鸭", cuisine: ["粤菜"],
+      scene: ["商务", "家庭", "仪式感"], rating: 4.8,
+      price: 350, visited: "2026-05-15",
+      location: "北京·朝阳",
+      must: ["烤鸭", "芥末鸭掌", "鸭肝"],
+      tags: ["仪式感", "必点"],
+      review: "仪式感满分，烤鸭现场片，皮脆肉嫩，朋友来访必带的'北京名片'餐厅。"
+    },
+    {
+      type: "visited", name: "鮨·青木", cuisine: ["日料"],
+      scene: ["约会", "独处", "仪式感"], rating: 4.7,
+      price: 800, visited: "2026-04-22",
+      location: "深圳·福田",
+      must: ["Omakase 套餐", "海胆军舰", "蓝鳍金枪鱼大腹"],
+      tags: ["仪式感", "必点"],
+      review: "深圳最值得的 Omakase 之一，板前 12 贯，性价比超预期。"
+    },
+    {
+      type: "visited", name: "Element·新鲜元素", cuisine: ["西餐"],
+      scene: ["约会", "商务", "家庭"], rating: 4.5,
+      price: 280, visited: "2026-02-14",
+      location: "深圳·福田",
+      must: ["战斧牛排", "黑松露意面", "提拉米苏"],
+      tags: ["仪式感", "必点"],
+      review: "情人节晚餐，战斧牛排现切、黑松露意面浓郁。"
+    },
+    {
+      type: "visited", name: "小馆川菜", cuisine: ["川菜"],
+      scene: ["朋友聚餐", "家庭", "工作餐"], rating: 4.3,
+      price: 80, visited: "2026-03-10",
+      location: "深圳·南山",
+      must: ["水煮鱼", "麻婆豆腐", "口水鸡"],
+      tags: ["必点", "平价"],
+      review: "科技园平价川菜王者，工作日中午的稳定选择。"
+    },
+    {
+      type: "visited", name: "Manner Coffee", cuisine: ["咖啡"],
+      scene: ["工作餐", "独处", "快"], rating: 4.2,
+      price: 25, visited: "2026-06-12",
+      location: "深圳·南山",
+      must: ["拿铁", "冰美式"],
+      tags: ["平价", "快"],
+      review: "科技园打工人续命咖啡，自带杯还便宜 5 元。"
+    },
+    {
+      type: "want_to_try", name: "喜茶·深圳湾万象城", cuisine: ["茶饮"],
+      scene: ["独处", "朋友聚餐"], rating: null,
+      price: 35, visited: "2026-06-14",
+      location: "深圳·南山",
+      must: ["多肉葡萄"],
+      tags: ["网红"],
+      source: { platform: "小红书", level: "L3" },
+      review: "小红书探店笔记看到，未验证。"
+    },
+    {
+      type: "old_restaurant", name: "陶陶居·广州", cuisine: ["粤菜"],
+      scene: ["家庭", "朋友聚餐", "仪式感"], rating: null,
+      price: 130, visited: "1880",
+      location: "广州·天河",
+      must: ["虾饺皇", "烧麦", "蛋挞"],
+      tags: ["老字号"],
+      source: { platform: "当地美食志", level: "L2" },
+      review: "138 年历史广州老字号，《广州美食志》收录。"
+    }
+  ];
+
+  // ============================================
+  // Render: Stats
+  // ============================================
+  function renderStats() {
+    const v = RESTAURANTS.filter(r => r.type === "visited").length;
+    const w = RESTAURANTS.filter(r => r.type === "want_to_try").length;
+    const o = RESTAURANTS.filter(r => r.type === "old_restaurant").length;
+    const c = new Set(RESTAURANTS.flatMap(r => r.cuisine)).size;
+    document.getElementById("stats").innerHTML = `
+      <div class="stat"><div class="stat-num">${v}</div><div class="stat-label">已打卡</div></div>
+      <div class="stat"><div class="stat-num">${w}</div><div class="stat-label">想去吃</div></div>
+      <div class="stat"><div class="stat-num">${o}</div><div class="stat-label">老店推荐</div></div>
+      <div class="stat"><div class="stat-num">${c}</div><div class="stat-label">菜系覆盖</div></div>
+    `;
+  }
+
+  // ============================================
+  // Render: Restaurant Grid
+  // ============================================
+  function renderGrid() {
+    const html = RESTAURANTS.map(r => {
+      const typeBadge = {
+        "visited": '<span class="type-badge type-visited">Visited</span>',
+        "want_to_try": '<span class="type-badge type-want">Want to Try</span>',
+        "old_restaurant": '<span class="type-badge type-old">Old</span>'
+      }[r.type];
+      const rating = r.rating !== null
+        ? `<div class="rcard-rating">${r.rating}</div>`
+        : `<div class="rcard-rating pending">待验证</div>`;
+      const source = r.source
+        ? `<div class="rcard-source">source: ${r.source.platform} · ${r.source.level}</div>`
+        : '';
+      return `
+        <div class="rcard">
+          <div class="rcard-head">
+            <div>
+              <div class="rcard-name">${typeBadge}${r.name}</div>
+              <div class="rcard-sub">${r.location} · ¥${r.price} / 人</div>
+            </div>
+            ${rating}
+          </div>
+          <div class="rcard-tags">
+            ${r.scene.map(s => `<span class="rtag scene">${s}</span>`).join('')}
+            ${r.tags.map(t => `<span class="rtag">${t}</span>`).join('')}
+          </div>
+          <div class="rcard-quote">"${r.review}"</div>
+          ${r.must && r.must.length ? `<div class="rcard-must"><strong>必点：</strong>${r.must.join(' · ')}</div>` : ''}
+          ${source}
+        </div>
+      `;
+    }).join('');
+    document.getElementById("rgrid").innerHTML = html;
+  }
+
+  // ============================================
+  // Recommend Algorithm (v1 5-Dim)
+  // ============================================
+  function runReco() {
+    const scene = document.getElementById("reco-scene").value;
+    const [minP, maxP] = document.getElementById("reco-price").value.split("-").map(Number);
+    const cuisine = document.getElementById("reco-cuisine").value;
+
+    let cands = RESTAURANTS.filter(r => r.type === "visited");
+    if (scene) cands = cands.filter(r => r.scene.includes(scene));
+    if (cuisine) cands = cands.filter(r => r.cuisine.includes(cuisine));
+    cands = cands.filter(r => r.price >= minP && r.price <= maxP);
+
+    const today = new Date();
+    cands = cands.map(r => {
+      const days = Math.floor((today - new Date(r.visited)) / 86400000);
+      let p = 1.0;
+      if (days < 7) p = 0.3;
+      else if (days < 30) p = 0.7;
+      else if (days < 90) p = 1.0;
+      else p = 1.2;
+      return { ...r, score: r.rating * p, days, penalty: p };
+    });
+    cands.sort((a, b) => b.score - a.score);
+    const top = cands.slice(0, 3);
+
+    if (top.length === 0) {
+      document.getElementById("reco-list").innerHTML = `
+        <div class="empty">
+          <div class="empty-title">没有符合条件的餐厅</div>
+          <div class="empty-desc">试试放宽筛选条件，或先增加更多打卡</div>
+        </div>`;
+      return;
+    }
+
+    document.getElementById("reco-list").innerHTML = top.map((r, i) => {
+      const reasons = [];
+      if (scene && r.scene.includes(scene)) reasons.push(`适合 ${scene} 场景`);
+      if (cuisine && r.cuisine.includes(cuisine)) reasons.push(`${cuisine}`);
+      if (r.tags.includes("仪式感")) reasons.push("符合你的仪式感偏好");
+      if (r.days < 7) reasons.push(`${r.days} 天前去过（降权 × 0.3）`);
+      else if (r.days < 30) reasons.push(`${r.days} 天前去过（中等权重）`);
+      else if (r.days < 90) reasons.push(`${r.days} 天前去过`);
+      else reasons.push(`${r.days} 天前去过（想重温 +20%）`);
+
+      const medal = i === 0 ? "01" : i === 1 ? "02" : "03";
+      return `
+        <div class="reco-card">
+          <div class="reco-medal">${medal}</div>
+          <div class="reco-reason">
+            <span class="reco-reason-label">Why</span>${reasons.join(' · ')}
+          </div>
+          <div class="rcard-head">
+            <div>
+              <div class="rcard-name">${r.name}</div>
+              <div class="rcard-sub">${r.location} · ¥${r.price}</div>
+            </div>
+            <div class="rcard-rating">${r.rating}</div>
+          </div>
+          <div class="rcard-quote" style="margin-top: var(--space-3)">"${r.review}"</div>
+          ${r.must && r.must.length ? `<div class="rcard-must" style="margin-top: var(--space-3)"><strong>必点：</strong>${r.must.join(' · ')}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function resetReco() {
+    document.getElementById("reco-scene").value = "";
+    document.getElementById("reco-price").value = "0-1000";
+    document.getElementById("reco-cuisine").value = "";
+    document.getElementById("reco-list").innerHTML = "";
+  }
+
+  // ============================================
+  // Add Restaurant
+  // ============================================
+  function addRest() {
+    const name = document.getElementById("add-name").value.trim();
+    const review = document.getElementById("add-review").value.trim();
+    if (!name || !review) {
+      document.getElementById("add-feedback").innerHTML =
+        '<span style="color: var(--accent)">⚠ 餐厅名和一句话评价是必填项</span>';
+      return;
+    }
+    const r = {
+      type: "visited", name,
+      cuisine: [document.getElementById("add-cuisine").value],
+      scene: document.getElementById("add-scene").value.split(/[,，]/).map(s => s.trim()).filter(Boolean),
+      rating: parseFloat(document.getElementById("add-rating").value),
+      price: parseInt(document.getElementById("add-price").value),
+      visited: new Date().toISOString().slice(0, 10),
+      location: "（待补充）",
+      must: document.getElementById("add-must").value.split(/[,，]/).map(s => s.trim()).filter(Boolean),
+      tags: [],
+      review
+    };
+    RESTAURANTS.push(r);
+    renderStats();
+    renderGrid();
+    document.getElementById("add-feedback").innerHTML =
+      `<span style="color: var(--accent)">✓ 已添加 <strong>${name}</strong> 到 demo 数据</span>`;
+    document.getElementById("add-name").value = "";
+    document.getElementById("add-review").value = "";
+    document.getElementById("add-scene").value = "";
+    document.getElementById("add-must").value = "";
+  }
+
+  // ============================================
+  // Tab Navigation
+  // ============================================
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById("page-" + btn.dataset.page).classList.add("active");
+    });
+  });
+
+  // ============================================
+  // Init
+  // ============================================
+  renderStats();
+  renderGrid();
+</script>
+
+</body>
+</html>

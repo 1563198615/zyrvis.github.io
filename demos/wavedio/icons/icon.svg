@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- 底板：阳光黄 + 新粗野主义粗描边 -->
+  <rect x="26" y="26" width="972" height="972" rx="220" fill="#FFD93D" stroke="#1E1E2E" stroke-width="30"/>
+
+  <!-- 多巴胺碎屑装饰 -->
+  <circle cx="186" cy="196" r="36" fill="#FF6B6B" stroke="#1E1E2E" stroke-width="14"/>
+  <rect x="762" y="158" width="76" height="76" rx="20" fill="#4ECDC4" stroke="#1E1E2E" stroke-width="14" transform="rotate(14 800 196)"/>
+  <path d="M196 780 l16 34 38 4 -28 25 8 37 -34 -19 -33 19 8 -37 -28 -25 38 -4z" fill="#B8B5FF" stroke="#1E1E2E" stroke-width="12" stroke-linejoin="round"/>
+  <circle cx="838" cy="826" r="30" fill="#FF8FAB" stroke="#1E1E2E" stroke-width="14"/>
+
+  <!-- 中央电台徽章 -->
+  <circle cx="512" cy="512" r="296" fill="#1E1E2E"/>
+  <circle cx="512" cy="512" r="54" fill="#FF6B6B"/>
+  <!-- 声波（dash 弧） -->
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round">
+    <circle cx="512" cy="512" r="104" stroke-width="42" stroke-dasharray="175 479" transform="rotate(132 512 512)"/>
+    <circle cx="512" cy="512" r="104" stroke-width="42" stroke-dasharray="175 479" transform="rotate(-48 512 512)"/>
+    <circle cx="512" cy="512" r="176" stroke-width="42" stroke-dasharray="215 891" transform="rotate(145 512 512)"/>
+    <circle cx="512" cy="512" r="176" stroke-width="42" stroke-dasharray="215 891" transform="rotate(-35 512 512)"/>
+  </g>
+</svg>

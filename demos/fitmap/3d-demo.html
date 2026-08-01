@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitMap — 3D 人体热力图 Demo</title>
+<style>
+  :root {
+    --primary: #FF4757;
+    --secondary: #3742FA;
+    --accent: #2ED573;
+    --warning: #FFA502;
+    --bg-1: #0A0A14;
+    --bg-2: #14142A;
+    --card: rgba(30,30,50,.85);
+    --border: rgba(255,255,255,.12);
+    --text: #FFFFFF;
+    --dim: rgba(255,255,255,.6);
+    --trained: #FF4757;
+    --recovering: #FFA502;
+    --ready: #2ED573;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; overflow:hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
+    background: radial-gradient(ellipse at top, #1A1A2E 0%, #0A0A14 100%);
+    color: var(--text);
+  }
+
+  /* ===== Header ===== */
+  header {
+    position: fixed; top:0; left:0; right:0; z-index:10;
+    padding: 12px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(10,10,20,.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    font-size: 18px; font-weight: 800;
+    background: linear-gradient(135deg, #FF4757, #FF6B7A);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  header .sub { font-size: 11px; color: var(--dim); margin-top:2px; }
+  .controls { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .ctrl-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: #fff;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: .2s;
+    font-weight: 500;
+  }
+  .ctrl-btn:hover { background: rgba(255,255,255,.1); border-color: var(--primary); }
+  .ctrl-btn.on {
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 12px rgba(255,71,87,.4);
+  }
+  .ctrl-group {
+    display: flex; gap: 2px;
+    background: rgba(0,0,0,.3);
+    padding: 2px;
+    border-radius: 8px;
+  }
+  .ctrl-group .ctrl-btn { background: transparent; border: none; padding: 6px 10px; }
+  .ctrl-group .ctrl-btn.on { background: var(--primary); }
+
+  /* ===== Canvas ===== */
+  #canvas-host {
+    position: fixed;
+    top: 60px; left: 0; right: 0; bottom: 0;
+    cursor: grab;
+  }
+  #canvas-host:active { cursor: grabbing; }
+  canvas { display: block; }
+
+  /* ===== Floating panels ===== */
+  .panel {
+    position: fixed;
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    z-index: 5;
+  }
+
+  .muscle-panel {
+    top: 80px; left: 16px;
+    width: 220px;
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .muscle-panel::-webkit-scrollbar { width: 4px; }
+  .muscle-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 2px; }
+  .muscle-panel h3 { font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+  .muscle-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .15s;
+    margin-bottom: 3px;
+    font-size: 11px;
+  }
+  .muscle-row:hover { background: rgba(255,255,255,.08); }
+  .muscle-row .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px currentColor;
+  }
+  .muscle-row .name { flex: 1; }
+  .muscle-row .pct { font-size: 10px; color: var(--dim); }
+
+  .info-panel {
+    top: 80px; right: 16px;
+    width: 250px;
+    display: none;
+  }
+  .info-panel.show { display: block; animation: slideIn .25s ease; }
+  @keyframes slideIn { from { opacity:0; transform: translateX(20px);} to {opacity:1; transform: translateX(0);} }
+  .info-panel .title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .info-panel .state {
+    display: inline-block;
+    padding: 3px 10px; border-radius: 12px;
+    font-size: 10px; font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .info-panel .recovery-bar {
+    height: 6px; background: rgba(255,255,255,.08);
+    border-radius: 3px; overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .info-panel .recovery-bar .fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, #FF4757, #FFA502, #2ED573);
+    transition: width .3s;
+  }
+  .info-panel .recovery-label {
+    font-size: 10px; color: var(--dim); margin-bottom: 12px;
+  }
+  .info-panel .subtitle {
+    font-size: 11px; font-weight: 600; margin-top: 6px; margin-bottom: 4px;
+    color: var(--dim);
+  }
+  .info-panel .exercises {
+    list-style: none;
+  }
+  .info-panel .exercises li {
+    padding: 4px 0; font-size: 11px;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between;
+    color: var(--dim);
+  }
+  .info-panel .exercises li:last-child { border-bottom: none; }
+  .info-panel .exercises .e-name { color: #fff; }
+
+  /* Bottom legend */
+  .legend-bar {
+    position: fixed;
+    bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 18px;
+    display: flex; gap: 18px;
+    z-index: 5;
+    align-items: center;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+  .legend-item .dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+  .legend-tip { color: var(--dim); font-size: 10px; margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--border); }
+
+  /* Toast */
+  .toast {
+    position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,.9); padding: 8px 16px;
+    border-radius: 20px; font-size: 12px;
+    opacity: 0; transition: opacity .3s;
+    z-index: 50; pointer-events: none;
+    backdrop-filter: blur(10px);
+  }
+  .toast.show { opacity: 1; }
+
+  /* Loading */
+  .loader {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: var(--bg-1); z-index: 100;
+    flex-direction: column; gap: 16px;
+    transition: opacity .5s;
+  }
+  .loader.hidden { opacity: 0; pointer-events: none; }
+  .loader .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid rgba(255,71,87,.2);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  .loader .msg { font-size: 13px; color: var(--dim); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-banner {
+    position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+    background: rgba(255,71,87,.2); border: 1px solid var(--primary);
+    padding: 10px 20px; border-radius: 10px;
+    font-size: 12px; z-index: 200;
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .muscle-panel, .info-panel { display: none; }
+    header { padding: 8px 12px; }
+    header h1 { font-size: 14px; }
+    .ctrl-btn { padding: 5px 8px; font-size: 10px; }
+    .legend-bar { padding: 8px 12px; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader">
+  <div class="spinner"></div>
+  <div class="msg">加载 3D 引擎...</div>
+</div>
+
+<div class="error-banner" id="error-banner"></div>
+
+<header>
+  <div>
+    <h1>🏋️ FitMap 3D 热力图</h1>
+    <div class="sub" id="status-text">拖动旋转 · 滚轮缩放 · 点击肌肉</div>
+  </div>
+  <div class="controls">
+    <div class="ctrl-group">
+      <button class="ctrl-btn on" id="gender-male" onclick="setGender('male')">♂ 男</button>
+      <button class="ctrl-btn" id="gender-female" onclick="setGender('female')">♀ 女</button>
+    </div>
+    <div class="ctrl-group">
+      <button class="ctrl-btn on" id="view-front" onclick="setView('front')">正面</button>
+      <button class="ctrl-btn" id="view-back" onclick="setView('back')">背面</button>
+    </div>
+    <button class="ctrl-btn" id="auto-rotate" onclick="toggleAutoRotate()">↻ 自动</button>
+    <button class="ctrl-btn" onclick="resetCamera()">⟲ 复位</button>
+  </div>
+</header>
+
+<div id="canvas-host"></div>
+
+<div class="panel muscle-panel">
+  <h3>💪 肌肉状态 (17)</h3>
+  <div id="muscle-list"></div>
+</div>
+
+<div class="panel info-panel" id="info-panel">
+  <div class="title" id="info-name">胸大肌</div>
+  <span class="state" id="info-state"></span>
+  <div class="recovery-bar"><div class="fill" id="info-fill" style="width: 5%"></div></div>
+  <div class="recovery-label" id="info-label">恢复进度 5% · 预计 46 小时</div>
+  <div class="subtitle">推荐训练动作</div>
+  <ul class="exercises" id="info-exercises"></ul>
+</div>
+
+<div class="legend-bar">
+  <div class="legend-item"><span class="dot" style="background:var(--trained); color:var(--trained)"></span>今日训练</div>
+  <div class="legend-item"><span class="dot" style="background:var(--recovering); color:var(--recovering)"></span>恢复中</div>
+  <div class="legend-item"><span class="dot" style="background:var(--ready); color:var(--ready)"></span>可训练</div>
+  <div class="legend-tip">🖱 拖动 · 滚轮缩放 · 点击切换</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const errorBanner = document.getElementById('error-banner');
+function showError(msg) {
+  errorBanner.textContent = '⚠️ ' + msg;
+  errorBanner.style.display = 'block';
+  console.error(msg);
+}
+window.addEventListener('error', (e) => showError(e.message));
+
+try {
+  // ========== Setup ==========
+  const host = document.getElementById('canvas-host');
+  if (!host) throw new Error('Canvas host not found');
+
+  const scene = new THREE.Scene();
+  scene.background = null;
+  scene.fog = new THREE.Fog(0x0A0A14, 12, 30);
+
+  const camera = new THREE.PerspectiveCamera(35, host.clientWidth / host.clientHeight, 0.1, 100);
+  camera.position.set(0, 1.4, 6);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(host.clientWidth, host.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  host.appendChild(renderer.domElement);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 3;
+  controls.maxDistance = 12;
+  controls.target.set(0, 1.1, 0);
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 1.2;
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x4A90E2, 0.3));
+
+  const key = new THREE.DirectionalLight(0xffffff, 1.4);
+  key.position.set(4, 6, 5);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.camera.left = -3;
+  key.shadow.camera.right = 3;
+  key.shadow.camera.top = 3;
+  key.shadow.camera.bottom = -3;
+  scene.add(key);
+
+  const rim = new THREE.DirectionalLight(0xFF4757, 0.7);
+  rim.position.set(-4, 4, -4);
+  scene.add(rim);
+
+  const fill = new THREE.PointLight(0x3742FA, 0.6, 12);
+  fill.position.set(-3, 3, 3);
+  scene.add(fill);
+
+  // Ground
+  const ground = new THREE.Mesh(
+    new THREE.CircleGeometry(2.5, 64),
+    new THREE.MeshStandardMaterial({ color: 0x14142A, metalness: 0.4, roughness: 0.5 })
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.02;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(1.5, 1.6, 64),
+    new THREE.MeshBasicMaterial({ color: 0xFF4757, transparent: true, opacity: 0.6, side: THREE.DoubleSide })
+  );
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = 0.001;
+  scene.add(ring);
+
+  // ========== Muscle Data ==========
+  // Muscle positions are explicit on body surface, sized so they BULGE OUT
+  // Geometry approach: build each muscle from a sphere then scale, OR from custom shape
+
+  const COLOR_TRAINED = 0xFF4757;
+  const COLOR_RECOVERING = 0xFFA502;
+  const COLOR_READY = 0x2ED573;
+  const COLOR_BODY_M = 0xD4A57E;
+  const COLOR_BODY_F = 0xE8C5A0;
+
+  // Each muscle: id, name (short), name (full), position[3], size[3] (radius), exercises, state, recovery, isPaired
+  // position and size are CENTER coordinates on body; size is full radius (not diameter)
+  const MUSCLE_LIST = [
+    // ----- FRONT -----
+    { id:'chest',         s:'胸',   cn:'胸大肌',     p:[0, 1.32, 0.32], r:[0.40, 0.26, 0.20], ex:['杠铃卧推','上斜哑铃推举','双杠臂屈伸','哑铃飞鸟'], st:'trained', rec: 0.05, side:'single' },
+    { id:'upper_chest',   s:'上胸', cn:'胸大肌上部', p:[0, 1.50, 0.30], r:[0.32, 0.14, 0.16], ex:['上斜卧推','上斜飞鸟'], st:'trained', rec: 0.05, side:'single' },
+    { id:'front_delt',    s:'前束', cn:'三角肌前束', p:[0.36, 1.62, 0.18], r:[0.14, 0.14, 0.16], ex:['推举','前平举','阿诺德推举'], st:'trained', rec: 0.05, side:'pair' },
+    { id:'side_delt',     s:'中束', cn:'三角肌中束', p:[0.46, 1.48, 0.10], r:[0.14, 0.18, 0.18], ex:['侧平举','绳索外展'], st:'recovering', rec: 0.55, side:'pair' },
+    { id:'biceps',        s:'二头', cn:'肱二头肌',   p:[0.45, 1.28, 0.18], r:[0.13, 0.22, 0.16], ex:['弯举','锤式弯举','牧师椅弯举'], st:'recovering', rec: 0.60, side:'pair' },
+    { id:'forearms',      s:'前臂', cn:'前臂肌群',   p:[0.48, 0.92, 0.14], r:[0.11, 0.20, 0.13], ex:['腕弯举','反握弯举'], st:'ready', rec: 1.0, side:'pair' },
+    { id:'abs',           s:'腹',   cn:'腹直肌',     p:[0, 1.02, 0.28], r:[0.22, 0.26, 0.14], ex:['卷腹','悬垂举腿','平板支撑'], st:'ready', rec: 1.0, side:'single' },
+    { id:'obliques',      s:'腹斜', cn:'腹外斜肌',   p:[0.30, 1.08, 0.22], r:[0.11, 0.24, 0.13], ex:['俄罗斯转体','侧卷腹'], st:'ready', rec: 1.0, side:'pair' },
+    { id:'quads',         s:'股四', cn:'股四头肌',   p:[0.16, 0.46, 0.20], r:[0.16, 0.34, 0.18], ex:['深蹲','腿举','腿屈伸','箭步蹲'], st:'ready', rec: 1.0, side:'pair' },
+
+    // ----- BACK -----
+    { id:'rear_delt',     s:'后束', cn:'三角肌后束', p:[0.36, 1.50, -0.22], r:[0.13, 0.14, 0.13], ex:['俯身飞鸟','反向飞鸟','面拉'], st:'ready', rec: 1.0, side:'pair' },
+    { id:'triceps',       s:'三头', cn:'肱三头肌',   p:[0.44, 1.28, -0.18], r:[0.13, 0.22, 0.14], ex:['臂屈伸','绳索下压','仰卧臂屈伸'], st:'trained', rec: 0.05, side:'pair' },
+    { id:'traps',         s:'斜方', cn:'斜方肌',     p:[0, 1.66, -0.16], r:[0.24, 0.12, 0.13], ex:['耸肩','直立划船'], st:'ready', rec: 1.0, side:'single' },
+    { id:'lats',          s:'背阔', cn:'背阔肌',     p:[0.34, 1.22, -0.26], r:[0.16, 0.32, 0.14], ex:['引体向上','高位下拉','坐姿划船'], st:'recovering', rec: 0.50, side:'pair' },
+    { id:'lower_back',    s:'下背', cn:'竖脊肌',     p:[0, 0.92, -0.24], r:[0.20, 0.20, 0.10], ex:['硬拉','罗马尼亚硬拉'], st:'ready', rec: 1.0, side:'single' },
+    { id:'glutes',        s:'臀',   cn:'臀大肌',     p:[0, 0.78, -0.26], r:[0.32, 0.18, 0.20], ex:['深蹲','臀推','臀桥'], st:'ready', rec: 1.0, side:'single' },
+    { id:'hamstrings',    s:'腘绳', cn:'腘绳肌',     p:[0.16, 0.46, -0.20], r:[0.14, 0.34, 0.16], ex:['罗马尼亚硬拉','腿弯举'], st:'ready', rec: 1.0, side:'pair' },
+    { id:'calves',        s:'小腿', cn:'腓肠肌',     p:[0.16, 0.12, -0.12], r:[0.13, 0.24, 0.16], ex:['站姿提踵','坐姿提踵'], st:'ready', rec: 1.0, side:'pair' },
+  ];
+
+  const STATE_HEX = { trained: COLOR_TRAINED, recovering: COLOR_RECOVERING, ready: COLOR_READY };
+  const STATE_NAME = { trained: '今日训练', recovering: '恢复中', ready: '可训练' };
+  const STATE_CYCLE = { ready: 'recovering', recovering: 'trained', trained: 'ready' };
+
+  let currentGender = 'male';
+  let bodyGroup = null;
+  const muscleMeshes = {}; // id -> mesh
+  let selectedMuscleId = null;
+
+  function disposeGroup(group) {
+    group.traverse(obj => {
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) {
+        if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose());
+        else obj.material.dispose();
+      }
+    });
+    scene.remove(group);
+  }
+
+  // ========== Build body ==========
+  function makeMuscleMesh(muscle, xPos) {
+    const [rx, ry, rz] = muscle.r;
+
+    // Use scaled sphere
+    const geom = new THREE.SphereGeometry(1, 32, 24);
+    geom.scale(rx, ry, rz);
+
+    const isTrained = muscle.st === 'trained';
+    const isRecov = muscle.st === 'recovering';
+    const mat = new THREE.MeshStandardMaterial({
+      color: STATE_HEX[muscle.st],
+      emissive: STATE_HEX[muscle.st],
+      emissiveIntensity: isTrained ? 0.85 : (isRecov ? 0.6 : 0.4),
+      roughness: 0.4,
+      metalness: 0.1,
+      transparent: false
+    });
+
+    const mesh = new THREE.Mesh(geom, mat);
+    const [px, py, pz] = muscle.p;
+    mesh.position.set(xPos, py, pz);
+    mesh.castShadow = true;
+    mesh.renderOrder = 10;
+    mesh.userData.muscleId = muscle.id;
+    mesh.userData.def = muscle;
+    return mesh;
+  }
+
+  function buildBody() {
+    if (bodyGroup) disposeGroup(bodyGroup);
+    bodyGroup = new THREE.Group();
+    scene.add(bodyGroup);
+
+    const skinColor = currentGender === 'female' ? COLOR_BODY_F : COLOR_BODY_M;
+    const bodyMat = new THREE.MeshStandardMaterial({
+      color: skinColor,
+      roughness: 0.7,
+      metalness: 0.0
+    });
+    const bodyMatDark = new THREE.MeshStandardMaterial({
+      color: skinColor,
+      roughness: 0.75,
+      metalness: 0.0
+    });
+
+    // ===== Head =====
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 32, 32), bodyMat);
+    head.position.set(0, 1.85, 0);
+    head.castShadow = true;
+    bodyGroup.add(head);
+
+    // Neck
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.10, 16), bodyMat);
+    neck.position.set(0, 1.71, 0);
+    bodyGroup.add(neck);
+
+    // ===== Torso (visible body) =====
+    const torsoTop = currentGender === 'female' ? 0.24 : 0.28;
+    const torsoBottom = currentGender === 'female' ? 0.26 : 0.26;
+
+    // Upper torso / ribcage
+    const upperTorso = new THREE.Mesh(
+      new THREE.CylinderGeometry(torsoTop, torsoBottom + 0.04, 0.36, 24),
+      bodyMat
+    );
+    upperTorso.position.set(0, 1.42, 0);
+    upperTorso.castShadow = true;
+    bodyGroup.add(upperTorso);
+
+    // Lower torso / waist
+    const lowerTorso = new THREE.Mesh(
+      new THREE.CylinderGeometry(torsoBottom + 0.02, torsoBottom + 0.06, 0.34, 24),
+      bodyMat
+    );
+    lowerTorso.position.set(0, 1.10, 0);
+    lowerTorso.castShadow = true;
+    bodyGroup.add(lowerTorso);
+
+    // Hips / pelvis
+    const hips = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.28, 0.24, 0.22, 24),
+      bodyMat
+    );
+    hips.position.set(0, 0.80, 0);
+    bodyGroup.add(hips);
+
+    // ===== Arms =====
+    function makeArm(side) {
+      const g = new THREE.Group();
+      const sign = side === 'left' ? -1 : 1;
+
+      // Shoulder joint
+      const shoulder = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), bodyMat);
+      shoulder.position.set(sign * 0.30, 1.62, 0);
+      g.add(shoulder);
+
+      // Upper arm
+      const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.30, 16), bodyMat);
+      upperArm.position.set(sign * 0.36, 1.42, 0);
+      upperArm.rotation.z = sign * 0.08;
+      g.add(upperArm);
+
+      // Elbow
+      const elbow = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 16), bodyMat);
+      elbow.position.set(sign * 0.38, 1.26, 0);
+      g.add(elbow);
+
+      // Forearm
+      const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.058, 0.30, 16), bodyMat);
+      forearm.position.set(sign * 0.40, 1.07, 0);
+      forearm.rotation.z = sign * 0.04;
+      g.add(forearm);
+
+      // Hand
+      const hand = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), bodyMat);
+      hand.scale.set(1, 1.2, 0.6);
+      hand.position.set(sign * 0.41, 0.90, 0);
+      g.add(hand);
+
+      return g;
+    }
+    bodyGroup.add(makeArm('left'));
+    bodyGroup.add(makeArm('right'));
+
+    // ===== Legs =====
+    function makeLeg(side) {
+      const g = new THREE.Group();
+      const sign = side === 'left' ? -1 : 1;
+
+      // Thigh
+      const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.10, 0.50, 16), bodyMat);
+      thigh.position.set(sign * 0.13, 0.50, 0);
+      thigh.castShadow = true;
+      g.add(thigh);
+
+      // Knee
+      const knee = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), bodyMat);
+      knee.position.set(sign * 0.13, 0.24, 0);
+      g.add(knee);
+
+      // Calf
+      const calf = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.06, 0.40, 16), bodyMat);
+      calf.position.set(sign * 0.13, 0.05, 0);
+      g.add(calf);
+
+      // Foot
+      const foot = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.05, 0.20), bodyMat);
+      foot.position.set(sign * 0.13, -0.16, 0.05);
+      g.add(foot);
+
+      return g;
+    }
+    bodyGroup.add(makeLeg('left'));
+    bodyGroup.add(makeLeg('right'));
+
+    // ===== Muscles (overlay bulges) =====
+    for (const m of MUSCLE_LIST) {
+      if (m.side === 'single') {
+        const mesh = makeMuscleMesh(m, m.p[0]);
+        bodyGroup.add(mesh);
+        muscleMeshes[m.id] = mesh;
+      } else {
+        const meshL = makeMuscleMesh(m, -Math.abs(m.p[0]));
+        const meshR = makeMuscleMesh(m, Math.abs(m.p[0]));
+        bodyGroup.add(meshL);
+        bodyGroup.add(meshR);
+        muscleMeshes[m.id] = [meshL, meshR];
+      }
+    }
+  }
+
+  buildBody();
+
+  // ========== Update muscle color ==========
+  function setMuscleState(id, state) {
+    const def = MUSCLE_LIST.find(x => x.id === id);
+    if (!def) return;
+    def.st = state;
+    def.rec = state === 'trained' ? 0.05 : state === 'recovering' ? 0.55 : 1.0;
+
+    const meshes = Array.isArray(muscleMeshes[id]) ? muscleMeshes[id] : [muscleMeshes[id]];
+    for (const mesh of meshes) {
+      const color = STATE_HEX[state];
+      mesh.material.color.setHex(color);
+      mesh.material.emissive.setHex(color);
+      mesh.material.emissiveIntensity = state === 'trained' ? 0.6 : 0.35;
+    }
+  }
+
+  // ========== Raycaster ==========
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  let hovered = null;
+
+  function getAllMuscleMeshes() {
+    const arr = [];
+    for (const id in muscleMeshes) {
+      const m = Array.isArray(muscleMeshes[id]) ? muscleMeshes[id] : [muscleMeshes[id]];
+      arr.push(...m);
+    }
+    return arr;
+  }
+
+  renderer.domElement.addEventListener('pointermove', (e) => {
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const hits = raycaster.intersectObjects(getAllMuscleMeshes(), false);
+
+    if (hovered) {
+      hovered.scale.set(1, 1, 1);
+      hovered = null;
+    }
+    if (hits.length > 0) {
+      hovered = hits[0].object;
+      hovered.scale.set(1.08, 1.08, 1.08);
+      renderer.domElement.style.cursor = 'pointer';
+    } else {
+      renderer.domElement.style.cursor = '';
+    }
+  });
+
+  renderer.domElement.addEventListener('click', (e) => {
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const hits = raycaster.intersectObjects(getAllMuscleMeshes(), false);
+
+    if (hits.length > 0) {
+      const mesh = hits[0].object;
+      const def = mesh.userData.def;
+      const newState = STATE_CYCLE[def.st];
+      setMuscleState(def.id, newState);
+      showInfo(def);
+      showToast(`${def.cn} → ${STATE_NAME[newState]}`);
+      renderMuscleList();
+    }
+  });
+
+  // ========== UI ==========
+  function renderMuscleList() {
+    const host = document.getElementById('muscle-list');
+    host.innerHTML = MUSCLE_LIST.map(m => `
+      <div class="muscle-row" data-id="${m.id}" onclick="window.selectMuscle('${m.id}')">
+        <span class="dot" style="background:#${STATE_HEX[m.st].toString(16).padStart(6,'0')}; color:#${STATE_HEX[m.st].toString(16).padStart(6,'0')}"></span>
+        <span class="name">${m.s}</span>
+        <span class="pct">${Math.round(m.rec * 100)}%</span>
+      </div>
+    `).join('');
+  }
+
+  window.selectMuscle = (id) => {
+    const def = MUSCLE_LIST.find(x => x.id === id);
+    if (!def) return;
+    showInfo(def);
+    const meshes = Array.isArray(muscleMeshes[id]) ? muscleMeshes[id] : [muscleMeshes[id]];
+    meshes.forEach(m => {
+      m.scale.set(1.18, 1.18, 1.18);
+      setTimeout(() => m.scale.set(1, 1, 1), 350);
+    });
+  };
+
+  function showInfo(muscle) {
+    selectedMuscleId = muscle.id;
+    const panel = document.getElementById('info-panel');
+    document.getElementById('info-name').textContent = muscle.cn;
+    const stateEl = document.getElementById('info-state');
+    stateEl.textContent = STATE_NAME[muscle.st];
+    const hex = '#' + STATE_HEX[muscle.st].toString(16).padStart(6, '0');
+    stateEl.style.background = hex + '33';
+    stateEl.style.color = hex;
+    document.getElementById('info-fill').style.width = (muscle.rec * 100) + '%';
+    const remaining = Math.round((1 - muscle.rec) * 48);
+    document.getElementById('info-label').textContent =
+      `恢复进度 ${Math.round(muscle.rec * 100)}% · ${muscle.st === 'ready' ? '已就绪' : `预计 ${remaining} 小时`}`;
+    document.getElementById('info-exercises').innerHTML = muscle.ex.map(e =>
+      `<li><span class="e-name">${e}</span><span>→</span></li>`
+    ).join('');
+    panel.classList.add('show');
+  }
+
+  window.setGender = (g) => {
+    currentGender = g;
+    document.getElementById('gender-male').classList.toggle('on', g === 'male');
+    document.getElementById('gender-female').classList.toggle('on', g === 'female');
+    buildBody();
+  };
+
+  window.setView = (v) => {
+    document.getElementById('view-front').classList.toggle('on', v === 'front');
+    document.getElementById('view-back').classList.toggle('on', v === 'back');
+    camera.position.set(0, 1.4, v === 'front' ? 6 : -6);
+    controls.target.set(0, 1.1, 0);
+    controls.update();
+  };
+
+  window.toggleAutoRotate = () => {
+    controls.autoRotate = !controls.autoRotate;
+    document.getElementById('auto-rotate').classList.toggle('on', controls.autoRotate);
+  };
+
+  window.resetCamera = () => {
+    camera.position.set(0, 1.4, 6);
+    controls.target.set(0, 1.1, 0);
+    controls.update();
+  };
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 1500);
+  }
+
+  window.addEventListener('resize', () => {
+    camera.aspect = host.clientWidth / host.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(host.clientWidth, host.clientHeight);
+  });
+
+  // ========== Render loop ==========
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  renderMuscleList();
+  showInfo(MUSCLE_LIST[0]);
+  animate();
+
+  document.getElementById('status-text').textContent =
+    `✓ 加载完成 · ${MUSCLE_LIST.length} 块肌肉`;
+
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 500);
+
+} catch (err) {
+  showError(err.message);
+  console.error(err);
+}
+</script>
+</body>
+</html>
