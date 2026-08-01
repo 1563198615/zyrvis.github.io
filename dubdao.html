@@ -1,490 +1,90 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>岛不岛 DubDao — 今天运动，岛不岛？｜玩法全览</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ff684c">
+<meta name="description" content="岛不岛 DubDao：你的每一步，都在海上长出一座岛。">
+<title>岛不岛 DubDao — 今天运动，岛不岛？</title>
 <style>
-  :root{
-    --magenta:#F9738F; --cyan:#45B7D9; --amber:#FFA940; --lime:#8FD14F;
-    --violet:#8B7BD8; --coral:#FF8A6B; --wood:#C9A27A;
-    --night1:#2E2A52; --night2:#241B5E; --paper:#FFF8EE;
-    --ink:#33304A; --ink-soft:#8F8AA5; --star:#F5F1E8; --star-soft:#B9B3D6;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--paper);color:var(--ink);line-height:1.75;overflow-x:hidden}
-  img{max-width:100%;display:block}
-  .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
-  section{padding:84px 0}
-  .tag{display:inline-block;padding:4px 14px;border-radius:999px;font-size:13px;font-weight:600;margin-bottom:18px}
-  h2{font-size:34px;line-height:1.3;margin-bottom:14px}
-  h2 em{font-style:normal;color:var(--amber)}
-  .sub{color:var(--ink-soft);font-size:16px;max-width:680px;margin-bottom:40px}
-  .card{border-radius:16px;background:#fff;box-shadow:0 4px 12px rgba(51,48,74,.08);padding:28px}
-  .grid{display:grid;gap:22px}
-  .g3{grid-template-columns:repeat(3,1fr)}
-  .g2{grid-template-columns:repeat(2,1fr)}
-  @media(max-width:860px){.g3,.g2{grid-template-columns:1fr}h2{font-size:26px}}
+:root{--coral:#ff684c;--pink:#f64d91;--sun:#ffb13c;--aqua:#39d4d1;--ink:#16142e;--cream:#fff4df;--violet:#3d286d;--ease:cubic-bezier(.2,.75,.25,1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--ink)}body{margin:0;color:#fff;background:var(--ink);font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif;overflow-x:hidden}img,video{display:block;width:100%}a{color:inherit}button{font:inherit}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}::selection{background:var(--sun);color:var(--ink)}
+.nav{position:fixed;z-index:90;inset:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:22px clamp(18px,4vw,58px);transition:.35s;background:linear-gradient(#0008,transparent)}.nav.scrolled{padding-top:14px;padding-bottom:14px;background:#16142ed9;backdrop-filter:blur(18px)}.brand{font-size:19px;font-weight:950;letter-spacing:-.7px;text-decoration:none}.brand i{font-style:normal;color:var(--sun)}.links{display:flex;gap:26px;font-size:12px;font-weight:800;letter-spacing:.13em}.links a{text-decoration:none;opacity:.78}.sound{border:1px solid #ffffff55;background:#17132999;color:#fff;border-radius:99px;padding:8px 12px;cursor:pointer}
+.hero{height:100svh;min-height:650px;position:relative;overflow:hidden;background:#ee785b}.hero-media,.hero-media img{position:absolute;inset:0;height:100%;object-fit:cover}.hero-mobile{display:none}.hero-media:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#130c3714 25%,#17112c18 48%,#16142ee8 100%),linear-gradient(90deg,#21133d99,transparent 62%)}.hero-copy{position:absolute;z-index:2;left:max(24px,calc((100vw - 1180px)/2));bottom:9vh;max-width:760px}.eyebrow{font-size:11px;font-weight:900;letter-spacing:.28em;text-transform:uppercase;color:#ffe29b}.hero h1,.mega{margin:0;font-size:clamp(72px,11vw,168px);line-height:.78;letter-spacing:-.075em;font-weight:1000;text-transform:uppercase}.hero h1 span{display:block;color:transparent;-webkit-text-stroke:2px #fff}.hero p{font-size:clamp(16px,1.45vw,20px);line-height:1.55;max-width:520px;margin:24px 0 0}.scroll-cue{position:absolute;z-index:3;right:clamp(20px,4vw,58px);bottom:8vh;writing-mode:vertical-rl;font-size:10px;letter-spacing:.25em;opacity:.75}.scroll-cue:after{content:"";display:inline-block;height:55px;border-left:1px solid;margin-top:12px;animation:pulse 1.6s infinite}@keyframes pulse{50%{transform:scaleY(.55);opacity:.35}}
+.manifesto{position:relative;padding:17vh 6vw;background:linear-gradient(135deg,#ff6b4b,#f74d8d 60%,#8d3bc3);overflow:hidden}.manifesto:after{content:"DUBDAO";position:absolute;right:-.05em;bottom:-.2em;font-size:22vw;font-weight:1000;letter-spacing:-.08em;color:#ffffff0e}.manifesto h2{position:relative;z-index:1;margin:0;max-width:1100px;font-size:clamp(42px,7.4vw,112px);line-height:.94;letter-spacing:-.055em}.manifesto h2 em{font-style:normal;color:#ffe69c}.manifesto p{position:relative;z-index:1;max-width:650px;font-size:18px;line-height:1.8;margin:32px 0 0}
+.story{position:relative}.stage{position:sticky;top:0;height:100svh;overflow:hidden;background:#15132a}.stage-layer{position:absolute;inset:0;opacity:0;transform:scale(1.035);transition:opacity .65s var(--ease),transform 1s var(--ease)}.stage-layer.active{opacity:1;transform:scale(1)}.stage-layer img,.stage-layer video{height:100%;object-fit:cover}.stage:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#15132ae8 0%,#15132a8a 38%,transparent 72%),linear-gradient(0deg,#15132a80,transparent 42%);pointer-events:none}.chapters{position:relative;z-index:3;margin-top:-100svh}.chapter{min-height:100svh;display:flex;align-items:center;padding:100px max(24px,calc((100vw - 1180px)/2)) 7vh}.chapter-copy{max-width:600px}.chapter .num{font-size:11px;letter-spacing:.3em;color:#ffd274;font-weight:900}.chapter h3{font-size:clamp(48px,6vw,88px);line-height:.92;letter-spacing:-.055em;margin:15px 0 22px}.chapter p{max-width:500px;font-size:16px;line-height:1.75;color:#fffde7}.pill{display:inline-flex;border:1px solid #ffffff66;border-radius:99px;padding:9px 14px;margin-top:14px;font-size:11px;letter-spacing:.12em;background:#16142e55;backdrop-filter:blur(10px)}
+.people{background:var(--cream);color:var(--ink);padding:12vh max(24px,calc((100vw - 1180px)/2)) 14vh}.section-head{display:flex;align-items:end;justify-content:space-between;gap:50px;margin-bottom:7vh}.section-head h2{margin:0;font-size:clamp(54px,7.8vw,108px);line-height:.82;letter-spacing:-.065em}.section-head p{max-width:420px;line-height:1.7;color:#5d526b}.character-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.character{position:relative;min-height:560px;overflow:hidden;border-radius:24px;background:#f7e9d8}.character img{position:absolute;inset:0;height:100%;object-fit:cover;object-position:left center;transition:transform .8s var(--ease)}.character:hover img{transform:scale(1.025)}.character:after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(transparent,#17132ad9)}.character-copy{position:absolute;z-index:2;left:28px;right:28px;bottom:25px;color:#fff}.character-copy b{font-size:32px}.character-copy span{display:block;color:#ffd274;font-size:10px;font-weight:900;letter-spacing:.2em;margin-bottom:8px}.character-copy p{margin:8px 0 0;max-width:420px;line-height:1.55;color:#fffdf0}.character:nth-child(2){background:#ffe4d2}.character:nth-child(3){background:#ebf0d3}.character:nth-child(4){background:#deedf4}
+.districts{background:#eaf8f4;color:var(--ink);padding:12vh max(24px,calc((100vw - 1180px)/2)) 14vh}.districts .section-head{margin-bottom:8vh}.district-list{display:grid;gap:11vh}.district{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.7fr);gap:4vw;align-items:center}.district:nth-child(even){grid-template-columns:minmax(320px,.7fr) minmax(0,1.3fr)}.district:nth-child(even) .district-media{order:2}.district-media{overflow:hidden;border-radius:22px;box-shadow:0 18px 50px #1b43551c}.district-media img{aspect-ratio:16/10;object-fit:cover;transition:transform 1s var(--ease)}.district:hover img{transform:scale(1.02)}.district-copy .code{font-size:10px;letter-spacing:.2em;font-weight:950;color:#ef566d}.district-copy h3{font-size:clamp(36px,4vw,58px);letter-spacing:-.05em;line-height:.95;margin:13px 0 20px}.district-copy p{font-size:14px;line-height:1.75;color:#514d61}.facts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#c8ded8;border-radius:14px;overflow:hidden;margin-top:22px}.fact{background:#f4fbf8;padding:13px}.fact b{display:block;font-size:11px}.fact span{font-size:11px;color:#686576}
+.gallery{padding:13vh 5vw;background:#20183e}.gallery h2{font-size:clamp(52px,9vw,135px);letter-spacing:-.07em;line-height:.8;margin:0 0 8vh}.mosaic{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.mosaic figure{margin:0;position:relative;overflow:hidden;background:#000}.mosaic figure:first-child{grid-row:span 2}.mosaic img{height:100%;min-height:330px;object-fit:cover;transition:transform .8s var(--ease)}.mosaic figure:hover img{transform:scale(1.035)}.mosaic figcaption{position:absolute;left:20px;bottom:18px;font-weight:900;text-shadow:0 2px 14px #000}
+.final{min-height:100svh;display:grid;place-items:center;text-align:center;padding:12vh 5vw;background:radial-gradient(circle at 50% 20%,#ff8a58 0,#f64d91 35%,#34205c 80%)}.final h2{margin:0;font-size:clamp(66px,14vw,200px);line-height:.75;letter-spacing:-.075em}.final p{font-size:18px}.cta{display:inline-block;text-decoration:none;margin-top:20px;background:#fff;color:var(--ink);padding:16px 28px;border-radius:99px;font-weight:900;transition:.25s}.cta:hover{transform:translateY(-4px)}footer{display:flex;justify-content:space-between;gap:20px;padding:28px 5vw;background:#141126;color:#ffffff75;font-size:12px}
+.reveal{opacity:1;transform:translateY(18px);transition:transform .7s var(--ease)}.reveal.on{transform:none}
+@media(max-width:760px){.links{display:none}.hero-wide{display:none}.hero-mobile{display:block}.hero-copy{left:22px;right:22px;bottom:8vh}.hero h1{font-size:24vw}.hero h1 span{-webkit-text-stroke:1px #fff}.scroll-cue{display:none}.manifesto{padding:12vh 6vw}.stage:after{background:linear-gradient(0deg,#16142ef2 0%,#16142e33 66%)}.chapter{padding:90px 22px 8vh;align-items:flex-end}.chapter h3{font-size:15vw}.section-head{display:block}.section-head p{margin-top:24px}.districts,.people{padding:10vh 22px}.district-list{gap:9vh}.district,.district:nth-child(even){display:flex;flex-direction:column;align-items:stretch}.district:nth-child(even) .district-media{order:0}.character-grid{grid-template-columns:1fr}.character{min-height:470px}.mosaic{grid-template-columns:1fr}.mosaic figure:first-child{grid-row:auto}.mosaic img{min-height:250px}footer{display:block}footer span{display:block;margin:7px 0}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none}.stage-layer{transition:none}.hero-media video{display:none}}
 
-  /* HERO 白昼·阳光相 */
-  .hero{background:linear-gradient(180deg,#AEE7F5 0%,#E8F9FF 55%,#FFF8EE 100%);color:var(--ink);padding:96px 0 0;position:relative;overflow:hidden}
-  .hero::before{content:"";position:absolute;inset:0;background:
-    radial-gradient(500px 280px at 18% 18%,rgba(255,255,255,.75),transparent 60%),
-    radial-gradient(700px 400px at 85% 10%,rgba(255,233,168,.35),transparent 60%),
-    radial-gradient(800px 420px at 50% 115%,rgba(255,169,64,.14),transparent 60%)}
-  .hero .wrap{position:relative}
-  .logo{font-size:15px;letter-spacing:2px;color:#5A6C96;margin-bottom:26px}
-  .logo b{color:var(--cyan)}
-  .hero h1{font-size:52px;line-height:1.2;margin-bottom:18px}
-  .hero h1 .accent{background:linear-gradient(90deg,var(--amber),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .slogan{font-size:20px;color:#E08A00;font-weight:600;margin-bottom:14px}
-  .pitch{color:#5A5670;max-width:640px;font-size:16px;margin-bottom:32px}
-  .hero-img{border-radius:24px 24px 0 0;box-shadow:0 -8px 60px rgba(255,169,64,.30),0 20px 60px rgba(51,48,74,.15);margin-top:20px}
-  .badges{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px}
-  .badges span{border:1px solid rgba(51,48,74,.22);border-radius:999px;padding:5px 14px;font-size:13px;color:#5A5670;background:rgba(255,255,255,.55)}
-
-  /* 支柱 */
-  .pillar{border-top:6px solid;border-radius:16px;background:#fff;box-shadow:0 4px 12px rgba(51,48,74,.08);padding:26px}
-  .pillar h3{font-size:19px;margin-bottom:8px}
-  .pillar p{font-size:14px;color:var(--ink-soft)}
-  .p1{border-color:var(--magenta)} .p2{border-color:var(--cyan)} .p3{border-color:var(--lime)}
-
-  /* 循环图 */
-  .loop{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin-top:20px}
-  .loop .node{padding:14px 20px;border-radius:999px;font-weight:600;font-size:15px;color:#fff;box-shadow:0 4px 12px rgba(51,48,74,.15)}
-  .loop .arrow{color:var(--ink-soft);font-size:20px}
-  .n1{background:var(--coral)} .n2{background:var(--amber)} .n3{background:var(--lime)}
-  .n4{background:var(--cyan)} .n5{background:var(--magenta)} .n6{background:var(--violet)}
-
-  /* 一天 */
-  .day{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  @media(max-width:860px){.day{grid-template-columns:repeat(2,1fr)}}
-  .day .d{border-radius:14px;padding:20px;color:#fff;min-height:150px}
-  .d1{background:linear-gradient(160deg,#FFC96A,#FFA940)} .d2{background:linear-gradient(160deg,#7EC8E3,#45B7D9)}
-  .d3{background:linear-gradient(160deg,#F9738F,#E85A7A)} .d4{background:linear-gradient(160deg,#6A63B8,#4A4380)}
-  .day b{display:block;font-size:17px;margin-bottom:6px}
-  .day span{font-size:13px;opacity:.95}
-
-  /* 世界 */
-  .world{background:linear-gradient(180deg,#E8F9FF,#FFF8EE)}
-  .zones{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:26px}
-  @media(max-width:860px){.zones{grid-template-columns:repeat(2,1fr)}}
-  .zone{border-radius:12px;padding:16px 12px;text-align:center;font-size:14px;font-weight:600;color:#fff}
-  .zone small{display:block;font-weight:400;font-size:12px;opacity:.92;margin-top:6px}
-  .biomes{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-  .biomes span{background:#fff;border-radius:999px;padding:6px 16px;font-size:13px;box-shadow:0 2px 8px rgba(51,48,74,.08)}
-
-  /* 玩法详情卡 */
-  .feat{border-radius:18px;background:#fff;box-shadow:0 4px 14px rgba(51,48,74,.09);overflow:hidden;display:flex;flex-direction:column}
-  .feat img{width:100%;aspect-ratio:16/9;object-fit:cover}
-  .feat .f-body{padding:22px 22px 24px}
-  .feat h3{font-size:18px;margin-bottom:8px}
-  .feat p{font-size:13.5px;color:var(--ink-soft);margin-bottom:10px}
-  .feat ul{margin:0 0 4px 18px;font-size:13px;color:#5A5670}
-  .feat ul li{margin-bottom:5px}
-  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-  .chips span{font-size:11.5px;border-radius:999px;padding:3px 10px;background:rgba(69,183,217,.12);color:#2E7FA8}
-  .chips.warm span{background:rgba(255,169,64,.16);color:#C77F00}
-  .chips.pink span{background:rgba(249,115,143,.14);color:#D14A6E}
-  .chips.green span{background:rgba(143,209,79,.18);color:#6FA31E}
-  .chips.violet span{background:rgba(139,123,216,.16);color:#6A5AC8}
-
-  /* AI 夜相 */
-  .ai{background:linear-gradient(180deg,#2E2A52,#241B5E);color:var(--star)}
-  .ai .sub{color:var(--star-soft)}
-  .agent{background:rgba(255,255,255,.06);border:1px solid rgba(245,241,232,.12);border-radius:16px;padding:20px}
-  .agent h3{font-size:16px;margin-bottom:6px}
-  .agent p{font-size:13px;color:var(--star-soft)}
-  .ai-img{border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.35);margin-bottom:36px}
-
-  /* 红线 */
-  .redline{background:var(--ink);color:var(--star)}
-  .redline .sub{color:var(--star-soft)}
-  .rl{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.05);border-radius:12px;padding:16px 18px;font-size:14px}
-  .rl b{color:var(--amber);flex-shrink:0}
-  footer{padding:44px 0;background:var(--night2);color:var(--star-soft);font-size:13px;text-align:center}
+/* Chinese-first typography: real system weights, readable CJK rhythm */
+body{font-family:"PingFang SC","Noto Sans SC","Source Han Sans SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;font-synthesis:none;-webkit-font-smoothing:antialiased}
+.brand{font-size:18px;font-weight:800;letter-spacing:-.03em}.links{font-weight:650;letter-spacing:.08em}
+.eyebrow,.chapter .num,.district-copy .code,.character-copy span{font-family:Inter,Arial,sans-serif;font-weight:800}
+.eyebrow{letter-spacing:.22em}.hero h1,.mega{font-size:clamp(72px,10.5vw,156px);line-height:.9;letter-spacing:-.045em;font-weight:850;text-transform:none}.hero p{line-height:1.65;margin-top:22px}
+.hero h1 span{display:inline;margin-left:.02em}
+.manifesto:after{font-family:Arial Black,Arial,sans-serif;font-weight:900;letter-spacing:-.06em}.manifesto h2{max-width:1050px;font-size:clamp(42px,7vw,102px);line-height:1.08;letter-spacing:-.04em;font-weight:800}.manifesto p{line-height:1.85;margin-top:30px}
+.chapter .num{letter-spacing:.24em}.chapter h3{font-size:clamp(46px,5.4vw,78px);line-height:1.06;letter-spacing:-.04em;font-weight:800;margin:14px 0 20px}.chapter p{line-height:1.8}.pill{letter-spacing:.08em}
+.section-head h2,.gallery h2{font-family:Arial Black,Inter,Arial,sans-serif;font-weight:900;line-height:.9;letter-spacing:-.045em}.section-head h2{font-size:clamp(52px,7vw,96px)}.section-head p{line-height:1.8}.district-copy h3{font-size:clamp(34px,3.6vw,52px);line-height:1.12;letter-spacing:-.035em;font-weight:800}.gallery h2{font-size:clamp(50px,8vw,112px)}.final h2{font-size:clamp(60px,11vw,150px);line-height:1.02;letter-spacing:-.045em;font-weight:850}
+@media(max-width:760px){.hero h1{font-size:22vw;line-height:.94}.manifesto h2{font-size:12vw;line-height:1.12}.chapter h3{font-size:13vw;line-height:1.08}.section-head h2{font-size:14vw;line-height:.94}.final h2{font-size:15vw;line-height:1.08}}
 </style>
 </head>
 <body>
+<nav class="nav" id="nav"><a class="brand" href="#top">岛不<i>岛</i> · DUBDAO</a><div class="links"><a href="#world">世界</a><a href="#people">居民</a><a href="#gallery">画面</a><a href="#join">关注</a></div></nav>
 
-<!-- HERO -->
-<header class="hero">
-  <div class="wrap">
-    <div class="logo">岛不岛 <b>DubDao</b> · 健康 × 社交 × 模拟经营 × AI 原生</div>
-    <h1>你的每一步，<br>都在海上长出<span class="accent">一座岛</span>。</h1>
-    <div class="slogan">「今天运动，岛不岛？」</div>
-    <p class="pitch">健康数据驱动的社交模拟经营游戏：真实的运动、饮食、睡眠、情绪转化为游戏资源，建设你的虚拟岛屿——和朋友互相捣蛋、组球队打联赛、办宴席开演唱会，顺便，真的变健康。</p>
-    <div class="badges">
-      <span>iOS / Android</span><span>AI 原生游戏</span><span>零 Pay-to-Win</span><span>真实健康数据</span><span>强社交</span><span>半写实 3D 动画电影风</span>
-    </div>
-    <img class="hero-img" src="assets/dubdao/05_主岛全景英雄图_白昼.jpg" alt="岛不岛主岛全景（白昼·阳光相）">
+<header class="hero" id="top">
+  <div class="hero-media">
+    <img class="hero-wide" src="assets/dubdao/05_主岛全景英雄图_白昼.jpg" alt="阳光下的岛不岛主岛全景">
+    <img class="hero-mobile" src="assets/generated/hero-mobile-v1.png" alt="阳光下的岛不岛主岛">
   </div>
+  <div class="hero-copy"><div class="eyebrow">A HEALTHY SOCIAL ISLAND</div><h1>岛不<span>岛</span></h1><p>你的每一步，都在海上长出一座岛。现实越健康，岛屿越繁荣，朋友越想来。</p></div>
+  <div class="scroll-cue">向下探索</div>
 </header>
 
-<!-- 三大支柱 -->
-<section>
-  <div class="wrap">
-    <span class="tag" style="background:rgba(249,115,143,.14);color:var(--magenta)">为什么是岛不岛</span>
-    <h2>玩得开心和活得健康，<em>第一次同向</em></h2>
-    <p class="sub">传统健康 App：记录数据 → 生成报告 → 用户流失。岛不岛：健康行为 → 获得资源 → 建设世界 → 情感连接 + 社交绑定 → 持续健康行为。</p>
-    <div class="grid g3">
-      <div class="pillar p1"><h3>🎉 娱乐属性</h3><p>捣蛋、派对、球队联赛、演唱会——好玩、有梗、想炫耀。每天打开的理由。</p></div>
-      <div class="pillar p2"><h3>🤝 社交属性</h3><p>复仇循环、好友岛、聚会碰岛、球队坑位——和朋友绑在一起。第二天回来的理由。</p></div>
-      <div class="pillar p3"><h3>💚 实际价值</h3><p>健康风险报告、19 项检测、数据体系——真的变健康，有专业背书。「玩这个不亏」的自我和解。</p></div>
-    </div>
+<section class="manifesto reveal" id="world"><h2>不是记录健康。<br>是把健康<br>变成一个<em>世界。</em></h2><p>运动、饮食、睡眠和情绪，都会变成岛上的资源、天气与故事。你离线时，居民继续生活；你回来时，世界已经有了新的记忆。</p></section>
+
+<section class="story" id="play">
+  <div class="stage" aria-hidden="true">
+    <div class="stage-layer active" data-layer="0"><video data-video muted playsinline preload="metadata" poster="assets/video/island-arrival-poster.jpg"><source src="assets/video/island-arrival.mp4" type="video/mp4"></video></div>
+    <div class="stage-layer" data-layer="1"><video data-video muted playsinline preload="metadata" poster="assets/video/health-gallery-poster.jpg"><source src="assets/video/health-gallery.mp4" type="video/mp4"></video></div>
+    <div class="stage-layer" data-layer="2"><video data-video muted playsinline preload="metadata" poster="assets/video/island-nightlife-poster.jpg"><source src="assets/video/island-nightlife.mp4" type="video/mp4"></video></div>
+    <div class="stage-layer" data-layer="3"><video data-video muted playsinline preload="metadata" poster="assets/video/ambient-night-poster.jpg"><source src="assets/video/ambient-night.mp4" type="video/mp4"></video></div>
+  </div>
+  <div class="chapters">
+    <article class="chapter" data-scene="0"><div class="chapter-copy reveal"><div class="num">01 · THE ARCHIPELAGO</div><h3>每座岛，<br>都有自己的生活。</h3><p>滑入这一章，群岛影片才开始播放。不同群系、航线与城市中心共同组成一个持续运转的健康世界。</p><span class="pill">影片一 · 群岛世界</span></div></article>
+    <article class="chapter" data-scene="1"><div class="chapter-copy reveal"><div class="num">02 · HEALTH GALLERY</div><h3>你的坚持，<br>会被世界看见。</h3><p>跑步、睡眠、饮食与团队成就进入运动成就馆。它们不是一串冷冰冰的数据，而是岛上可以参观、分享和纪念的故事。</p><span class="pill">影片二 · 健康成就馆</span></div></article>
+    <article class="chapter" data-scene="2"><div class="chapter-copy reveal"><div class="num">03 · SOCIAL CITY</div><h3>朋友来了，<br>城市才亮起来。</h3><p>社交广场把好友动态、艺术小组、健康挑战和城市活动放到同一片公共空间。灯光服务于生活，不是赛博朋克装饰。</p><span class="pill">影片三 · 社交信息广场</span></div></article>
+    <article class="chapter" data-scene="3"><div class="chapter-copy reveal"><div class="num">04 · AMBIENT NIGHT</div><h3>你不在线，<br>岛也没有停下。</h3><p>月光、暖灯与海面倒影构成晚安时刻。居民有自己的日程，观赏模式让整座岛成为一台会呼吸的电子鱼缸。</p><span class="pill">影片四 · 月夜观赏模式</span></div></article>
   </div>
 </section>
 
-<!-- 核心循环 -->
-<section style="padding-top:0">
-  <div class="wrap">
-    <span class="tag" style="background:rgba(69,183,217,.14);color:#2E7FA8">核心循环</span>
-    <h2>现实越健康，<em>岛屿越繁荣</em></h2>
-    <p class="sub">30 秒就能懂的循环：健康行为产生资源，资源长成看得见的岛，岛把朋友吸引过来，朋友让你明天还想回来。</p>
-    <div class="card">
-      <div class="loop">
-        <span class="node n1">🏃 现实健康行为</span><span class="arrow">→</span>
-        <span class="node n2">🪙 检测得资源</span><span class="arrow">→</span>
-        <span class="node n3">🏝 建设岛屿</span><span class="arrow">→</span>
-        <span class="node n4">🎉 社交展示/对抗</span><span class="arrow">→</span>
-        <span class="node n5">🔥 更强健康动机</span><span class="arrow">→</span>
-        <span class="node n6">🔁 循环</span>
-      </div>
-    </div>
+<section class="districts" id="districts">
+  <div class="section-head reveal"><h2>ISLAND<br>DISTRICTS</h2><p>岛不岛不是一张漂亮背景图，而是一套能运转的城市。五大分区分别承接健康、生产、商业、公共服务和社交生活。</p></div>
+  <div class="district-list">
+    <article class="district reveal"><div class="district-media"><img src="assets/generated/13_西部农田与健康农业区_白昼.png" alt="西部农田与健康农业区"></div><div class="district-copy"><div class="code">WEST · NATURAL DISTRICT</div><h3>农田把饮食<br>变成收获。</h3><p>梯田菜园、柑橘果园、奶牛牧场、玻璃温室和清水灌溉网共同组成农业循环。饮食打卡产生种子与食材碎片；涂涂在育苗工坊安排种植，成熟作物进入市集、餐厅和好友宴席。</p><div class="facts"><div class="fact"><b>生产设施</b><span>温室 / 磨坊 / 堆肥 / 市集</span></div><div class="fact"><b>健康联动</b><span>饮食 / 饮水 / 膳食多样性</span></div><div class="fact"><b>居民故事</b><span>浇水 / 收获 / 运送 / 交易</span></div><div class="fact"><b>视觉锚点</b><span>果树梯田与蓝色水渠</span></div></div></div></article>
+    <article class="district reveal"><div class="district-media"><img src="assets/generated/14_中心岛CBD与海港商业区_白昼.png" alt="中心岛 CBD 与海港商业区"></div><div class="district-copy"><div class="code">EAST · BUSINESS DISTRICT</div><h3>一座会生活的<br>海港 CBD。</h3><p>交易所、银行、创业工坊、诊所、图书馆与渡轮码头围绕步行广场展开。商业不是独立菜单：居民真实上下班，货物从港口进入商店，健康行为形成全服经济的基本面。</p><div class="facts"><div class="fact"><b>核心设施</b><span>交易所 / 银行 / 工作室 / 商店</span></div><div class="fact"><b>交通系统</b><span>渡轮 / 自行车 / 空中步道</span></div><div class="fact"><b>绿色城市</b><span>太阳能屋顶 / 屋顶花园</span></div><div class="fact"><b>三秒玩法</b><span>行情屏与露天交易广场</span></div></div></div></article>
+    <article class="district reveal"><div class="district-media"><img src="assets/generated/15_北部健身与运动中心_白昼.png" alt="北部健身与运动中心"></div><div class="district-copy"><div class="code">NORTH · WELLNESS DISTRICT</div><h3>健身房没有墙，<br>运动连着海。</h3><p>开放式力量区、屋顶跑道、攀岩墙、泳道、瑜伽草坪、恢复诊所和补水站组成一座立体健康中心。训练数据在这里结算为资源，联赛日则沿山路连接上方体育场。</p><div class="facts"><div class="fact"><b>训练设施</b><span>力量 / 跑步 / 游泳 / 攀岩</span></div><div class="fact"><b>恢复设施</b><span>拉伸 / 理疗 / 补水 / 更衣</span></div><div class="fact"><b>社交玩法</b><span>教练课 / 约练 / 球队联赛</span></div><div class="fact"><b>建筑语言</b><span>玻璃 / 木 / 绿植 / 海景平台</span></div></div></div></article>
+    <article class="district reveal"><div class="district-media"><img src="assets/dubdao/10_中心岛市政区_白昼.jpg" alt="中心岛公共服务设施"></div><div class="district-copy"><div class="code">CENTRAL · CIVIC DISTRICT</div><h3>公共服务，<br>也是岛上日常。</h3><p>医院、警局、消防局、法院、邮局和市政厅集中在中心岛。它们不只是布景：健康报告在医院生成，捣蛋案件进入警局与法院，邮差慢慢把好友礼物送上门。</p><div class="facts"><div class="fact"><b>健康服务</b><span>医院 / 体检 / 风险报告</span></div><div class="fact"><b>秩序系统</b><span>警局 / 法院 / 健康法</span></div><div class="fact"><b>城市保障</b><span>消防 / 邮局 / 市政厅</span></div><div class="fact"><b>角色驻地</b><span>龟龟 / 梆梆 / 泼泼 / 慢慢</span></div></div></div></article>
   </div>
 </section>
 
-<!-- 一天怎么过 -->
-<section style="padding-top:0">
-  <div class="wrap">
-    <span class="tag" style="background:rgba(255,169,64,.16);color:#C77F00">节奏</span>
-    <h2>一天怎么过</h2>
-    <p class="sub">一天四段情绪曲线，每天 25 分钟就够——这是个劝你放下手机去走路的游戏，时长上涨不是捷报，是警报。</p>
-    <div class="day">
-      <div class="d d1"><b>🌅 早晨 · 期待</b><span>打卡总览卡：步数/睡眠/饮水自动结算，DD 一句梗，确认今日→转一次健康转盘。</span></div>
-      <div class="d d2"><b>☀️ 白天 · 轻互动</b><span>收菜、建岛、看行情、给好友点赞。居民们自己在上班、开店、八卦。</span></div>
-      <div class="d d3"><b>🌆 傍晚 · 高峰</b><span>派对、宴席、复仇时刻：谁偷了你的阳光值？比赛日看联赛演出，热血限定。</span></div>
-      <div class="d d4"><b>🌙 睡前 · 治愈</b><span>晚安仪式：灯火变暖、BGM 转治愈、宠物趴进窝。熬夜？DD 在记账。</span></div>
-    </div>
-  </div>
-</section>
+<section class="people" id="people"><div class="section-head reveal"><h2>MEET THE<br>ISLANDERS</h2><p>已完成的人物不再藏在设定页里。每位居民都有清晰的物种轮廓、职业服装、道具和驻地，并会在岛上持续生活。</p></div><div class="character-grid"><article class="character reveal"><img src="assets/characters/dd.png" alt="DD 岛灵角色设定"><div class="character-copy"><span>ISLAND SPIRIT · YOUR ISLAND</span><b>DD · 岛岛</b><p>岛灵、损友和健康秘书。头顶叶片会随着景气与心情变化。</p></div></article><article class="character reveal"><img src="assets/characters/kaka.png" alt="咔咔角色设定"><div class="character-copy"><span>MARKET MAKER · EAST DISTRICT</span><b>咔咔</b><p>精明的螃蟹做市商，也是健身连锁经营者。规矩连 AI 也不能破。</p></div></article><article class="character reveal"><img src="assets/characters/tutu.png" alt="涂涂角色设定"><div class="character-copy"><span>FARMER · WEST DISTRICT</span><b>涂涂</b><p>鼹鼠农场主。负责菜园、温室和食材碎片从播种到市集的完整旅程。</p></div></article><article class="character reveal"><img src="assets/characters/dazui.png" alt="大嘴角色设定"><div class="character-copy"><span>DJ · EAST DISTRICT</span><b>大嘴</b><p>鹈鹕 DJ，台上炸场、台下社恐。负责把城市灯光相的夜晚真正点亮。</p></div></article></div></section>
 
-<!-- 世界 -->
-<section class="world">
-  <div class="wrap">
-    <span class="tag" style="background:rgba(143,209,79,.20);color:#6FA31E">你的世界</span>
-    <h2>一人一岛，<em>群岛成世界</em></h2>
-    <p class="sub">注册即生成你的岛。五分区布局让 19 项健康检测各有归宿——喝水少了，南边的水域真的会干涸。好友的岛在你的地图上浮现，陌生人要坐盲盒航班才能偶遇；中心岛是共享的「市中心」。</p>
-    <div class="grid g2" style="margin-bottom:26px">
-      <img style="border-radius:16px;box-shadow:0 4px 16px rgba(51,48,74,.12)" src="assets/dubdao/10_中心岛市政区_白昼.jpg" alt="中心岛市政区">
-      <img style="border-radius:16px;box-shadow:0 4px 16px rgba(51,48,74,.12)" src="assets/dubdao/11_昼夜对比_同一座岛.jpg" alt="昼夜对比">
-    </div>
-    <div class="zones">
-      <div class="zone" style="background:var(--coral)">北部·运动区<small>球场 健身房 跑道</small></div>
-      <div class="zone" style="background:var(--lime)">西部·自然区<small>菜园 果园 牧场</small></div>
-      <div class="zone" style="background:var(--amber)">中部·家园核心<small>小屋 LED 博物馆</small></div>
-      <div class="zone" style="background:var(--magenta)">东部·社交区<small>酒吧 派对广场 交易所</small></div>
-      <div class="zone" style="background:var(--cyan)">南部·水域<small>海滩 水族馆 码头</small></div>
-    </div>
-    <div class="biomes">
-      <span>🌿 温带草岛 30%</span><span>⛰ 山地岛 15%</span><span>🌴 热带岛 15%</span><span>❄️ 雪地岛 10%</span><span>🏜 沙漠岛 10%</span><span>🛶 湖心岛 10%</span><span>🌸 樱花岛 10%</span>
-    </div>
-    <p class="sub" style="margin:14px 0 0">出生群系终身固定，是你的资产而不是皮肤：沙漠岛阳光双倍但种菜 −20%——差异是流派，不是惩罚。扩张从 10×10 到 30×30，过渡带自动渐变，地貌可购新地块。</p>
-  </div>
-</section>
+<section class="gallery" id="gallery"><h2 class="reveal">THE ISLAND<br>IS YOURS.</h2><div class="mosaic"><figure class="reveal"><img src="assets/dubdao/05_主岛全景英雄图_白昼.jpg" alt="主岛全景"><figcaption>主岛 · 白昼</figcaption></figure><figure class="reveal"><img src="assets/dubdao/06_雾潮晒岛_赛季事件.jpg" alt="雾潮赛季事件"><figcaption>群岛事件 · 雾潮</figcaption></figure><figure class="reveal"><img src="assets/dubdao/10_中心岛市政区_白昼.jpg" alt="中心岛市政区"><figcaption>中心岛 · 市政区</figcaption></figure></div></section>
 
-<!-- 玩法详情 ① 健康与经济 -->
-<section>
-  <div class="wrap">
-    <span class="tag" style="background:rgba(255,169,64,.16);color:#C77F00">玩法 · 健康与经济</span>
-    <h2>打卡、碎片、金币、股票</h2>
-    <p class="sub">一切从真实行为开始：19 项检测产出颗粒货币与五气，金币建岛炒股，全部有日上限——防肝防通胀，更防"用钱买健康"。</p>
-    <div class="grid g3">
-      <div class="feat">
-        <img src="assets/dubdao/IMG_3167.jpg" alt="每日打卡">
-        <div class="f-body">
-          <h3>✅ 健康检测与打卡</h3>
-          <p>步数/跑步/骑行/力量/游泳自动直读（HealthKit/微信运动/华为），饮水/饮食/情绪轻量手动。每天一张打卡总览卡，确认=岛门关闭（防捣蛋）。</p>
-          <ul>
-            <li>漏记=少得，永不负反馈；断签不羞辱</li>
-            <li>完成打卡=1 次健康转盘（概率公示，不卖次数）</li>
-            <li>各项日上限：防肝防通胀，体感松弛</li>
-          </ul>
-          <div class="chips"><span>19 项检测</span><span>打卡旗标</span><span>健康转盘</span></div>
-        </div>
-      </div>
-      <div class="feat">
-        <img src="assets/dubdao/IMG_3171.jpg" alt="种植养殖">
-        <div class="f-body">
-          <h3>🍗 吃得好，岛上长出来</h3>
-          <p>饮食打卡产「碎片」：鸡胸肉→小鸡碎片、时蔬→种子碎片、水果→果树碎片，集 10 片合成去种地养殖。</p>
-          <ul>
-            <li>品质系数：健康做法 5/10、普通 3/10、炸鸡 1/10</li>
-            <li>炸鸡也给——是"少得"，不是惩罚（DD：小鸡表示理解，但只来了一只脚）</li>
-            <li>碎片可赠好友，不可购买</li>
-          </ul>
-          <div class="chips green"><span>碎片×品质</span><span>种养联动</span><span>红线 2 口径</span></div>
-        </div>
-      </div>
-      <div class="feat">
-        <img src="assets/dubdao/IMG_3164.jpg" alt="岛上商业">
-        <div class="f-body">
-          <h3>📈 股市与岛上商业</h3>
-          <p>8 家居民企业上市（咔咔健身、龟龟客栈、树树酒吧、大嘴巡演…），基本面=全服健康行为；做市商定价，三盘结算（8:00/12:30/22:30）。</p>
-          <ul>
-            <li>纯模拟盘：金币计价，与真实资金完全隔离</li>
-            <li>分红 ≤ 打卡收入 15%（浇头不是主食）</li>
-            <li>α 排行榜按超额收益排——重氪买不到名次</li>
-            <li>好友共建：「我是你酒吧股东」，90 天 150% 封顶</li>
-          </ul>
-          <div class="chips violet"><span>DAO-8 岛指</span><span>无杠杆无做空</span><span>股东卡座</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<section class="final" id="join"><div class="reveal"><div class="eyebrow">COMING TO iOS & ANDROID</div><h2>今天运动，<br>岛不岛？</h2><p>概念验证阶段 · 画面非最终游戏画面</p><a class="cta" href="mailto:hello@dubdao.game">关注项目进展</a></div></section>
+<footer><span>岛不岛 DubDao © 2026 ZYRVIS</span><span>健康不是任务，是世界发生变化的原因。</span></footer>
 
-<!-- 玩法详情 ② 建设与表达 -->
-<section style="padding-top:0">
-  <div class="wrap">
-    <span class="tag" style="background:rgba(143,209,79,.20);color:#6FA31E">玩法 · 建设与表达</span>
-    <h2>建岛、装修、办宴席</h2>
-    <p class="sub">岛是健康行为的可视化账本，也是最大的社交名片——外部建设给别人看，室内装修给自己住。</p>
-    <div class="grid g3">
-      <div class="feat">
-        <img src="assets/dubdao/05_主岛全景英雄图_白昼.jpg" alt="建岛">
-        <div class="f-body">
-          <h3>🏝 岛屿建设</h3>
-          <p>10×10 → 30×30 同心圆扩张，37 栋建筑按分区落位（酒吧只能在东区），茅草屋→砖房→城堡三级演进。</p>
-          <ul>
-            <li>地形过渡带：群系交界自动渐变，拒绝贴图缝</li>
-            <li>群系是流派不是惩罚（沙漠种菜 −20% 但阳光 +100%）</li>
-            <li>闲置建筑长懒藤——回来用用就好，无维护费</li>
-          </ul>
-          <div class="chips green"><span>五分区</span><span>里程碑解锁</span><span>7 群系</span></div>
-        </div>
-      </div>
-      <div class="feat">
-        <img src="assets/dubdao/IMG_3171.jpg" alt="室内装修">
-        <div class="f-body">
-          <h3>🛋 室内装修</h3>
-          <p>小屋可进入：卧室/厨房/书房/健身房角/收藏室，家具网格摆放、染色改色，模板一键抄作业。</p>
-          <ul>
-            <li>房间随房屋升级：茅草 1 间→城堡 6 间+地下室</li>
-            <li>家具全部零数值——床是晚安仪式的落点，不是 buff</li>
-            <li>好友可来家装参观，低速社交，不卷</li>
-          </ul>
-          <div class="chips"><span>动森式情感锚</span><span>装修模板</span><span>宠物窝位</span></div>
-        </div>
-      </div>
-      <div class="feat">
-        <img src="assets/dubdao/12_宴席流水席_夜.jpg" alt="宴席">
-        <div class="f-body">
-          <h3>🍜 招待与宴席影响力</h3>
-          <p>食物三来源：自种料理 ★★★ / 商店成品 ★★ / 零食囤货 ★。好友小酌→家宴→流水席，备少了还能 +20% 叫酒吧外卖救场。</p>
-          <ul>
-            <li>「光盘」是最高礼节，不是损失</li>
-            <li>影响力称号：无名小厨→群岛名宴（无排行榜，不可购买）</li>
-            <li>食物能用金币买，好评只能来自真实招待</li>
-          </ul>
-          <div class="chips warm"><span>流水席</span><span>外卖救场</span><span>影响力</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 玩法详情 ③ 社交与对抗 -->
-<section style="padding-top:0">
-  <div class="wrap">
-    <span class="tag" style="background:rgba(249,115,143,.14);color:var(--magenta)">玩法 · 社交与对抗</span>
-    <h2>捣蛋、复仇、组队、打官司</h2>
-    <p class="sub">可见性=关系深度：好友圈是开车可达的日常，陌生人是要坐飞机的远行。社交是黏合剂——捣蛋让人回来，球队让人不敢走。</p>
-    <div class="grid g3">
-      <div class="feat">
-        <img src="assets/dubdao/IMG_3173.jpg" alt="捣蛋与复仇">
-        <div class="f-body">
-          <h3>😈 捣蛋与复仇</h3>
-          <p>好友今天没打卡？岛门大开：涂鸦留言、放臭鼬、偷摘果子（留借据）、给宠物戴搞笑帽子——全部可逆软破坏。</p>
-          <ul>
-            <li>只能捣蛋未打卡的好友：打卡=最好的防御</li>
-            <li>案发现场通知→完成打卡一键清理+发起反击</li>
-            <li>捣蛋时间线：谁偷了我、谁救了我——必须回来看看</li>
-          </ul>
-          <div class="chips pink"><span>权限门</span><span>复仇证书</span><span>梁子簿</span></div>
-        </div>
-      </div>
-      <div class="feat">
-        <img src="assets/dubdao/07_逮捕演出_黄牌.jpg" alt="群岛健康法">
-        <div class="f-body">
-          <h3>⚖️ 群岛健康法</h3>
-          <p>在群岛，熬夜是犯法的。警长梆梆开螃蟹警车上门，DD 憋笑宣读罪状——服刑=做健康任务保释。</p>
-          <ul>
-            <li>罪名：熬夜罪/久坐罪/滴水不进罪/暴食罪/扰民罪</li>
-            <li>拘留所的床很舒服；不想做任务？静坐 24h 也放人</li>
-            <li>服刑期间岛照常运转，好友还能来探监</li>
-            <li>免责通道：生病/出差/emo 一键暂停立案，信任制</li>
-          </ul>
-          <div class="chips pink"><span>贱萌司法</span><span>静坐保释</span><span>前科墙（仅自己可见）</span></div>
-        </div>
-      </div>
-      <div class="feat">
-        <img src="assets/dubdao/04_夜晚派对广场.jpg" alt="运动比赛">
-        <div class="f-body">
-          <h3>🏆 运动比赛与联赛</h3>
-          <p>足球/篮球/羽毛球/跑团——项目只是皮肤，真实运动数据才是球员：步数→体力、跑步→速度、力量→力量、睡眠→状态。</p>
-          <ul>
-            <li>周末联赛、8 周赛季、ELO 匹配、升降级</li>
-            <li>「你偷懒，全队输」=最强留存机制（阵容完整度）</li>
-            <li>冠军合影进博物馆荣誉馆，队徽徽章绝版</li>
-          </ul>
-          <div class="chips"><span>多项目矩阵</span><span>战力=本周真实数据</span><span>连败保护</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 玩法详情 ④ 世界在呼吸 -->
-<section style="padding-top:0">
-  <div class="wrap">
-    <span class="tag" style="background:rgba(139,123,216,.16);color:#6A5AC8">玩法 · 活着的世界</span>
-    <h2>天气、节庆、事件、故事</h2>
-    <p class="sub">每天都有一点未知：心情是岛的天气，现实是岛的钟，而居民们——不管你在线不在线，都在过自己的生活。</p>
-    <div class="grid g3">
-      <div class="feat">
-        <img src="assets/dubdao/09_观赏模式_电子鱼缸_夜.jpg" alt="观赏模式">
-        <div class="f-body">
-          <h3>🐠 人机共玩 · 电子鱼缸</h3>
-          <p>你操作，岛陪你玩；你不操作，岛自己活。观赏模式=隐藏 UI 的电影镜头，看居民上班、吵架、和好。</p>
-          <ul>
-            <li>回岛 recap《你不在的时候》：树树和大嘴又吵了一架</li>
-            <li>观赏零收益差异——看与不看，岛都一样过</li>
-            <li>离线世界继续运转，但绝不发生需要你补救的坏事</li>
-          </ul>
-          <div class="chips violet"><span>放置无压力</span><span>居民自治</span><span>回岛小报</span></div>
-        </div>
-      </div>
-      <div class="feat">
-        <img src="assets/dubdao/06_雾潮晒岛_赛季事件.jpg" alt="节庆与雾潮">
-        <div class="f-body">
-          <h3>🎪 节庆与主题日</h3>
-          <p>每周主题日轮转（鲜市节/夜光跑节/好眠日/放空日/热力周末）；每季节三节：开醒节→护盘战→雾散祭。</p>
-          <ul>
-            <li>雾潮：全服健康行为聚合"晒岛"退潮，没有失败</li>
-            <li>群系庆典日：花见节/雪祭/绿洲节，稀有群系的炫耀时刻</li>
-            <li>节日产出走限定奖励池，不破日上限</li>
-          </ul>
-          <div class="chips violet"><span>赛季心跳</span><span>全服合作</span><span>绝版纪念</span></div>
-        </div>
-      </div>
-      <div class="feat">
-        <img src="assets/dubdao/08_DD表情包设定页.jpg" alt="居民故事">
-        <div class="f-body">
-          <h3>📖 居民故事线</h3>
-          <p>NPC 不是功能牌，是慢慢变成朋友的人。每条故事线 3–5 章：陪涂涂把农场做到上市、听龟龟讲面瘫的理由、帮 DD 找回名字。</p>
-          <ul>
-            <li>关系只升不降；agent 真的记得你五年前帮过他</li>
-            <li>双人协作任务：合办派对、陪飞最后一班夜航</li>
-            <li>岛繁荣了，会有新居民递申请搬进来</li>
-          </ul>
-          <div class="chips"><span>情感弧线</span><span>双人任务</span><span>居民迁入</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 玩法详情 ⑤ 收集与创造 -->
-<section style="padding-top:0">
-  <div class="wrap">
-    <span class="tag" style="background:rgba(69,183,217,.14);color:#2E7FA8">玩法 · 收集与创造</span>
-    <h2>徽章、博物馆、UGC</h2>
-    <p class="sub">永远差一点的收集欲 + 你来定义这座岛的创造力——风格一致性由 AI 守护，所以 UGC 才敢开放。</p>
-    <div class="grid g3">
-      <div class="feat">
-        <img src="assets/dubdao/IMG_3163.jpg" alt="徽章与博物馆">
-        <div class="f-body">
-          <h3>🏛 徽章与博物馆</h3>
-          <p>首季 60 张徽章（运动/饮食/睡眠/社交/赛季），每张卡背写着"获得那天的故事"。博物馆=实体化朋友圈。</p>
-          <ul>
-            <li>重复徽章可送好友——缺的那张只能去社交</li>
-            <li>赛季徽章绝版不返场；年末自动生成健康年鉴</li>
-            <li>岛编年史：第一栋屋、第一座桥、第一次被倒螃蟹</li>
-          </ul>
-          <div class="chips"><span>互赠裂变</span><span>年鉴拉新</span><span>编年史</span></div>
-        </div>
-      </div>
-      <div class="feat">
-        <img src="assets/dubdao/IMG_3173.jpg" alt="宠物">
-        <div class="f-body">
-          <h3>🐾 宠物健康绑定</h3>
-          <p>宠物是你的第二面镜子：你运动它活力满满，你熬夜它第二天没精神——情感驱动自律，比推送狠。</p>
-          <ul>
-            <li>不病、不逃、不死（红线绝对禁区）</li>
-            <li>星星能量可给它充能——睡眠资源的第二出口</li>
-            <li>稀有动物用幸运币抽（10 抽保底，概率公示）</li>
-          </ul>
-          <div class="chips green"><span>情感镜像</span><span>流浪动物收编</span><span>宠物选美</span></div>
-        </div>
-      </div>
-      <div class="feat">
-        <img src="assets/dubdao/IMG_3164.jpg" alt="UGC 与贸易">
-        <div class="f-body">
-          <h3>🎨 UGC 与跨岛贸易</h3>
-          <p>你出草图，AI 翻译成岛不岛风格的标准建筑，模组市场创作者分 30%。群系不同→特产不同→贸易有真实需求。</p>
-          <ul>
-            <li>行情板：「雪地岛的暖饮在沙漠岛溢价 1.8×」</li>
-            <li>商路命名、商队编队、路上随机事件（海鸥抢货）</li>
-            <li>货车载重=近 7 日真实运动数据：健康兑换经济能力</li>
-          </ul>
-          <div class="chips warm"><span>风格锁</span><span>稀缺溢价 2×</span><span>商队周目标</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- AI 原生 -->
-<section class="ai">
-  <div class="wrap">
-    <span class="tag" style="background:rgba(139,123,216,.30);color:#CFC6FF">AI 原生</span>
-    <h2>你操作，岛陪你玩；<br>你不操作，岛自己活。</h2>
-    <p class="sub">每个角色都是 agent：有记忆、有性格、有自己的日子。宪法层是硬代码——红线，AI 也不能破。</p>
-    <img class="ai-img" src="assets/dubdao/08_DD表情包设定页.jpg" alt="DD 表情包设定页">
-    <div class="grid g3">
-      <div class="agent"><h3>🍃 DD（岛岛）</h3><p>你的岛灵兼损友：记仇、毒舌、职业性嫌弃熬夜。但翻健康报告时，会戴上面瘫面具切换专业口吻。</p></div>
-      <div class="agent"><h3>🐢 龟龟</h3><p>报告执笔人，面瘫是他的专业。每月开体检车上门：「坐下，我们谈谈你的睡眠。」</p></div>
-      <div class="agent"><h3>🦀 梆梆 & 泼泼</h3><p>警长开螃蟹警车、消防队长开螃蟹水车。在群岛熬夜是犯法的——但拘留所的床很舒服。</p></div>
-      <div class="agent"><h3>🎧 树树 & 大嘴</h3><p>酒吧老板与 DJ，会为一颗椰子冷战三天，再合办一场演出和好。你在不在，他们都这么过。</p></div>
-      <div class="agent"><h3>📰 嚓嚓 & 墨墨</h3><p>《岛民日报》主编与博物馆馆长。你的复仇、夺冠、冷场，都可能成为明天的头版。</p></div>
-      <div class="agent"><h3>📈 咔咔</h3><p>交易所做市商，在宪法夹取内报价。涨跌停、无杠杆、无做空——规矩是硬代码，AI 也不能破。</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- 红线 -->
-<section class="redline">
-  <div class="wrap">
-    <span class="tag" style="background:rgba(255,169,64,.22);color:var(--amber)">五条红线</span>
-    <h2>我们的承诺</h2>
-    <p class="sub">写进代码的边界，agent 也无法突破。</p>
-    <div class="grid g2">
-      <div class="rl"><b>01</b><span>健康数据无法用金钱购买。金币只由健康行为产出，商城只卖装饰，永不做 Pay-to-Win。</span></div>
-      <div class="rl"><b>02</b><span>所有惩罚都是可逆的软反馈。薄雾会散、捣蛋能清理，没有倒计时焦虑，没有羞辱。</span></div>
-      <div class="rl"><b>03</b><span>股市是纯模拟盘。无充值、无提现、不接真实行情，与真实资金完全隔离。</span></div>
-      <div class="rl"><b>04</b><span>健康报告永远标注「非医疗诊断，仅供参考」。数据本地优先、加密、可一键删除。</span></div>
-      <div class="rl"><b>05</b><span>未成年模式：捣蛋、股市、酒吧入口默认关闭。保护做得比要求多一步。</span></div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <p style="font-size:16px;color:var(--star);margin-bottom:8px">今天运动，岛不岛？</p>
-    <p>岛不岛 DubDao · 玩法全览（基于游戏设计手册 v1.0 / Art Bible v0.5 生成） · 所有画面均为概念示意图，非最终游戏画面</p>
-  </div>
-</footer>
-
-</body>
-</html>
+<script>
+const nav=document.querySelector('#nav');addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>50),{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.15});document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const layers=[...document.querySelectorAll('.stage-layer')],chapters=[...document.querySelectorAll('.chapter')];
+const sceneIO=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const n=+e.target.dataset.scene;layers.forEach((l,i)=>{const active=i===n;l.classList.toggle('active',active);const v=l.querySelector('video');if(!v)return;if(active){if(v.dataset.sceneActive!=='1'){v.currentTime=0;v.dataset.sceneActive='1'}v.play().catch(()=>{})}else{v.pause();v.currentTime=0;v.dataset.sceneActive='0'}})}),{rootMargin:'-38% 0px -38% 0px',threshold:0});chapters.forEach(c=>sceneIO.observe(c));
+const videos=[...document.querySelectorAll('[data-video]')];videos.forEach(v=>{v.muted=true;v.pause();v.currentTime=0;v.addEventListener('ended',()=>v.pause())});
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)videos.forEach(v=>v.pause());
+</script>
+</body></html>
