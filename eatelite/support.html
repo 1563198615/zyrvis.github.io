@@ -8,14 +8,70 @@
     :root { color-scheme: light dark; font-family: -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; }
     body { margin: 0; background: #f5f6fa; color: #15171c; } main { max-width: 680px; margin: auto; padding: 72px 24px; }
     .logo { display:grid;place-items:center;width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#ff7b54,#f43f84);color:white;font-size:24px; }
-    h1 { font-size:36px;letter-spacing:-.03em;margin:20px 0 8px; } h2 { font-size:20px;margin-top:40px; } p,li { font-size:16px;line-height:1.7; } a { color:#d83e62; } footer { margin-top:56px;color:#70737c;font-size:14px; }
-    @media(prefers-color-scheme:dark){body{background:#121318;color:#f5f5f7}a{color:#ff7b9a}footer{color:#a6a7ae}}
+    h1 { font-size:36px;letter-spacing:-.03em;margin:20px 0 8px; } h2 { font-size:20px;margin-top:40px; } h3{font-size:16px;margin-top:22px;margin-bottom:2px}
+    p,li { font-size:16px; line-height:1.7; } ul{padding-left:22px} li{margin:6px 0} a { color:#d83e62; }
+    .note{background:#f0f1f6;border-radius:10px;padding:12px 14px;margin:12px 0;font-size:15px;line-height:1.7}
+    code{background:#e8e9f0;border-radius:5px;padding:1px 6px;font-size:14px}
+    footer { margin-top:56px;color:#70737c;font-size:14px; }
+    @media (prefers-color-scheme:dark){body{background:#121318;color:#f5f5f7}a{color:#ff7b9a}footer{color:#a6a7ae}.note{background:#1c1d24}code{background:#2a2b33}}
   </style>
 </head>
 <body><main>
   <div class="logo">E</div><h1>EatElite 支持</h1>
-  <p>EatElite 帮助你记录饮食、营养和饮水，并通过拍照识别辅助完成一餐记录。</p>
-  <h2>需要帮助？</h2><p>请通过电子邮件联系我们：<a href="mailto:1563198615@qq.com">1563198615@qq.com</a>。请说明设备型号、系统版本、操作步骤和问题截图，便于我们定位问题。</p>
-  <h2>常见问题</h2><ul><li>AI 识别结果仅用于辅助记录，请在保存前确认食物、份量和营养数值。</li><li>Apple 健康同步需要在系统弹窗中授权相应数据类型。</li><li>若使用自定义 AI 服务，请确认 API 地址、模型名称与密钥配置正确。</li></ul>
+  <p>EatElite 帮你记录饮食、营养和饮水，并通过拍照识别辅助完成一餐记录。</p>
+
+  <div class="note">本应用提供的营养值是<strong>估计结果</strong>，不是医学检测。饮食记录不能用于疾病诊断或治疗建议。如有健康问题请咨询医生或注册营养师。</div>
+
+  <h2>开始使用：AI 识别需要你自己配置</h2>
+  <p>EatElite 的<strong>拍照识别功能需要你提供一个 AI 服务</strong>。本应用不提供官方 AI 订阅，也不在应用内内置任何服务器密钥。这样做是为了让照片的去向始终由你自己决定。</p>
+  <p>如果你只是想手动记录饮食、饮水和营养，<strong>完全不需要配置任何东西</strong>——「记一餐」按钮可以直接用。</p>
+
+  <h3>配置步骤</h3>
+  <ul>
+    <li>前往任意 AI 服务商开放平台注册账号，获取 API Key。你可以选择 MiniMax、阿里云百炼（通义千问）、智谱 GLM、DeepSeek、Kimi，或任意兼容 OpenAI Chat Completions 协议的服务。</li>
+    <li>打开 EatElite「设置 → AI 与订阅」。</li>
+    <li>选择服务商，填写基础地址、视觉模型名称和 API Key。</li>
+    <li>可点击<strong>「测试连接（仅文本）」</strong>检查服务配置。</li>
+    <li>只有你主动配置了服务地址、模型和凭据并使用拍照识别时，照片才会发送到所选服务商。</li>
+  </ul>
+  <p class="note">如果你不打算使用 AI 拍照识别，本应用仍然可以在本机完成营养标签 OCR 和条码识别；查询条码商品资料时会向 Open Food Facts 发送条码数字。</p>
+
+  <h2>常见问题</h2>
+
+  <h3>照片发出去会怎样？</h3>
+  <p>照片会先在设备上压缩（长边最大 2048 像素，JPEG 质量 0.88），然后发送给你所选的 AI 服务商，附带识别用的提示词。你的饮食记录、API Key 和历史记录不会随照片发送。详见<a href="privacy.html">隐私政策</a>。</p>
+
+  <h3>为什么拍完照没有自动出结果？</h3>
+  <p>请检查服务地址、视觉模型名称与 API Key；可使用「测试连接（仅文本）」排查。营养标签 OCR 和条码扫描可在没有 AI 配置时使用。</p>
+
+  <h3>营养值和实际差很多？</h3>
+  <p>份量估计是 AI 识别中最不确定的一环。请在保存前展开草稿卡片，直接修改食物名称、克重和各项营养值。应用会保留每条记录的来源与估计不确定性，修改后的结果只影响你自己。</p>
+
+  <h3>Apple 健康没有数据？</h3>
+  <p>需要在系统弹窗中分别授权「读取」和「写入」。注意：只有你点击<strong>「确认记录」</strong>之后，确认过的餐食才会同步到 Apple 健康。删除一条餐食时，应用会尝试清理对应的健康数据。</p>
+
+  <h3>数据存在哪里？怎么删？</h3>
+  <ul>
+    <li>记录保存在设备本地；经授权后，确认的餐食和饮水会写入 Apple 健康。</li>
+    <li>可以在应用内删除单条记录，或清空全部记录。</li>
+    <li>可以导出 JSON 备份。已导出的文件需要你自己管理，卸载应用不会删除它。</li>
+    <li>照片不会保存进记录，也不会进入 JSON 备份。</li>
+  </ul>
+
+  <h3>为什么识别不出来 / 数值明显不对？</h3>
+  <p>复杂中式菜品、混合汤羹和被遮挡的食物最容易识别不准。这类情况建议直接手动填写。应用不会为了给出答案而编造食物名称——如果它不确定，会直接让你补充。</p>
+
+  <h2>需要帮助？</h2>
+  <p>请通过电子邮件联系我们：<a href="mailto:1563198615@qq.com">1563198615@qq.com</a></p>
+  <p>请附上以下信息，便于我们定位问题：</p>
+  <ul>
+    <li>设备型号与 iOS 版本</li>
+    <li>EatElite 版本号（「设置」页底部）</li>
+    <li>操作步骤与问题截图</li>
+    <li>若与 AI 配置有关，请说明你选择的服务商与模型名称（<strong>请勿发送 API Key</strong>）</li>
+  </ul>
+
   <p><a href="privacy.html">查看隐私政策</a></p><footer>© 2026 ZYRVIS</footer>
-</main></body></html>
+</main>
+</body>
+</html>

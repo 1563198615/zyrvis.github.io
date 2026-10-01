@@ -3,16 +3,81 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>EatElite 隐私政策</title>
   <style>
-    :root{color-scheme:light dark;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}body{margin:0;background:#f5f6fa;color:#15171c}main{max-width:680px;margin:auto;padding:72px 24px}h1{font-size:36px;letter-spacing:-.03em;margin:0 0 8px}h2{font-size:20px;margin-top:36px}p{font-size:16px;line-height:1.7}a{color:#d83e62}.date,footer{color:#70737c;font-size:14px}footer{margin-top:56px}@media(prefers-color-scheme:dark){body{background:#121318;color:#f5f5f7}a{color:#ff7b9a}.date,footer{color:#a6a7ae}}
+    :root{color-scheme:light dark;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}body{margin:0;background:#f5f6fa;color:#15171c}main{max-width:680px;margin:auto;padding:72px 24px}h1{font-size:36px;letter-spacing:-.03em;margin:0 0 8px}h2{font-size:20px;margin-top:36px}h3{font-size:16px;margin-top:20px;margin-bottom:4px}p,li{font-size:16px;line-height:1.7}ul{padding-left:22px}li{margin:6px 0}.date,.note,footer{color:#70737c;font-size:14px}.note{background:#f0f1f6;border-radius:10px;padding:12px 14px;margin:12px 0}a{color:#d83e62}table{border-collapse:collapse;width:100%;font-size:15px;margin:12px 0}th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid #e2e3ea}th{font-weight:600;white-space:nowrap}footer{margin-top:56px}@media(prefers-color-scheme:dark){body{background:#121318;color:#f5f5f7}a{color:#ff7b9a}.date,.note,footer{color:#a6a7ae}.note{background:#1c1d24}th,td{border-bottom-color:#2a2b33}}
   </style>
 </head>
 <body><main>
-  <h1>EatElite 隐私政策</h1><p class="date">生效日期：2026 年 9 月 9 日</p>
-  <p>EatElite（“本应用”）由 ZYRVIS 提供。本政策说明本应用如何处理与你的饮食记录有关的数据。</p>
-  <h2>本应用处理的数据</h2><p>本应用可在设备上保存你输入或确认的饮食、营养、饮水、体重和偏好数据。你可以选择启用 iCloud，以便通过你的 Apple 账户在设备间同步这些数据。</p>
-  <h2>Apple 健康</h2><p>只有在你明确授权后，本应用才会读取 Apple 健康中的活动能量、体重等数据，或写入饮食与饮水记录。健康数据仅用于你在应用内查看和管理健康记录，不会用于广告、营销或出售给第三方。</p>
-  <h2>AI 图片识别与自定义 API</h2><p>当你主动使用拍照识别或配置自定义 AI 服务时，所选图片和提示内容会发送至你指定或所选 AI 服务商，以取得识别结果。该服务商将按其自身隐私政策处理数据。请勿上传不希望发送给该服务商的内容。</p>
-  <h2>数据存储与控制</h2><p>你的记录默认保存在设备本地；启用 iCloud 后，数据通过 Apple 的 iCloud 服务同步。你可以在应用中删除记录，并可在系统设置中关闭 iCloud 或 Apple 健康授权。</p>
-  <h2>联系我们</h2><p>如对本政策有疑问，请发送邮件至 <a href="mailto:1563198615@qq.com">1563198615@qq.com</a>。</p>
-  <p><a href="support.html">返回支持页面</a></p><footer>© 2026 ZYRVIS</footer>
-</main></body></html>
+  <h1>EatElite 隐私政策</h1><p class="date">生效日期：2026 年 10 月 1 日 · 上次更新：2026 年 10 月 1 日</p>
+
+  <p>EatElite（“本应用”）由 ZYRVIS 提供。本政策说明本应用收集哪些数据、为什么收集、保存多久，以及你可以如何控制它们。</p>
+  <p class="note">本应用不集成任何第三方统计、广告或行为追踪 SDK。我们未将你的饮食记录用于广告或营销，也不会出售给第三方。</p>
+
+  <h2>一、我们收集的数据</h2>
+
+  <h3>你输入或确认的饮食记录</h3>
+  <p>包括餐食名称、份量、营养值、饮水记录、体重与你的份量偏好。用于生成当日与每周的营养汇总和饮食建议。</p>
+
+  <h3>你拍摄或选择的照片</h3>
+  <p>仅在你主动使用拍照记录功能时处理。照片默认只在本机用于文字识别（OCR）与条码识别；<strong>是否会发送到外部 AI 服务，取决于你是否配置了 AI 服务</strong>，详见第三节。</p>
+
+  <h3>Apple 健康数据</h3>
+  <p>经你明确授权后，本应用读取基础能量、活动能量、体重和饮水，用于在应用内展示“今日消耗”；并在你确认餐食后，将已记录的热量、蛋白质、碳水化合物、脂肪、膳食纤维和钠，以及饮水记录写入 Apple 健康。未填写的营养项不会被当作零值写入。</p>
+  <p>健康数据只用于本应用内的展示与同步，不会用于广告、营销，也不会提供给任何第三方。</p>
+
+  <h3>你在设置中填写的 API Key</h3>
+  <p>如果你选择使用自己的 AI 服务，API Key 保存在设备钥匙串（Keychain）中，不会包含在 JSON 备份里。本应用不会将你的 API Key 发送给除你所选服务商之外的任何方。</p>
+
+  <h2>二、默认在本机处理的内容</h2>
+  <p>以下识别步骤全部在你的设备上完成，照片不会离开设备：</p>
+  <ul>
+    <li><strong>营养标签文字识别</strong>：使用 Apple Vision 框架读取包装上的营养成分表，并按每 100 克 / 每份换算。</li>
+    <li><strong>条码识别</strong>：使用 Apple Vision 框架读取条码数字。</li>
+    <li><strong>条码商品查询</strong>：仅当你<em>没有</em>配置 AI 服务、且照片中含有数字条码时，应用会向 <strong>Open Food Facts</strong>（world.openfoodfacts.org）发送该条码号码以查询商品资料。发送的是条码数字，不是你的照片。</li>
+  </ul>
+
+  <h2>三、何时照片会发送给 AI 服务商</h2>
+  <p>当你拍摄或选择一张<strong>无法在本机解析</strong>的照片（既没有读到完整营养标签，也没有走通条码查询）时，应用会把照片发送给你所选的 AI 服务商以获取识别结果。</p>
+  <p>发送前应用会先在设备上压缩照片：长边超过 2048 像素时缩放到 2048，并转换为质量系数 0.88 的 JPEG。</p>
+
+  <p>在“使用自己的 API”模式下，只有你主动配置了服务地址、模型和凭据并使用拍照识别时，照片才会发送到你所选的服务商。“测试连接（仅文本）”可用于检查配置，但不是发送照片的唯一前置条件。</p>
+  <p>本应用当前版本<strong>不提供官方 AI 订阅服务</strong>，也不内置任何服务器端密钥。AI 识别完全由你自己选择的服务商承担。</p>
+
+  <h3>可选择的 AI 服务商</h3>
+  <p>你可以选择以下任一服务商，或填写任意兼容 OpenAI Chat Completions 协议的自定义 HTTPS 地址：</p>
+  <table>
+    <tr><th>服务商</th><th>接口地址</th></tr>
+    <tr><td>MiniMax 国际</td><td>api.minimax.io</td></tr>
+    <tr><td>阿里云百炼（通义千问，中国）</td><td>dashscope.aliyuncs.com</td></tr>
+    <tr><td>阿里云百炼（通义千问，国际）</td><td>dashscope-intl.aliyuncs.com</td></tr>
+    <tr><td>智谱 GLM</td><td>open.bigmodel.cn</td></tr>
+    <tr><td>DeepSeek</td><td>api.deepseek.com</td></tr>
+    <tr><td>Kimi / 月之暗面</td><td>api.moonshot.ai</td></tr>
+    <tr><td>Open Food Facts（仅条码）</td><td>world.openfoodfacts.org</td></tr>
+  </table>
+  <p>发送照片时，同时会一并发送识别所需的提示词。你的饮食记录、API Key 和历史记录<strong>不会</strong>随照片发送。</p>
+  <p class="note">这些服务商各自的数据处理地点、保留期限和隐私条款由其自身规定。发送的照片会按照你所选服务商的隐私政策被处理。使用前请确认你接受该条款；如不接受，可改用本机的标签与条码识别路径，或不使用拍照识别。</p>
+
+  <h2>四、数据存储与同步</h2>
+  <p>你的饮食与饮水记录保存在设备本地。经你授权后，已确认的餐食和饮水也会同步写入 Apple 健康；Apple 健康的跨设备同步由你的系统设置控制。本应用不把健康记录写入自己的 iCloud 容器。</p>
+  <p>照片<strong>不会</strong>被写入记录文件，也<strong>不会</strong>包含在 JSON 备份中。</p>
+
+  <h2>五、你的控制权</h2>
+  <ul>
+    <li>在应用中删除单条餐食记录或饮水记录；删除餐食时会尝试同步清理 Apple 健康中的对应数据。</li>
+    <li>在应用中清空全部本机记录，并尝试清理本应用写入 Apple 健康的对应数据；健康清理失败时应用会提示。</li>
+    <li>在“健康”App 中撤销本应用授权，或删除本应用写入的健康数据。</li>
+    <li>导出 JSON 备份。已导出的文件由你自己管理，卸载应用不会自动删除它。</li>
+  </ul>
+  <p>本应用不设账号体系，不使用设备标识符或广告标识符。</p>
+
+  <h2>六、AI 估计值的性质</h2>
+  <p>AI 识别出的食物、份量和营养值是<strong>估计结果</strong>，可能不准确。本应用会在记录中保留估计来源与不确定性，并要求你逐项核对后再保存。饮食记录不是医学检测，本应用不提供疾病诊断或治疗建议。</p>
+
+  <h2>七、联系我们</h2>
+  <p>如对本政策有疑问，或需要请求删除你的数据，请发送邮件至 <a href="mailto:1563198615@qq.com">1563198615@qq.com</a>。</p>
+  <p>用户支持页：<a href="support.html">support.html</a></p>
+
+  <footer>© 2026 ZYRVIS</footer>
+</main>
+</body>
+</html>
