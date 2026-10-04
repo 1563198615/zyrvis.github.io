@@ -7,7 +7,7 @@
   </style>
 </head>
 <body><main>
-  <h1>EatElite 隐私政策</h1><p class="date">生效日期：2026 年 10 月 1 日 · 上次更新：2026 年 10 月 1 日</p>
+  <h1>EatElite 隐私政策</h1><p class="date">生效日期：2026 年 10 月 1 日 · 上次更新：2026 年 10 月 5 日</p>
 
   <p>EatElite（“本应用”）由 ZYRVIS 提供。本政策说明本应用收集哪些数据、为什么收集、保存多久，以及你可以如何控制它们。</p>
   <p class="note">本应用不集成任何第三方统计、广告或行为追踪 SDK。我们未将你的饮食记录用于广告或营销，也不会出售给第三方。</p>
@@ -32,11 +32,11 @@
   <ul>
     <li><strong>营养标签文字识别</strong>：使用 Apple Vision 框架读取包装上的营养成分表，并按每 100 克 / 每份换算。</li>
     <li><strong>条码识别</strong>：使用 Apple Vision 框架读取条码数字。</li>
-    <li><strong>条码商品查询</strong>：仅当你<em>没有</em>配置 AI 服务、且照片中含有数字条码时，应用会向 <strong>Open Food Facts</strong>（world.openfoodfacts.org）发送该条码号码以查询商品资料。发送的是条码数字，不是你的照片。</li>
+    <li><strong>条码识别结果</strong>：当前版本只在本机读取条码数字，不会将条码号码发送到第三方商品数据库查询。</li>
   </ul>
 
   <h2>三、何时照片会发送给 AI 服务商</h2>
-  <p>当你拍摄或选择一张<strong>无法在本机解析</strong>的照片（既没有读到完整营养标签，也没有走通条码查询）时，应用会把照片发送给你所选的 AI 服务商以获取识别结果。</p>
+  <p>当你拍摄或选择一张<strong>无法在本机解析</strong>的照片，并主动选择使用已配置的 AI 服务时，应用会把照片发送给你所选的 AI 服务商以获取识别结果。</p>
   <p>发送前应用会先在设备上压缩照片：长边超过 2048 像素时缩放到 2048，并转换为质量系数 0.88 的 JPEG。</p>
 
   <p>在“使用自己的 API”模式下，只有你主动配置了服务地址、模型和凭据并使用拍照识别时，照片才会发送到你所选的服务商。“测试连接（仅文本）”可用于检查配置，但不是发送照片的唯一前置条件。</p>
@@ -52,7 +52,6 @@
     <tr><td>智谱 GLM</td><td>open.bigmodel.cn</td></tr>
     <tr><td>DeepSeek</td><td>api.deepseek.com</td></tr>
     <tr><td>Kimi / 月之暗面</td><td>api.moonshot.ai</td></tr>
-    <tr><td>Open Food Facts（仅条码）</td><td>world.openfoodfacts.org</td></tr>
   </table>
   <p>发送照片时，同时会一并发送识别所需的提示词。你的饮食记录、API Key 和历史记录<strong>不会</strong>随照片发送。</p>
   <p class="note">这些服务商各自的数据处理地点、保留期限和隐私条款由其自身规定。发送的照片会按照你所选服务商的隐私政策被处理。使用前请确认你接受该条款；如不接受，可改用本机的标签与条码识别路径，或不使用拍照识别。</p>
